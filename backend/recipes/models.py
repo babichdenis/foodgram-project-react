@@ -3,7 +3,14 @@ from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
-from backend.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, MIN_VAL, MAX_VAL
+from backend.constants import (
+    MAX_CHAR_LENGTH,
+    MAX_COLOR_LENGTH,
+    MIN_VAL,
+    MAX_VAL,
+    MAX_FIELD_LENGTH_RECIPE
+)
+
 
 User = get_user_model()
 
@@ -41,7 +48,8 @@ class Tag(models.Model):
         max_length=MAX_CHAR_LENGTH
         )
     color = models.CharField(
-        "Цвет тэга",
+        "Цветовой HEX-код",
+        unique=True,
         blank=False,
         default='#ffffff',
         max_length=MAX_COLOR_LENGTH
@@ -76,14 +84,19 @@ class Recipe(models.Model):
         related_name='recipes',
     )
     text = models.TextField(
-        'Описание'
-        )
+        null=True,
+        default=None,
+        verbose_name='Описание рецепта',
+        max_length=MAX_FIELD_LENGTH_RECIPE
+    )
     name = models.CharField(
-        max_length=MAX_CHAR_LENGTH,
-        verbose_name='Название рецепта')
+        'Название рецепта',
+        max_length=MAX_CHAR_LENGTH
+    )
     image = models.ImageField(
         upload_to='recipes/images/',
-        verbose_name='Картинка'
+        verbose_name="Изображение рецепта",
+        blank=True,
     )
     cooking_time = models.PositiveSmallIntegerField(
         verbose_name='Время приготовления',
@@ -102,7 +115,7 @@ class Recipe(models.Model):
         on_delete=models.CASCADE,
         blank=False,
         related_name='recipes',
-        verbose_name='Автор'
+        verbose_name="Автор рецепта"
     )
 
     class Meta:
@@ -111,8 +124,7 @@ class Recipe(models.Model):
         verbose_name_plural = "Рецепты"
 
     def __str__(self):
-        """Возвращает строковое представление рецепта."""
-        return self.name
+        return f"{self.author}, {self.name}."
 
 
 class IngredientRecipe(models.Model):
@@ -139,20 +151,51 @@ class IngredientRecipe(models.Model):
     def __str__(self):
         """Возвращает строковое представление ингредиента для рецепта."""
         return self.recipe.name
-    
+
+
 class TagRecipe(models.Model):
     """Связанная модель рецепта и тега."""
 
     tag = models.ForeignKey(
         Tag,
-        related_name='recipe_tags',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Тег'
     )
     recipe = models.ForeignKey(
         Recipe,
-        related_name='recipe_tags',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт'
     )
 
     def __str__(self):
         return f'{self.recipe}: {self.tag}'
+
+
+class Favorite(models.Model):
+    """Модель избранного."""
+
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorite_recipe',
+        verbose_name="Пользователь",
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favorite_follower',
+        verbose_name="Рецепт",
+    )
+
+    class Meta:
+        ordering = ("-id",)
+        verbose_name = "Избранное"
+        verbose_name_plural = "Избранные"
+        constraints = [
+            models.UniqueConstraint(
+                fields=['user', 'recipe'],
+                name='unique_favourite')
+        ]
+
+    def __str__(self):
+        return f'{self.user} добавил "{self.recipe}" в Избранное'

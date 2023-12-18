@@ -14,8 +14,6 @@ DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-# Application definition
-
 INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "recipes.apps.RecipesConfig",

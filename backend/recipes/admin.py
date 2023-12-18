@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from .models import Ingredient, Tag, IngredientRecipe, Recipe, TagRecipe
+from .models import (
+    Ingredient,
+    Tag,
+    IngredientRecipe,
+    Recipe,
+    TagRecipe,
+    Favorite
+)
 
 admin.site.empty_value_display = "Не задано"
 
@@ -33,20 +40,28 @@ class AdminTag(admin.ModelAdmin):
     search_fields = ('name', 'color')
     list_filter = ('name', 'color')
 
-    
+
 @admin.register(Recipe)
 class AdminRecipe(admin.ModelAdmin):
     """Административная панель для управления рецептами."""
 
-    inlines = (IngredientRecipeAdminInline,)
-#    list_display = ("name", "author", "favorites_count")
-    list_display = ("name", "author")
-    list_filter = ("author", "name", "tags")
-    search_fields = ("name", "author")
+    inlines = (IngredientRecipeAdminInline, TagRecipeAdminInline)
+    list_display = ('name',
+                    'author',
+                    'cooking_time',
+                    'followers'
+                    )
+    list_filter = ('author', 'name', 'tags')
+    search_fields = ('name', 'author')
 
-#    def favorites_count(self, obj):
-#        """Метод для отображения числа добавлений в избранное."""
-#        return obj.favorited_by.count()
+    def followers(self, obj):
+        result = Favorite.objects.filter(recipe=obj)
+        return len(list(result))
 
-#    favorites_count.short_description = "Число добавлений в избранное"
+    followers.short_description = "B избранном"
 
+
+@admin.register(Favorite)
+class AdminFavorite(admin.ModelAdmin):
+    list_display = ('user', 'recipe')
+    list_filter = ('user', 'recipe')
