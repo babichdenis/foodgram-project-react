@@ -24,9 +24,10 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-#    "rest_framework.authtoken",
-#    "rest_framework",
+    "rest_framework.authtoken",
+    "rest_framework",
     "djoser",
+    "django_filters",
 ]
 
 MIDDLEWARE = [
@@ -59,14 +60,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
-# if os.getenv("USE_SQLITE"):
-DATABASES = {
+if os.getenv("USE_SQLITE"):
+    DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
             "NAME": BASE_DIR / "db.sqlite3",
         }
     }
-''' else:
+else:
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -76,7 +77,7 @@ DATABASES = {
             "HOST": os.getenv("DB_HOST", ""),
             "PORT": os.getenv("DB_PORT", 5432)
         }
-    } '''
+    }
 
 
 # Password validation

@@ -6,6 +6,7 @@ from .models import (
     IngredientRecipe,
     Recipe,
     TagRecipe,
+    ShoppingCart,
     Favorite
 )
 
@@ -63,5 +64,13 @@ class AdminRecipe(admin.ModelAdmin):
 
 @admin.register(Favorite)
 class AdminFavorite(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
+    """Административная панель избранного."""
+
+    list_display = ('id', 'user', 'recipe')
+    list_filter = ('user', 'recipe')
+
+
+@admin.register(ShoppingCart)
+class ShoppingListAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'recipe')
     list_filter = ('user', 'recipe')
