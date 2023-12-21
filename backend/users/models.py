@@ -21,7 +21,7 @@ class CustomUser(AbstractUser):
             RegexValidator(
                 regex=REGEX,
                 message="Недопустимый символ"
-                )
+            )
         ],
     )
     email = models.EmailField(
@@ -35,13 +35,13 @@ class CustomUser(AbstractUser):
         unique=True,
         blank=False,
         max_length=MAX_USERNAME_LENGTH
-        )
+    )
     last_name = models.CharField(
         "Фамилия",
         unique=True,
         blank=False,
         max_length=MAX_USERNAME_LENGTH
-        )
+    )
     password = models.CharField(
         "Пароль",
         max_length=MAX_USERNAME_LENGTH,

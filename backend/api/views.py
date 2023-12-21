@@ -1,25 +1,26 @@
-from django.http import HttpResponse
+from datetime import timezone
+
+from api.filters import IngredientFilter, RecipeFilter
 from api.pagination import CustomPagination
-from djoser.views import UserViewSet
-from users.models import Subscribe, CustomUser
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from api.permissions import IsAuthorOrAdminOrReadOnly
 from api.serializers import (CustomUserCreateSerializer, CustomUserSerializer,
                              IngredientSerializer, RecipeCreateSerializer,
                              RecipeSerializer, SubscriptionSerializer,
                              TagSerializer)
-from users.models import Subscribe, CustomUser
-from rest_framework.response import Response
+from django.db.models import Sum
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from rest_framework import status
-from rest_framework.exceptions import PermissionDenied, ValidationError
-from rest_framework.decorators import action
-from api.pagination import CustomPagination
-from api.permissions import IsAuthorOrAdminOrReadOnly
-from api.filters import IngredientFilter, RecipeFilter
-from rest_framework.viewsets import (ModelViewSet, ReadOnlyModelViewSet)
-from recipes.models import (Ingredient, IngredientRecipe, Favorite, Recipe,
-                            ShoppingCart, Tag)
 from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
+from recipes.models import (Favorite, Ingredient, IngredientRecipe, Recipe,
+                            ShoppingCart, Tag)
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.exceptions import PermissionDenied, ValidationError
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
+from users.models import CustomUser, Subscribe
 
 
 class TagViewSet(ReadOnlyModelViewSet):
@@ -81,7 +82,7 @@ class CustomUserViewSet(UserViewSet):
     )
     def subscribe(self, request, id):
         user = request.user
-        author = get_object_or_404(User, id=id)
+        author = get_object_or_404(CustomUser, id=id)
 
         if user == author:
             return Response({'message': 'Подписка на себя невозможна'},

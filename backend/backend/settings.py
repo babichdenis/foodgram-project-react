@@ -1,8 +1,8 @@
 import os
 from pathlib import Path
 
-from dotenv import load_dotenv
 from django.core.management.utils import get_random_secret_key
+from dotenv import load_dotenv
 
 load_dotenv()
 
@@ -132,4 +132,18 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 6,
 
+}
+
+DJOSER = {
+    "HIDE_USERS": False,
+    "LOGIN_FIELD": "email",
+    "SERIALIZERS": {
+        "user_create": "api.serializers.UserCreateSerializer",
+        "user": "api.serializers.UserGETSerializer",
+        "current_user": "api.serializers.UserGETSerializer",
+    },
+    "PERMISSIONS": {
+        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
+        "user_list": ["rest_framework.permissions.AllowAny"],
+    },
 }
