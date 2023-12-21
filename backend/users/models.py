@@ -2,56 +2,28 @@ from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
 
-from backend.constants import MAX_EMAIL_LENGTH, MAX_USERNAME_LENGTH, REGEX
+from foodgram.constants import MAX_EMAIL_LENGTH, MAX_USERNAME_LENGTH, REGEX
 
 
-class CustomUser(AbstractUser):
-    """Модель пользователя, расширяющая AbstractUser.
-    с заменой username на email при авторизации.
-    """
+class User(AbstractUser):
+    """Модель пользователя, расширяющая AbstractUser."""
 
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
-
+    email = models.EmailField(
+        "Почтовый адрес", max_length=MAX_EMAIL_LENGTH, unique=True
+    )
     username = models.CharField(
         "Логин",
         max_length=MAX_USERNAME_LENGTH,
         unique=True,
         validators=[
-            RegexValidator(
-                regex=REGEX,
-                message="Недопустимый символ"
-            )
+            RegexValidator(regex=REGEX, message="Недопустимый символ")
         ],
     )
-    email = models.EmailField(
-        "email address",
-        max_length=MAX_EMAIL_LENGTH,
-        unique=True,
-        blank=False,
-    )
-    first_name = models.CharField(
-        "Имя",
-        unique=True,
-        blank=False,
-        max_length=MAX_USERNAME_LENGTH
-    )
-    last_name = models.CharField(
-        "Фамилия",
-        unique=True,
-        blank=False,
-        max_length=MAX_USERNAME_LENGTH
-    )
-    password = models.CharField(
-        "Пароль",
-        max_length=MAX_USERNAME_LENGTH,
-        blank=False,
-        validators=[
-            RegexValidator(
-                regex=REGEX,
-                message="Недопустимый символ"),
-        ],
-    )
+    first_name = models.CharField("Имя", max_length=MAX_USERNAME_LENGTH)
+    last_name = models.CharField("Фамилия", max_length=MAX_USERNAME_LENGTH)
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
 
     class Meta:
         ordering = ("id",)
@@ -67,30 +39,25 @@ class Subscribe(models.Model):
     """Модель для представления подписок пользователей."""
 
     user = models.ForeignKey(
-        CustomUser,
-        related_name='subscriber',
-        verbose_name='Подписчик',
-        on_delete=models.CASCADE
+        User,
+        on_delete=models.CASCADE,
+        related_name="followers",
+        verbose_name="Пользователь",
     )
     author = models.ForeignKey(
-        CustomUser,
-        related_name='author',
-        verbose_name='Автор',
-        on_delete=models.CASCADE
+        User,
+        on_delete=models.CASCADE,
+        related_name="following",
+        verbose_name="Автор",
     )
 
     class Meta:
-        ordering = ('author',)
-        verbose_name = 'Подписка'
-        verbose_name_plural = 'Подписки'
+        ordering = ("id",)
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
         constraints = [
             models.UniqueConstraint(
-                fields=['user', 'author'],
-                name='unique_user_author'
-            ),
-            models.CheckConstraint(
-                check=~models.Q(user=models.F('author')),
-                name='users_cannot_rate_themselves'
+                fields=["user", "author"], name="unique_user_author"
             )
         ]
 
