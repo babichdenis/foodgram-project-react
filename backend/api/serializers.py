@@ -6,7 +6,7 @@ import djoser.serializers
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
-from foodgram.constants import MIN_AMOUNT, MIN_COOKING_TIME
+from backend.constants import MIN_AMOUNT, MIN_COOKING_TIME
 from recipes.models import (
     FavoriteRecipe,
     Ingredient,
