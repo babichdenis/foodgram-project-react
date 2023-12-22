@@ -1,68 +1,49 @@
 from django.contrib import admin
 
-from .models import (
-    FavoriteRecipe,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingList,
-    Tag
-)
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+
+EMPTY_MESSAGE = '-пусто-'
 
 
-class RecipeIngredientInline(admin.TabularInline):
-    """Inline для отображения ингредиентов в админ-панели рецепта."""
-
-    model = RecipeIngredient
-    extra = 0
-
-
-@admin.register(Recipe)
-class RecipeAdmin(admin.ModelAdmin):
-    """Административная панель для управления рецептами."""
-
-    inlines = (RecipeIngredientInline,)
-    list_display = ("name", "author", "favorites_count")
-    list_filter = ("author", "name", "tags")
-    filter_horizontal = ("tags",)
-    search_fields = ("name", "author")
-
-    def favorites_count(self, obj):
-        """Метод для отображения числа добавлений в избранное."""
-        return obj.favorited_by.count()
-
-    favorites_count.short_description = "Число добавлений в избранное"
+class IngredientsInLine(admin.TabularInline):
+    model = Recipe.ingredients.through
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    """Административная панель для управления ингредиентами."""
-
-    list_display = ("name", "measurement_unit")
-    list_filter = ("name",)
-    search_fields = ("name",)
+    list_display = ('id', 'name', 'measurement_unit')
+    search_fields = ('name', )
+    empty_value_display = EMPTY_MESSAGE
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    """Административная панель для управления тегами."""
-
-    list_display = ("name", "color", "slug")
-    list_filter = ("name", "color")
-    search_fields = ("name", "color")
+    list_display = ('id', 'name', 'color', 'slug')
+    search_fields = ('name', )
+    empty_value_display = EMPTY_MESSAGE
 
 
-@admin.register(FavoriteRecipe)
-class FavoriteRecipeAdmin(admin.ModelAdmin):
-    """Административная панель для управления избранными рецептами."""
+@admin.register(Recipe)
+class RecipeAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'author', 'count_favorites')
+    search_fields = ('name', 'author__username')
+    list_filter = ('tags', )
+    empty_value_display = EMPTY_MESSAGE
+    inlines = (IngredientsInLine, )
 
-    list_display = ("user", "recipe")
-    search_fields = ("user", "recipe")
+    def count_favorites(self, obj):
+        return obj.favorites.count()
 
 
-@admin.register(ShoppingList)
-class ShoppingListAdmin(admin.ModelAdmin):
-    """Административная панель для управления списком покупок."""
+@admin.register(ShoppingCart)
+class ShoppingCartAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'recipe')
+    search_fields = ('user__username', 'user__email')
+    empty_value_display = EMPTY_MESSAGE
 
-    list_display = ("user", "recipe")
-    search_fields = ("user", "recipe")
+
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ('id', 'user', 'recipe')
+    search_fields = ('user__username', 'user__email')
+    empty_value_display = EMPTY_MESSAGE

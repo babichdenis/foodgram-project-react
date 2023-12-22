@@ -1,27 +1,35 @@
 from django.contrib import admin
+from django.contrib.auth.admin import UserAdmin
 
-from .models import Subscribe, User
+from users.models import Subscription, User
 
-admin.site.empty_value_display = "Не задано"
+EMPTY_MESSAGE = '-пусто-'
 
 
 @admin.register(User)
-class MyUserAdmin(admin.ModelAdmin):
-    """Административная панель для управления пользователями."""
+class UserAdmin(UserAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name',
+                    'count_subscribers', 'count_recipes')
+    search_fields = ('username', 'email')
+    list_filter = ('username', 'email')
+    ordering = ('username', )
+    empty_value_display = EMPTY_MESSAGE
 
-    list_display = ("username", "first_name", "last_name", "email")
-    list_filter = ("username", "email")
-    search_fields = ("username",)
+    def count_subscribers(self, obj):
+        return obj.subscriber.count()
 
-
-@admin.register(Subscribe)
-class SubscribeAdmin(admin.ModelAdmin):
-    """Административная панель для управления подписками."""
-
-    list_display = ("user", "author")
-    list_filter = ("user", "author")
-    search_fields = ("user", "author")
+    def count_recipes(self, obj):
+        return obj.recipes.count()
 
 
-admin.site.site_title = 'Админ-панель сайта Foodgram'
-admin.site.site_header = 'Админ-панель сайта Foodgram'
+@admin.register(Subscription)
+class SubscriptionAdmin(admin.ModelAdmin):
+    list_display = ('user', 'author')
+    search_fields = (
+        'author__username',
+        'author__email',
+        'user__username',
+        'user__email'
+    )
+    list_filter = ('author__username', 'user__username')
+    empty_value_display = EMPTY_MESSAGE

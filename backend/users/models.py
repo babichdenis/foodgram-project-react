@@ -1,66 +1,76 @@
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
 from django.db import models
 
-from backend.constants import MAX_EMAIL_LENGTH, MAX_USERNAME_LENGTH, REGEX
+from users.validators import username_validator
+
+MAX_LENGTH_NAME = 150
+MAX_LENGTH_EMAIL = 254
 
 
 class User(AbstractUser):
-    """Модель пользователя, расширяющая AbstractUser."""
-
-    email = models.EmailField(
-        "Почтовый адрес", max_length=MAX_EMAIL_LENGTH, unique=True
-    )
     username = models.CharField(
-        "Логин",
-        max_length=MAX_USERNAME_LENGTH,
+        max_length=MAX_LENGTH_NAME,
+        verbose_name='Имя пользователя',
         unique=True,
-        validators=[
-            RegexValidator(regex=REGEX, message="Недопустимый символ")
-        ],
+        validators=(username_validator, ),
     )
-    first_name = models.CharField("Имя", max_length=MAX_USERNAME_LENGTH)
-    last_name = models.CharField("Фамилия", max_length=MAX_USERNAME_LENGTH)
+    email = models.EmailField(
+        max_length=MAX_LENGTH_EMAIL,
+        verbose_name='Почта',
+        unique=True,
+    )
+    first_name = models.CharField(
+        max_length=MAX_LENGTH_NAME,
+        verbose_name='Имя',
+        blank=False,
+    )
+    last_name = models.CharField(
+        max_length=MAX_LENGTH_NAME,
+        verbose_name='Фамилия',
+        blank=False,
+    )
 
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('username', 'first_name', 'last_name')
 
     class Meta:
-        ordering = ("id",)
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
+        default_related_name = 'users'
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
+        ordering = ('username', )
 
     def __str__(self):
-        """Возвращает строковое представление пользователя."""
         return self.username
 
 
-class Subscribe(models.Model):
-    """Модель для представления подписок пользователей."""
+class Subscription(models.Model):
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="followers",
-        verbose_name="Пользователь",
+        verbose_name='Подписчик',
+        related_name='subscriber',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="following",
-        verbose_name="Автор",
+        verbose_name='Автор',
+        related_name='author',
     )
 
     class Meta:
-        ordering = ("id",)
-        verbose_name = "Подписка"
-        verbose_name_plural = "Подписки"
-        constraints = [
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
+        constraints = (
             models.UniqueConstraint(
-                fields=["user", "author"], name="unique_user_author"
-            )
-        ]
+                fields=('user', 'author'),
+                name='user_author_unique'
+            ),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('author')),
+                name='author_and_user_different'
+            ),
+        )
 
     def __str__(self):
-        """Возвращает строковое представление подписки."""
-        return f"{self.user.username} подписан(а) на {self.author.username}"
+        return f'{self.user} подписался на {self.author}'
