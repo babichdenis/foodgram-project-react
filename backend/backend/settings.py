@@ -26,7 +26,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework.authtoken",
     "rest_framework",
- #   "djoser",
+    "djoser",
     "django_filters",
 ]
 
@@ -110,7 +110,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-AUTH_USER_MODEL = "users.CustomUser"
+AUTH_USER_MODEL = "users.User"
 
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR / 'collected_static'
@@ -129,7 +129,7 @@ REST_FRAMEWORK = {
         'rest_framework.authentication.TokenAuthentication',
     ],
 
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.CustomPagination',
+    "DEFAULT_PAGINATION_CLASS": "api.pagination.CustomPagination",
     'PAGE_SIZE': 6,
 
 }

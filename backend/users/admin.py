@@ -1,32 +1,26 @@
 from django.contrib import admin
 
-from .models import CustomUser, Subscribe
+from .models import Subscribe, User
 
 admin.site.empty_value_display = "Не задано"
 
 
-@admin.register(CustomUser)
-class UserAdmin(admin.ModelAdmin):
+@admin.register(User)
+class MyUserAdmin(admin.ModelAdmin):
     """Административная панель для управления пользователями."""
 
-    list_display = ('id', 'username', 'email', 'first_name',
-                    'last_name', 'recipes_count')
-    search_fields = ('username', 'email', 'first_name', 'last_name')
-    list_filter = ('first_name', 'last_name', 'email')
-
-    @admin.display(description='Кол-во рецептов')
-    def recipes_count(self, obj):
-        return obj.recipes.count()
-
-    @admin.display(description='Кол-во подписчиков')
-    def subscribers_count(self, obj):
-        return obj.subscribed_by.count()
+    list_display = ("username", "first_name", "last_name", "email")
+    list_filter = ("username", "email")
+    search_fields = ("username",)
 
 
 @admin.register(Subscribe)
-class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'author')
-    list_filter = ('user', 'author')
+class SubscribeAdmin(admin.ModelAdmin):
+    """Административная панель для управления подписками."""
+
+    list_display = ("user", "author")
+    list_filter = ("user", "author")
+    search_fields = ("user", "author")
 
 
 admin.site.site_title = 'Админ-панель сайта Foodgram'
