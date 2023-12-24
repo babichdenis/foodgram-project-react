@@ -24,7 +24,7 @@ from .serializers import (UserSerializer, FavoriteSerializer,
 from .utils import create_model_instance, delete_model_instance, pdf_drawer
 
 
-class UserViewSet(UserViewSet):
+class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     pagination_class = CustomPagination
