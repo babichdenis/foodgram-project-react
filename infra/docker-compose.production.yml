@@ -2,17 +2,14 @@ version: '3.3'
 volumes:
   pg_data:
   static:
-  media_v:
-
+  media:
 
 services:
-
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: babichdenis/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
+
   nginx:
     image: nginx:1.19.3
     ports:
@@ -22,22 +19,21 @@ services:
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static:/static/
-      - media_v:/media/
+      - media:/media
 
   db:
     image: postgres:13.10
-    env_file: ./.env
+    env_file: .env
     volumes:
       - pg_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
 
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
-    env_file:
-      - ./.env
+    image: babichdenis/foodgram_backend
+    env_file: .env
     volumes:
       - static:/app/static/
-      - media_v:/app/media/
+      - media:/media
     depends_on:
       - db
