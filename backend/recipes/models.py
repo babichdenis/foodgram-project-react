@@ -38,9 +38,7 @@ class Ingredient(models.Model):
         max_length=MAX_LENGTH,
         blank=False)
     measurement_unit = models.CharField(
-        
         'Единицы измерения',
-        
         max_length=MAX_LENGTH,
         blank=False)
 
