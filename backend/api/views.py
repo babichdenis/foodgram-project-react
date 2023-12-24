@@ -11,9 +11,9 @@ from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.filters import IngredientFilter, RecipeFilter
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
-from users.models import User, Subscription
 
+from users.models import User, Subscription
+from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .pagination import CustomPagination
 from .permissions import IsAuthorOrReadOnly
 from .serializers import (UserSerializer, FavoriteSerializer,

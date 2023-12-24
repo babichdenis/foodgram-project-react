@@ -12,7 +12,7 @@ from recipes.models import (Favorite, Ingredient, IngredientForRecipe, Recipe,
 from users.models import Subscription, User
 
 
-class UserSerializer(UserSerializer):
+class CustomUserSerializer(UserSerializer):
     is_subscribed = SerializerMethodField(read_only=True)
 
     class Meta:
