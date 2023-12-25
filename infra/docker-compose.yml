@@ -13,6 +13,9 @@ services:
       dockerfile: Dockerfile
     volumes:
       - ../frontend/:/app/result_build/
+    depends_on:
+      - backend
+
   nginx:
     image: nginx:1.19.3
     ports:
@@ -23,6 +26,10 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static:/static/
       - media:/media/
+    depends_on:
+      - backend
+      - frontend
+    restart: always
 
   db:
     image: postgres:13.10
@@ -38,6 +45,6 @@ services:
       - ./.env
     volumes:
       - static:/app/static/
-      - media_v:/app/media/
+      - media:/app/media/
     depends_on:
       - db
