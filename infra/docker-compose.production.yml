@@ -18,7 +18,7 @@ services:
       - static:/static
       - media:/media
   frontend:
-    image: babichdenisfoodgram_frontend
+    image: babichdenis/foodgram_frontend
     env_file: .env
     command: cp -r /app/build/. /static/
     volumes:
