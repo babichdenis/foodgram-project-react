@@ -1,63 +1,76 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from users.validators import username_validator
+
+MAX_LENGTH_NAME = 150
+MAX_LENGTH_EMAIL = 254
+
 
 class User(AbstractUser):
-    email = models.EmailField(
-        'Адрес электронной почты',
-        max_length=254,
-        blank=False,
-        null=False,
-        unique=True)
     username = models.CharField(
-        'Логин',
-        max_length=150,
-        blank=False,
-        null=False,)
+        max_length=MAX_LENGTH_NAME,
+        verbose_name='Имя пользователя',
+        unique=True,
+        validators=(username_validator, ),
+    )
+    email = models.EmailField(
+        max_length=MAX_LENGTH_EMAIL,
+        verbose_name='Почта',
+        unique=True,
+    )
     first_name = models.CharField(
-        'Имя',
-        max_length=150,
+        max_length=MAX_LENGTH_NAME,
+        verbose_name='Имя',
         blank=False,
-        null=False,)
+    )
     last_name = models.CharField(
-        'Фамилия',
-        max_length=150,
+        max_length=MAX_LENGTH_NAME,
+        verbose_name='Фамилия',
         blank=False,
-        null=False,)
-    password = models.CharField(
-        'Пароль',
-        max_length=150,
-        blank=False,
-        null=False,)
+    )
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'username', 'password']
+    REQUIRED_FIELDS = ('username', 'first_name', 'last_name')
 
     class Meta:
-        verbose_name = 'пользователь'
+        default_related_name = 'users'
+        verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        unique_together = ('email', 'username')
+        ordering = ('username', )
 
     def __str__(self):
         return self.username
 
 
 class Subscription(models.Model):
+
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscriptions',
-        verbose_name='Подписчик')
+        verbose_name='Подписчик',
+        related_name='subscriber',
+    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='subscribers',
-        verbose_name='Автор')
+        verbose_name='Автор',
+        related_name='author',
+    )
 
     class Meta:
-        verbose_name = 'подписка'
+        verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
-        unique_together = ('user', 'author')
+        constraints = (
+            models.UniqueConstraint(
+                fields=('user', 'author'),
+                name='user_author_unique'
+            ),
+            models.CheckConstraint(
+                check=~models.Q(user=models.F('author')),
+                name='author_and_user_different'
+            ),
+        )
 
     def __str__(self):
-        return self.username
+        return f'{self.user} подписался на {self.author}'

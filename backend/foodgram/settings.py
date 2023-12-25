@@ -14,7 +14,7 @@ DEBUG = os.getenv("DEBUG", "false").lower() == "true"
 
 # ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "127.0.0.1,localhost").split(",")
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '*').split(',')
 
 
 INSTALLED_APPS = [
@@ -64,15 +64,24 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram.wsgi.application'
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'postgres'),
-        'USER': os.getenv('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', ''),
-        'PORT': os.getenv('DB_PORT', 5432)}
-}
+if os.getenv('DATABASES', 'postgres') == 'sqlite':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', 'postgres'),
+            'USER': os.getenv('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+            'HOST': os.getenv('DB_HOST', ''),
+            'PORT': os.getenv('DB_PORT', 5432),
+        }
+    }
 
 AUTH_USER_MODEL = 'users.User'
 
@@ -107,17 +116,17 @@ REST_FRAMEWORK = {
 }
 
 DJOSER = {
-    'LOGIN_FIELD': 'email',
-    'SERIALIZERS': {
-        'user': 'api.serializers.CustomUserSerializer',
-        'user_create': 'api.serializers.CustomUserRegistrationSerializer',
-        'current_user': 'api.serializers.CustomUserSerializer'},
     'HIDE_USERS': False,
     'PERMISSIONS': {
+        'user': ['djoser.permissions.CurrentUserOrAdmin'],
         'user_list': ['rest_framework.permissions.AllowAny'],
-        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-    }
+    },
+    'SERIALIZERS': {
+        'user': 'api.serializers.UserSerializer',
+        'current_user': 'api.serializers.UserSerializer',
+    },
 }
+
 
 LANGUAGE_CODE = 'ru-ru'
 
