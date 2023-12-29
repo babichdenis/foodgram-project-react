@@ -1,49 +1,42 @@
 from django.contrib import admin
+from django.contrib.admin import display
 
-from recipes.models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
-
-EMPTY_MESSAGE = '-пусто-'
-
-
-class IngredientsInLine(admin.TabularInline):
-    model = Recipe.ingredients.through
-
-
-@admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'measurement_unit')
-    search_fields = ('name', )
-    empty_value_display = EMPTY_MESSAGE
-
-
-@admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'color', 'slug')
-    search_fields = ('name', )
-    empty_value_display = EMPTY_MESSAGE
+from .models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
+                     ShoppingCart, Tag)
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'author', 'count_favorites')
-    search_fields = ('name', 'author__username')
-    list_filter = ('tags', )
-    empty_value_display = EMPTY_MESSAGE
-    inlines = (IngredientsInLine, )
+    list_display = ('name', 'id', 'author', 'added_in_favorites')
+    readonly_fields = ('added_in_favorites',)
+    list_filter = ('author', 'name', 'tags',)
 
-    def count_favorites(self, obj):
+    @display(description='Количество в избранных')
+    def added_in_favorites(self, obj):
         return obj.favorites.count()
+
+
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    list_display = ('name', 'measurement_unit',)
+    list_filter = ('name',)
+
+
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = ('name', 'color', 'slug',)
 
 
 @admin.register(ShoppingCart)
 class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'recipe')
-    search_fields = ('user__username', 'user__email')
-    empty_value_display = EMPTY_MESSAGE
+    list_display = ('user', 'recipe',)
 
 
-@admin.register(Favorite)
-class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'recipe')
-    search_fields = ('user__username', 'user__email')
-    empty_value_display = EMPTY_MESSAGE
+@admin.register(Favourite)
+class FavouriteAdmin(admin.ModelAdmin):
+    list_display = ('user', 'recipe',)
+
+
+@admin.register(IngredientInRecipe)
+class IngredientInRecipe(admin.ModelAdmin):
+    list_display = ('recipe', 'ingredient', 'amount',)

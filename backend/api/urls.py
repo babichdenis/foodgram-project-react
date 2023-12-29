@@ -1,20 +1,16 @@
 from django.urls import include, path
 from rest_framework.routers import DefaultRouter
 
-from api.views import (IngredientViewSet, RecipeViewSet,
-                       CustomUserViewSet, TagViewSet)
+from .views import IngredientViewSet, RecipeViewSet, TagViewSet
 
 app_name = 'api'
 
 router = DefaultRouter()
 
-router.register('ingredients', IngredientViewSet, basename='ingredients')
-router.register('recipes', RecipeViewSet, basename='recipes')
-router.register('tags', TagViewSet, basename='tags')
-router.register('users', CustomUserViewSet, basename='users')
+router.register('ingredients', IngredientViewSet)
+router.register('tags', TagViewSet)
+router.register('recipes', RecipeViewSet)
 
 urlpatterns = [
-    path('auth/', include('djoser.urls.authtoken')),
     path('', include(router.urls)),
-    # path('', include('djoser.urls')),
 ]
