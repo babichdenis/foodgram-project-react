@@ -1,21 +1,23 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 
 from .models import Subscribe, User
 
+admin.site.empty_value_display = "Не задано"
+
 
 @admin.register(User)
-class UserAdmin(UserAdmin):
-    list_display = (
-        'username',
-        'id',
-        'email',
-        'first_name',
-        'last_name',
-    )
-    list_filter = ('email', 'first_name')
+class MyUserAdmin(admin.ModelAdmin):
+    """Административная панель для управления пользователями."""
+
+    list_display = ("username", "first_name", "last_name", "email")
+    list_filter = ("username", "email")
+    search_fields = ("username",)
 
 
 @admin.register(Subscribe)
 class SubscribeAdmin(admin.ModelAdmin):
-    list_display = ('user', 'author',)
+    """Административная панель для управления подписками."""
+
+    list_display = ("user", "author")
+    list_filter = ("user", "author")
+    search_fields = ("user", "author")

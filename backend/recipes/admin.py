@@ -1,42 +1,68 @@
 from django.contrib import admin
-from django.contrib.admin import display
 
-from .models import (Favourite, Ingredient, IngredientInRecipe, Recipe,
-                     ShoppingCart, Tag)
+from .models import (
+    FavoriteRecipe,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingList,
+    Tag
+)
+
+
+class RecipeIngredientInline(admin.TabularInline):
+    """Inline для отображения ингредиентов в админ-панели рецепта."""
+
+    model = RecipeIngredient
+    extra = 0
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'id', 'author', 'added_in_favorites')
-    readonly_fields = ('added_in_favorites',)
-    list_filter = ('author', 'name', 'tags',)
+    """Административная панель для управления рецептами."""
 
-    @display(description='Количество в избранных')
-    def added_in_favorites(self, obj):
-        return obj.favorites.count()
+    inlines = (RecipeIngredientInline,)
+    list_display = ("name", "author", "favorites_count")
+    list_filter = ("author", "name", "tags")
+    filter_horizontal = ("tags",)
+    search_fields = ("name", "author")
+
+    def favorites_count(self, obj):
+        """Метод для отображения числа добавлений в избранное."""
+        return obj.favorited_by.count()
+
+    favorites_count.short_description = "Число добавлений в избранное"
 
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit',)
-    list_filter = ('name',)
+    """Административная панель для управления ингредиентами."""
+
+    list_display = ("name", "measurement_unit")
+    list_filter = ("name",)
+    search_fields = ("name",)
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'color', 'slug',)
+    """Административная панель для управления тегами."""
+
+    list_display = ("name", "color", "slug")
+    list_filter = ("name", "color")
+    search_fields = ("name", "color")
 
 
-@admin.register(ShoppingCart)
-class ShoppingCartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe',)
+@admin.register(FavoriteRecipe)
+class FavoriteRecipeAdmin(admin.ModelAdmin):
+    """Административная панель для управления избранными рецептами."""
+
+    list_display = ("user", "recipe")
+    search_fields = ("user", "recipe")
 
 
-@admin.register(Favourite)
-class FavouriteAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe',)
+@admin.register(ShoppingList)
+class ShoppingListAdmin(admin.ModelAdmin):
+    """Административная панель для управления списком покупок."""
 
-
-@admin.register(IngredientInRecipe)
-class IngredientInRecipe(admin.ModelAdmin):
-    list_display = ('recipe', 'ingredient', 'amount',)
+    list_display = ("user", "recipe")
+    search_fields = ("user", "recipe")
