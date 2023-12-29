@@ -1,10 +1,3 @@
-from typing import Optional
-
-from django.db.models import Sum
-from django.db.models.query import QuerySet
-from django.http import HttpResponse
-from django.shortcuts import get_object_or_404
-
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status, viewsets
 from rest_framework.decorators import action
@@ -13,35 +6,26 @@ from rest_framework.pagination import BasePagination
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from typing import Optional
 
-from recipes.models import (
-    FavoriteRecipe,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingList,
-    Tag
-)
-from users.models import Subscribe, User
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
+                            RecipeIngredient, ShoppingList, Tag)
+
+from django.db.models import Sum
+from django.db.models.query import QuerySet
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 
 from .filters import IngredientFilter, RecipeFilter
 from .permissions import OwnerOnlyPermission
-from .serializers import (
-    FavoriteSerializer,
-    IngredientSerializer,
-    RecipeCreateSerializer,
-    RecipeGETSerializer,
-    ShoppingListSerializer,
-    SubscriptionCreateSerializer,
-    SubscriptionSerializer,
-    TagSerializer,
-    UserGETSerializer
-)
-from .utils import (
-    add_favorite_or_shopping_list,
-    generate_shopping_list_pdf,
-    remove_favorite_or_shopping_list
-)
+from .serializers import (FavoriteSerializer, IngredientSerializer,
+                          RecipeCreateSerializer, RecipeGETSerializer,
+                          ShoppingListSerializer, SubscriptionCreateSerializer,
+                          SubscriptionSerializer, TagSerializer,
+                          UserGETSerializer)
+from .utils import (add_favorite_or_shopping_list, generate_shopping_list_pdf,
+                    remove_favorite_or_shopping_list)
+from users.models import Subscribe, User
 
 
 class MeView(APIView):

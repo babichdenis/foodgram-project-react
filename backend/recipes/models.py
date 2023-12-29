@@ -1,8 +1,9 @@
+from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX
+
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Exists, OuterRef
 
-from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX
 from users.models import User
 
 
