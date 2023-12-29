@@ -1,23 +1,16 @@
 import base64
-
-from django.core.files.base import ContentFile
-
 import djoser.serializers
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from foodgram.constants import MIN_AMOUNT, MIN_COOKING_TIME
-from recipes.models import (
-    FavoriteRecipe,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    ShoppingList,
-    Tag
-)
-from users.models import Subscribe, User
+from recipes.models import (FavoriteRecipe, Ingredient, Recipe,
+                            RecipeIngredient, ShoppingList, Tag)
+
+from django.core.files.base import ContentFile
 
 from .utils import create_update_ingredients
+from users.models import Subscribe, User
 
 
 class Base64ImageField(serializers.ImageField):

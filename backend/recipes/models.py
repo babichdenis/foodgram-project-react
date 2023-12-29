@@ -34,9 +34,13 @@ class RecipeQuerySet(models.QuerySet):
 class Ingredient(models.Model):
     """Модель для представления ингредиентов."""
 
-    name = models.CharField("Название", max_length=MAX_CHAR_LENGTH)
+    name = models.CharField(
+        "Название",
+        max_length=MAX_CHAR_LENGTH
+    )
     measurement_unit = models.CharField(
-        "Единица измерения", max_length=MAX_CHAR_LENGTH
+        "Единица измерения", 
+        max_length=MAX_CHAR_LENGTH
     )
 
     class Meta:
@@ -46,22 +50,37 @@ class Ingredient(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление ингредиента."""
-        return self.name
+        return f'{self.name} ({self.measurement_unit})'
 
 
 class Tag(models.Model):
     """Модель для представления тэгов."""
 
-    name = models.CharField("Название тэга", max_length=MAX_CHAR_LENGTH)
-    color = models.CharField("Цвет", max_length=MAX_COLOR_LENGTH)
-    slug = models.SlugField(
-        "Slug",
+
+class Tag(models.Model):
+    name = models.CharField(
+        'Название тега',
         max_length=MAX_CHAR_LENGTH,
         unique=True,
-        validators=[
-            RegexValidator(regex=REGEX, message="Недопустимый символ")
-        ],
     )
+    color = models.CharField(
+        'Цветовой HEX-код',
+        max_length=MAX_COLOR_LENGTH,
+        default='#00ff7f',
+        null=True,
+        blank=True,
+        unique=True,
+    )
+    slug = models.SlugField(
+        'Slug тега',
+        max_length=MAX_CHAR_LENGTH,
+        unique=True,
+    )
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
+        ordering = ('name',)
 
     class Meta:
         ordering = ("id",)
@@ -76,14 +95,27 @@ class Tag(models.Model):
 class Recipe(models.Model):
     """Модель для представления рецептов."""
 
-    tags = models.ManyToManyField(Tag, verbose_name="Тэг")
-    ingredients = models.ManyToManyField(
-        Ingredient, through="RecipeIngredient"
+    tags = models.ManyToManyField(
+        Tag,
+        verbose_name='Тег',
+        related_name='recipes',
     )
-    text = models.TextField("Описание")
-    name = models.CharField("Название рецепта", max_length=MAX_CHAR_LENGTH)
-    image = models.ImageField("Фотография", upload_to="recipes/images/")
-    cooking_time = models.IntegerField("Время приготовления")
+    ingredients = models.ManyToManyField(
+        Ingredient,
+        through="RecipeIngredient"
+    )
+    text = models.TextField(
+        'Описание рецепта',
+    )
+    name = models.CharField(
+        "Название рецепта",
+        max_length=MAX_CHAR_LENGTH)
+    image = models.ImageField(
+        'Изображение рецепта',
+        upload_to='recipes/images',
+    )
+    cooking_time = models.IntegerField(
+        "Время приготовления")
     author = models.ForeignKey(
         User,
         related_name="recipes",
@@ -91,15 +123,18 @@ class Recipe(models.Model):
         verbose_name="Автор",
     )
     objects = RecipeQuerySet.as_manager()
+    pub_date = models.DateTimeField(
+        'Дата публикации рецепта',
+        auto_now_add=True)
 
     class Meta:
-        ordering = ("-id",)
-        verbose_name = "Рецепт"
-        verbose_name_plural = "Рецепты"
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+        ordering = ('-pub_date',)
 
     def __str__(self):
         """Возвращает строковое представление рецепта."""
-        return self.name
+        return f'Автор: {self.author.username} рецепт: {self.name}'
 
 
 class RecipeIngredient(models.Model):
@@ -156,7 +191,8 @@ class FavoriteRecipe(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление избранного рецепта."""
-        return self.recipe.name
+        return (f'Пользователь: {self.user.username}'
+                f'рецепт: {self.recipe.name}')
 
 
 class ShoppingList(models.Model):
@@ -186,5 +222,5 @@ class ShoppingList(models.Model):
         ]
 
     def __str__(self):
-        """Возвращает строковое представление списка покупок."""
-        return self.recipe.name
+        return (f'Пользователь: {self.user.username},'
+                f'рецепт в списке: {self.recipe.name}')
