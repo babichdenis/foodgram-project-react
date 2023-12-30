@@ -1,23 +1,10 @@
-from rest_framework import permissions
+from rest_framework.permissions import SAFE_METHODS, BasePermission
 
 
-class OwnerOnlyPermission(permissions.BasePermission):
-    """
-    Пользовательское разрешение.
-
-    Разрешает чтение или изменение/удаление объекта только автору объекта.
-    """
-
-    def has_permission(self, request, view):
-        """Определяет право доступа пользователя к представлению."""
-        return (
-            request.method in permissions.SAFE_METHODS
-            or request.user.is_authenticated
-        )
+class AuthorPermission(BasePermission):
+    """Делаем так, чтобы изменять и добавлять объекты
+       мог только их автор"""
 
     def has_object_permission(self, request, view, obj):
-        """Определяет право доступа пользователя к объекту."""
-        return (
-            request.method in permissions.SAFE_METHODS
-            or obj.author == request.user
-        )
+        return (request.method in SAFE_METHODS
+                or obj.author == request.user)

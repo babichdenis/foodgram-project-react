@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "django_filters",
     "djoser",
+    "drf_yasg",
 ]
 
 MIDDLEWARE = [
@@ -61,51 +62,68 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
-
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.getenv("POSTGRES_DB", "postgres"),
-        "USER": os.getenv("POSTGRES_USER", "postgres"),
-        "PASSWORD": os.getenv("POSTGRES_PASSWORD", "postgres"),
-        "HOST": os.getenv("DB_HOST", ""),
-        "PORT": os.getenv("DB_PORT", 5432),
+if DEBUG:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+            'NAME': os.getenv('DB_NAME', default='postgres'),
+            'USER': os.getenv('POSTGRES_USER', default='postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', default='postgres'),
+            'HOST': os.getenv('DB_HOST', default='localhost'),
+            'PORT': os.getenv('DB_PORT', default='5432')
+        }
+    }
 
-
-PASSWORD_VALIDATION_USER = (
-    "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
-)
-
-PASSWORD_VALIDATION_MINIMUM = (
-    "django.contrib.auth.password_validation.MinimumLengthValidator"
-)
-PASSWORD_VALIDATION_COMMON = (
-    "django.contrib.auth.password_validation.CommonPasswordValidator"
-)
-PASSWORD_VALIDATION_NUMERIC = (
-    "django.contrib.auth.password_validation.NumericPasswordValidator"
-)
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": PASSWORD_VALIDATION_USER,
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
     {
-        "NAME": PASSWORD_VALIDATION_MINIMUM,
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
     },
     {
-        "NAME": PASSWORD_VALIDATION_COMMON,
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
     },
     {
-        "NAME": PASSWORD_VALIDATION_NUMERIC,
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
 
-LANGUAGE_CODE = "ru-RU"
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.AllowAny",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+}
 
-TIME_ZONE = "UTC"
+DJOSER = {
+    "SERIALIZERS": {
+        "user_create": "api.serializers.UserCreateSerializer",
+        "user": "api.serializers.UserSerializer",
+        "current_user": "api.serializers.UserSerializer",
+    },
+
+    "PERMISSIONS": {
+        "user": ["djoser.permissions.CurrentUserOrAdminOrReadOnly"],
+        "user_list": ["rest_framework.permissions.IsAuthenticatedOrReadOnly"],
+    },
+
+    "HIDE_USERS": False,
+}
+
+LANGUAGE_CODE = 'ru-RU'
+
+TIME_ZONE = 'Europe/Moscow'
 
 USE_I18N = True
 
@@ -113,39 +131,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
-AUTH_USER_MODEL = "users.User"
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+LENGTH_OF_FIELDS_USER_1 = 150
 
-STATIC_URL = "/static/"
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+LENGTH_OF_FIELDS_USER_2 = 254
 
-MEDIA_URL = "/media/"
-MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-
-DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-REST_FRAMEWORK = {
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticatedOrReadOnly",
-    ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.TokenAuthentication",
-    ],
-    "DEFAULT_PAGINATION_CLASS": "api.pagination.CustomPagination",
-    "PAGE_SIZE": 6,
-}
-
-DJOSER = {
-    "HIDE_USERS": False,
-    "LOGIN_FIELD": "email",
-    "SERIALIZERS": {
-        "user_create": "api.serializers.UserCreateSerializer",
-        "user": "api.serializers.UserGETSerializer",
-        "current_user": "api.serializers.UserGETSerializer",
-    },
-    "PERMISSIONS": {
-        'user': ['djoser.permissions.CurrentUserOrAdminOrReadOnly'],
-        "user_list": ["rest_framework.permissions.AllowAny"],
-    },
-}
+LENGTH_OF_FIELDS_RECIPES = 200

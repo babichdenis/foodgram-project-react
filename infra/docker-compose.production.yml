@@ -19,10 +19,14 @@ services:
       - media:/app/media
     depends_on:
       - db
+    container_name: foodgram_backend
+
   frontend:
     image: babichdenis/foodgram_frontend
     volumes:
       - ../frontend/:/app/result_build/
+    container_name: foodgram_frontend
+
   nginx:
     image: nginx:1.19.3
     ports:
@@ -33,3 +37,4 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static:/var/html/static/
       - media:/var/html/media/
+    container_name: foodgram_nginx

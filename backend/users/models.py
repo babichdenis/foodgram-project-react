@@ -1,66 +1,72 @@
-from foodgram.constants import MAX_EMAIL_LENGTH, MAX_USERNAME_LENGTH, REGEX
-
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
-from django.core.validators import RegexValidator
+from django.contrib.auth.validators import UnicodeUsernameValidator
 from django.db import models
+from django.db.models import F, Q, UniqueConstraint
 
 
 class User(AbstractUser):
-    """Модель пользователя, расширяющая AbstractUser."""
-
+    """ Модель пользователя. """
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ('username', 'first_name', 'last_name', )
+    first_name = models.CharField(
+        verbose_name='Имя',
+        max_length=settings.LENGTH_OF_FIELDS_USER_1
+    )
+    last_name = models.CharField(
+        max_length=settings.LENGTH_OF_FIELDS_USER_1,
+        verbose_name='Фамилия',
+    )
     email = models.EmailField(
-        "Почтовый адрес", max_length=MAX_EMAIL_LENGTH, unique=True
+        max_length=settings.LENGTH_OF_FIELDS_USER_1,
+        verbose_name='email',
+        unique=True
     )
     username = models.CharField(
-        "Логин",
-        max_length=MAX_USERNAME_LENGTH,
+        verbose_name='username',
+        max_length=settings.LENGTH_OF_FIELDS_USER_2,
         unique=True,
-        validators=[
-            RegexValidator(regex=REGEX, message="Недопустимый символ")
-        ],
+        validators=(UnicodeUsernameValidator(), )
     )
-    first_name = models.CharField("Имя", max_length=MAX_USERNAME_LENGTH)
-    last_name = models.CharField("Фамилия", max_length=MAX_USERNAME_LENGTH)
-
-    USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = ["username", "first_name", "last_name"]
 
     class Meta:
-        ordering = ("id",)
-        verbose_name = "Пользователь"
-        verbose_name_plural = "Пользователи"
+        ordering = ('username', )
+        verbose_name = 'Пользователь'
+        verbose_name_plural = 'Пользователи'
 
     def __str__(self):
-        """Возвращает строковое представление пользователя."""
         return self.username
 
 
-class Subscribe(models.Model):
-    """Модель для представления подписок пользователей."""
-
+class Follow(models.Model):
+    """ Модель подписки на автора. """
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="followers",
-        verbose_name="Пользователь",
+        verbose_name='Автор',
+        related_name='follower',
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="following",
-        verbose_name="Автор",
+        verbose_name='Подписчик',
+        related_name='following'
     )
 
     class Meta:
-        ordering = ("id",)
-        verbose_name = "Подписка"
-        verbose_name_plural = "Подписки"
+        ordering = ('-id', )
         constraints = [
-            models.UniqueConstraint(
-                fields=["user", "author"], name="unique_user_author"
+            UniqueConstraint(
+                fields=('user', 'author'),
+                name='unique_follow'
+            ),
+            models.CheckConstraint(
+                check=~Q(user=F('author')),
+                name='no_self_follow'
             )
         ]
+        verbose_name = 'Подписка'
+        verbose_name_plural = 'Подписки'
 
-    def __str__(self):
-        """Возвращает строковое представление подписки."""
-        return f"{self.user.username} подписан(а) на {self.author.username}"
+    def __str__(self) -> str:
+        return f"{self.user} подписан на {self.author}"

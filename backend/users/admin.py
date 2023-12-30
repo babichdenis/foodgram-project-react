@@ -1,23 +1,14 @@
 from django.contrib import admin
 
-from .models import Subscribe, User
-
-admin.site.empty_value_display = "Не задано"
+from .models import User
 
 
-@admin.register(User)
-class MyUserAdmin(admin.ModelAdmin):
-    """Административная панель для управления пользователями."""
+class UserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'email', 'first_name', 'last_name')
+    search_fields = ('username', 'email')
+    list_filter = ('first_name', 'last_name')
+    ordering = ('username', )
+    empty_value_display = '-пусто-'
 
-    list_display = ("username", "first_name", "last_name", "email")
-    list_filter = ("username", "email")
-    search_fields = ("username",)
 
-
-@admin.register(Subscribe)
-class SubscribeAdmin(admin.ModelAdmin):
-    """Административная панель для управления подписками."""
-
-    list_display = ("user", "author")
-    list_filter = ("user", "author")
-    search_fields = ("user", "author")
+admin.site.register(User, UserAdmin)
