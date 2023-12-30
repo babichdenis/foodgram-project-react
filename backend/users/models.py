@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import F, Q, UniqueConstraint
 
 
-class User(AbstractUser):
+class User_new(AbstractUser):
     """ Модель пользователя. """
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ('username', 'first_name', 'last_name', )
@@ -41,13 +41,13 @@ class User(AbstractUser):
 class Follow(models.Model):
     """ Модель подписки на автора. """
     user = models.ForeignKey(
-        User,
+        User_new,
         on_delete=models.CASCADE,
         verbose_name='Автор',
         related_name='follower',
     )
     author = models.ForeignKey(
-        User,
+        User_new,
         on_delete=models.CASCADE,
         verbose_name='Подписчик',
         related_name='following'

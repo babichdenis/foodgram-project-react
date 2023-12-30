@@ -16,20 +16,21 @@ ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "*").split(",")
 
 
 INSTALLED_APPS = [
-    "users.apps.UsersConfig",
-    "api.apps.ApiConfig",
-    "recipes.apps.RecipesConfig",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    'users.apps.UsersConfig',
+    'recipes.apps.RecipesConfig',
+    'api.apps.ApiConfig',
     "rest_framework",
     "rest_framework.authtoken",
     "django_filters",
     "djoser",
     "drf_yasg",
+    "colorfield",
 ]
 
 MIDDLEWARE = [
@@ -59,6 +60,8 @@ TEMPLATES = [
         },
     },
 ]
+
+AUTH_USER_MODEL = 'users.User_new'
 
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
