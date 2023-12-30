@@ -61,7 +61,7 @@ TEMPLATES = [
     },
 ]
 
-AUTH_USER_MODEL = 'users.User_new'
+AUTH_USER_MODEL = 'users.User'
 
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
