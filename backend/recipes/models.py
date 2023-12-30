@@ -1,9 +1,6 @@
-from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX
-
-from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import Exists, OuterRef
-
+from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH
 from users.models import User
 
 
@@ -39,7 +36,7 @@ class Ingredient(models.Model):
         max_length=MAX_CHAR_LENGTH
     )
     measurement_unit = models.CharField(
-        "Единица измерения", 
+        "Единица измерения",
         max_length=MAX_CHAR_LENGTH
     )
 
