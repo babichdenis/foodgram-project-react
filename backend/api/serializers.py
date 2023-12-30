@@ -251,7 +251,9 @@ class RecipeGETSerializer(serializers.ModelSerializer):
 class RecipeCreateSerializer(serializers.ModelSerializer):
     """Сериализатор для создания и обновления рецептов."""
 
-    image = Base64ImageField(required=True)
+    image = Base64ImageField(
+        max_length=None,
+        use_url=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(), many=True, required=True
     )
@@ -311,14 +313,15 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         """Создает новый рецепт."""
         user = self.context.get("request").user
-        ingredients_data = validated_data.pop("ingredients")
+        ingredients = validated_data.pop("ingredients")
         tags = validated_data.pop("tags")
 
         recipe = Recipe.objects.create(author=user, **validated_data)
 
         recipe.tags.set(tags)
 
-        create_update_ingredients(recipe, ingredients_data)
+        # create_update_ingredients(recipe, ingredients_data)
+        self.create_ingredients(ingredients, recipe)
 
         return recipe
 
