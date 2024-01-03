@@ -1,26 +1,36 @@
 from django.urls import include, path
+
 from rest_framework import routers
 
-from users.views import UserViewSet
-from .views import (APIFavorite, APIShoppingCart, IngredientViewSet,
-                    RecipeViewSet, SubscribeListView, SubscribeViewSet,
-                    TagViewSet)
-
-app_name = 'api'
+from .views import (
+    IngredientViewSet,
+    MeView,
+    RecipeViewSet,
+    SubscribeView,
+    SubscriptionsListView,
+    TagViewSet
+)
 
 router = routers.DefaultRouter()
 
-router.register('ingredients', IngredientViewSet, basename='ingredients')
-router.register('tags', TagViewSet, basename='tags')
-router.register('recipes', RecipeViewSet, basename='recipes')
-router.register('users', UserViewSet, basename='users')
+router.register(r"tags", TagViewSet, basename="tags")
+router.register(r"recipes", RecipeViewSet, basename="recipes")
+router.register(r"ingredients", IngredientViewSet, basename="ingredients")
 
+
+user_urls = [
+    path("me/", MeView.as_view(), name="user-me"),
+    path(
+        "subscriptions/",
+        SubscriptionsListView.as_view(),
+        name="subscriptions-list",
+    ),
+    path("<int:pk>/subscribe/", SubscribeView.as_view(), name="subscribe"),
+]
 
 urlpatterns = [
-    path('users/subscriptions/', SubscribeListView.as_view()),
-    path('users/<int:id>/subscribe/', SubscribeViewSet.as_view()),
-    path('recipes/<int:id>/favorite/', APIFavorite.as_view()),
-    path('recipes/<int:id>/shopping_cart/', APIShoppingCart.as_view()),
-    path('recipes/download_shopping_cart/', APIShoppingCart.as_view()),
-    path('', include(router.urls)),
+    path("users/", include(user_urls)),
+    path("", include(router.urls)),
+    path("", include("djoser.urls")),
+    path("auth/", include("djoser.urls.authtoken")),
 ]

@@ -1,15 +1,23 @@
-from django.contrib.auth.admin import UserAdmin
-from django.contrib.auth.models import Group
 from django.contrib import admin
-from rest_framework.authtoken.models import TokenProxy
 
-from .models import CustomUser
+from .models import Subscribe, User
 
-
-class CustomUserAdmin(UserAdmin):
-    list_display = ('username',)
+admin.site.empty_value_display = "Не задано"
 
 
-admin.site.register(CustomUser, CustomUserAdmin)
-admin.site.unregister(Group)
-admin.site.unregister(TokenProxy)
+@admin.register(User)
+class MyUserAdmin(admin.ModelAdmin):
+    """Административная панель для управления пользователями."""
+
+    list_display = ("username", "first_name", "last_name", "email")
+    list_filter = ("username", "email")
+    search_fields = ("username",)
+
+
+@admin.register(Subscribe)
+class SubscribeAdmin(admin.ModelAdmin):
+    """Административная панель для управления подписками."""
+
+    list_display = ("user", "author")
+    list_filter = ("user", "author")
+    search_fields = ("user", "author")

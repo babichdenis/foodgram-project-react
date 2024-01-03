@@ -1,42 +1,68 @@
 from django.contrib import admin
 
-from .models import (Favorite, Ingredient, IngredientAmount, Recipe,
-                     ShoppingСart, Subscribe, Tag)
+from .models import (
+    FavoriteRecipe,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    ShoppingList,
+    Tag
+)
 
 
-class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit')
+class RecipeIngredientInline(admin.TabularInline):
+    """Inline для отображения ингредиентов в админ-панели рецепта."""
+
+    model = RecipeIngredient
+    extra = 0
 
 
-class TagAdmin(admin.ModelAdmin):
-    list_display = ('name', 'color', 'slug')
-
-
-class IngredientAmountInline(admin.TabularInline):
-    model = IngredientAmount
-    min_num = 1
-
-
+@admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ('name', 'author')
-    inlines = [IngredientAmountInline, ]
+    """Административная панель для управления рецептами."""
+
+    inlines = (RecipeIngredientInline,)
+    list_display = ("name", "author", "favorites_count")
+    list_filter = ("author", "name", "tags")
+    filter_horizontal = ("tags",)
+    search_fields = ("name", "author")
+
+    def favorites_count(self, obj):
+        """Метод для отображения числа добавлений в избранное."""
+        return obj.favorited_by.count()
+
+    favorites_count.short_description = "Число добавлений в избранное"
 
 
-class SubscribeAdmin(admin.ModelAdmin):
-    list_display = ('follower', 'following')
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    """Административная панель для управления ингредиентами."""
+
+    list_display = ("name", "measurement_unit")
+    list_filter = ("name",)
+    search_fields = ("name",)
 
 
-class FavoriteAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    """Административная панель для управления тегами."""
+
+    list_display = ("name", "color", "slug")
+    list_filter = ("name", "color")
+    search_fields = ("name", "color")
 
 
-class ShopingCartAdmin(admin.ModelAdmin):
-    list_display = ('user', 'recipe')
+@admin.register(FavoriteRecipe)
+class FavoriteRecipeAdmin(admin.ModelAdmin):
+    """Административная панель для управления избранными рецептами."""
+
+    list_display = ("user", "recipe")
+    search_fields = ("user", "recipe")
 
 
-admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Tag, TagAdmin)
-admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(Subscribe, SubscribeAdmin)
-admin.site.register(Favorite, FavoriteAdmin)
-admin.site.register(ShoppingСart, ShopingCartAdmin)
+@admin.register(ShoppingList)
+class ShoppingListAdmin(admin.ModelAdmin):
+    """Административная панель для управления списком покупок."""
+
+    list_display = ("user", "recipe")
+    search_fields = ("user", "recipe")
