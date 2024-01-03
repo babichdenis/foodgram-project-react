@@ -1,34 +1,33 @@
 version: '3.3'
 
 volumes:
-  pg_data:
   static:
-  media:
+  backend_static:
+  backend_media:
+  pg_data:
 
 services:
-  db:
-    env_file: .env
-    image: postgres:13
-    volumes:
-      - pg_data:/var/lib/postgresql/data
 
-  backend:
-    depends_on:
-      - db
-    build: ../backend/
+  db:
+    image: postgres:13
     env_file: .env
     volumes:
-      - ../data/:/app/data/
-      - static:/app/backend_static
-      - media:/app/media
+      - pg_data:/var/lib/postgresql/data/
 
   frontend:
-    env_file: .env
-    build: ../frontend/
+    build:
+      context: ../frontend
     volumes:
       - ../frontend/:/app/result_build/
+
+  backend:
+    build: ../backend/foodgram
+    env_file: .env
     depends_on:
-      - backend
+      - db
+    volumes:
+      - backend_static:/app/static/
+      - backend_media:/app/media/
 
   nginx:
     image: nginx:1.19.3
@@ -37,8 +36,9 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
+      - backend_static:/backend_static
+      - backend_media:/backend_media
       - ../docs/:/usr/share/nginx/html/api/docs/
-      - static:/usr/share/nginx/html/api/backend_static/
-      - media:/usr/share/nginx/html/api/media/
     depends_on:
+      - backend
       - frontend

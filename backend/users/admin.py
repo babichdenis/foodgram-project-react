@@ -1,14 +1,20 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
+from rest_framework.authtoken.models import TokenProxy
 
-from .models import User
-
-
-class UserAdmin(admin.ModelAdmin):
-    list_display = ('username', 'email', 'first_name', 'last_name')
-    search_fields = ('username', 'email')
-    list_filter = ('first_name', 'last_name')
-    ordering = ('username', )
-    empty_value_display = '-пусто-'
+from users.models import CustomUser, Follow
 
 
-admin.site.register(User, UserAdmin)
+@admin.register(CustomUser)
+class CustomUserAdmin(admin.ModelAdmin):
+    list_display = ('username', 'id', 'email', 'first_name', 'last_name')
+    list_filter = ('email', 'first_name')
+
+
+@admin.register(Follow)
+class FollowAdmin(admin.ModelAdmin):
+    list_display = ('author', 'user')
+
+
+admin.site.unregister(Group)
+admin.site.unregister(TokenProxy)

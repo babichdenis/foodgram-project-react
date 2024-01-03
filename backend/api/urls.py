@@ -1,19 +1,41 @@
+from api.views import (FollowListView, IngredientsViewSet, RecipeViewSet,
+                       TagsViewSet, UserFollowView, UserViewSet, get_me)
 from django.urls import include, path
-from rest_framework.routers import DefaultRouter
-
-from .views import IngredientViewSet, RecipeViewSet, TagViewSet, UserViewSet
+from rest_framework import routers
 
 app_name = 'api'
 
-router = DefaultRouter()
-router.register('ingredients', IngredientViewSet, basename='ingredients')
-router.register('tags', TagViewSet, basename='tags')
-router.register('recipes', RecipeViewSet, basename='recipes')
-router.register('users', UserViewSet, basename='users')
+router = routers.DefaultRouter()
 
+
+router.register(
+    'ingredients',
+    IngredientsViewSet,
+    basename='ingredient'
+)
+router.register(
+    'users',
+    UserViewSet,
+    basename='user'
+)
+router.register(
+    'tags',
+    TagsViewSet,
+    basename='tag'
+)
+router.register(
+    'recipes',
+    RecipeViewSet,
+    basename='recipe'
+)
 
 urlpatterns = [
+    path('users/<int:user_id>/subscribe/', UserFollowView.as_view(),
+         name='user-subscribe'),
+    path('users/subscriptions/', FollowListView.as_view(),
+         name='user-subscriptions'),
+    path('users/me/', get_me, name='user-me'),
     path('', include(router.urls)),
-    path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
+    path('', include('djoser.urls')),
 ]
