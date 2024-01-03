@@ -1,4 +1,4 @@
-FROM python:3.7-slim
+FROM python:3.9
 
 WORKDIR /app
 
@@ -9,4 +9,4 @@ RUN apt-get update && apt-get upgrade -y && \
 
 COPY . .
 
-CMD ["gunicorn", "foodgram.wsgi:application", "--bind", "0:7000" ]
+CMD ["gunicorn", "foodgram.wsgi:application", "--bind", "0.0.0.0:7000" ]
