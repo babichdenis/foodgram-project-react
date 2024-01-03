@@ -1,42 +1,36 @@
-from django.shortcuts import get_object_or_404
-from django.http import HttpResponse
+from api.pagination import CustomPagination
+from api.permissions import IsAdminAuthorOrReadOnly
+from api.serializers import (AddFavoriteSerializer, FollowListSerializer,
+                             FollowSerializer, IngredientSerializer,
+                             ProfileSerializer, RecipeListSerializer,
+                             RecipeSerializer, TagSerializer)
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Sum
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from djoser.views import UserViewSet
+from foodgram.constants import (NOT_FOLLOW_THIS_USER,
+                                RECIPE_ALREADY_IN_FAVORITE,
+                                RECIPE_ALREADY_IN_SHOPPING_CART,
+                                RECIPE_NOT_FOUND_FOR_ADD_FAVORITE,
+                                RECIPE_NOT_FOUND_FOR_ADD_SHOPPING_CART,
+                                RECIPE_NOT_FOUND_FOR_REMOVE_FAVORITE,
+                                RECIPE_NOT_FOUND_FOR_REMOVE_SHOPPING_CART,
+                                RECIPE_NOT_IN_FAVORITE,
+                                RECIPE_NOT_IN_SHOPPING_CART)
+from recipes.filters import IngredientFilter, RecipeFilter
+from recipes.models import (FavoriteRecipe, Ingredient, IngredientAmount,
+                            Recipe, ShoppingCart, Tag)
 from rest_framework import status
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.generics import ListAPIView
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.permissions import (
-    AllowAny, IsAuthenticated
-)
-
-from recipes.models import (
-    Ingredient, Tag, Recipe,
-    FavoriteRecipe, ShoppingCart, IngredientAmount,
-)
-from recipes.filters import IngredientFilter, RecipeFilter
-from api.serializers import (
-    IngredientSerializer, TagSerializer, RecipeListSerializer,
-    RecipeSerializer, FollowListSerializer, AddFavoriteSerializer,
-    FollowSerializer, ProfileSerializer
-)
-from api.pagination import CustomPagination
-from api.permissions import IsAdminAuthorOrReadOnly
-
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from users.models import CustomUser, Follow
-
-from foodgram.constants import (
-    RECIPE_ALREADY_IN_SHOPPING_CART, RECIPE_NOT_IN_SHOPPING_CART,
-    RECIPE_NOT_FOUND_FOR_ADD_SHOPPING_CART,
-    RECIPE_NOT_FOUND_FOR_REMOVE_SHOPPING_CART,
-    RECIPE_NOT_FOUND_FOR_ADD_FAVORITE, RECIPE_NOT_FOUND_FOR_REMOVE_FAVORITE,
-    RECIPE_ALREADY_IN_FAVORITE, RECIPE_NOT_IN_FAVORITE, NOT_FOLLOW_THIS_USER
-)
 
 
 @api_view(['GET'])
