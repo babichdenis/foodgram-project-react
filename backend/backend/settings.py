@@ -12,9 +12,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'secret')
 
 DEBUG = False
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '84.201.138.150 127.0.0.1 localhost foodgram.ddnsking.com').split()
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '158.160.22.131 127.0.0.1 localhost foodgramden.ddns.net').split(',')
 
-CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://foodgram.ddnsking.com').split()
+CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS', 'https://foodgramden.ddns.net').split()
 
 LOGGING = {
     'version': 1,
@@ -87,10 +87,10 @@ DATABASES = {
     'default': {
 
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB', 'django'),
-        'USER': os.getenv('POSTGRES_USER', 'django'),
+        'NAME': os.getenv('POSTGRES_DB', 'postgres'),
+        'USER': os.getenv('POSTGRES_USER', 'postgres'),
         'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', 'localhost'),
+        'HOST': os.getenv('DB_HOST', ''),
         'PORT': os.getenv('DB_PORT', 5432)
     }
 }
