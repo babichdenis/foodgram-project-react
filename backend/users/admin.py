@@ -34,6 +34,7 @@ class UserAdmin(admin.ModelAdmin):
         return obj.recipes.count()
 
 
+'''
 @admin.register(Subscription)
 class Subscription(admin.ModelAdmin):
     list_display = ('user', 'author')
@@ -45,3 +46,4 @@ class Subscription(admin.ModelAdmin):
     )
     list_filter = ('author__username', 'user__username')
     empty_value_display = EMPTY_MESSAGE
+ '''
