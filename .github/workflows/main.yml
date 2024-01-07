@@ -81,10 +81,11 @@ jobs:
           command_timeout: 20m
           script: |
             cd ~/foodgram/infra
-            docker compose down
-            docker image rm ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
-            docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram_backend:latest
-            docker compose up -d
+          sudo docker compose -f docker-compose.yml pull
+          sudo docker compose -f docker-compose.yml down
+          sudo docker compose -f docker-compose.yml up -d
+          sudo docker compose -f docker-compose.yml exec backend python manage.py migrate
+          sudo docker compose -f docker-compose.yml exec backend python manage.py collectstatic --no-input
 
   send_message:
     runs-on: ubuntu-latest
