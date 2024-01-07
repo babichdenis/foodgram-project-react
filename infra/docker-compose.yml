@@ -13,7 +13,7 @@ services:
     volumes:
       - foodgram_db_volume:/var/lib/postgresql/data/
     env_file:
-      - ./.env
+      - .env
 
   backend:
     image: babichdenis/foodgram_backend:latest
@@ -25,13 +25,13 @@ services:
     depends_on:
       - db
     env_file:
-      - ./.env
+      - .env
 
   nginx:
     image: nginx:1.24.0-alpine3.17-slim
     container_name: foodgram-nginx
     ports:
-      - "127.0.0.1:7000:80"
+      - "7000:80"
     volumes:
       - ./nginx.conf:/etc/nginx/conf.d/default.conf
       - ../frontend/build:/usr/share/nginx/html/
