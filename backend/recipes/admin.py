@@ -7,10 +7,13 @@ from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
 
 class RecipeIngredientInLine(admin.TabularInline):
     model = RecipeIngredient
+    extra = 1
 
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
+    """Административная панель для управления рецептами."""
+
     list_display = (
         'id', 'author', 'name', 'text',
         'cooking_time', 'favorites_count')
@@ -22,11 +25,16 @@ class RecipeAdmin(admin.ModelAdmin):
 
     @admin.display(description='В избранном')
     def favorites_count(self, obj):
-        return obj.favorites.count()
+        """Метод для отображения числа добавлений в избранное."""
+        return obj.favorited_by.count()
+
+    favorites_count.short_description = "Число добавлений в избранное"
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
+    """Административная панель для управления тегами."""
+
     list_display = (
         'id', 'name', 'color', 'slug',)
     search_fields = ('name', 'slug',)
@@ -34,6 +42,8 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class IngredientAdmin(admin.ModelAdmin):
+    """Административная панель для управления ингредиентами."""
+
     list_display = (
         'id', 'name', 'measurement_unit',)
     search_fields = ('^name',)
@@ -49,9 +59,15 @@ class SubscribeAdmin(admin.ModelAdmin):
 
 @admin.register(FavoritRecipe)
 class FavoritRecipeAdmin(admin.ModelAdmin):
-    pass
+    """Административная панель для управления избранными рецептами."""
+
+    list_display = ("user", "recipe")
+    search_fields = ("user", "recipe")
 
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    pass
+    """Административная панель для управления списком покупок."""
+
+    list_display = ("user", "recipe")
+    search_fields = ("user", "recipe")
