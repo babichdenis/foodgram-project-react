@@ -1,11 +1,13 @@
 from django.contrib import admin
-from users.models import Subscription, User
+from users.models import User
 
 EMPTY_MESSAGE = '-пусто-'
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
+    """Административная панель для управления пользователями."""
+
     list_display = (
         'id',
         'username',
@@ -32,13 +34,3 @@ class UserAdmin(admin.ModelAdmin):
 
     def count_recipes(self, obj):
         return obj.recipes.count()
-
-
-@admin.register(Subscription)
-class Subscription(admin.ModelAdmin):
-    """Административная панель для управления подписками."""
-
-    list_display = ("user", "author")
-    list_filter = ("user", "author")
-    search_fields = ("user", "author")
-    empty_value_display = EMPTY_MESSAGE
