@@ -35,7 +35,7 @@ class UserAdmin(admin.ModelAdmin):
 
 
 @admin.register(Subscription)
-class SubscriptionAdmin(admin.ModelAdmin):
+class Subscription(admin.ModelAdmin):
     list_display = ('user', 'author')
     search_fields = (
         'author__username',
