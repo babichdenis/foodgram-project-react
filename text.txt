@@ -15,7 +15,8 @@ ip: 158.160.22.131
 ssh -i /Users/Denis/.ssh/ssh_Den/yc-babichdenis yc-user@158.160.22.131
 
 sudo nginx -t
-sudo systemctl reload nginx 
+sudo systemctl reload nginx
+sudo nano /etc/nginx/sites-enabled/default 
 
 docker run --name db \
        --env-file .env \

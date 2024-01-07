@@ -1,35 +1,57 @@
-from import_export.admin import ImportExportMixin
-
 from django.contrib import admin
 
-from .models import FavoriteRecipe, Ingredient, Recipe, ShoppingCart, Tag
+from users.models import Subscription
+from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
+                            RecipeIngredient, Tag)
 
 
-class IngredientInRecipeInline(admin.TabularInline):
-    model = Recipe.ingredients.through
+class RecipeIngredientInLine(admin.TabularInline):
+    model = RecipeIngredient
 
 
+@admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    inlines = [IngredientInRecipeInline, ]
-    list_display = ('id', 'name', 'author', 'added_to_favorites')
-    list_filter = ('author', 'name', 'tags')
-    empty_value_display = '-пусто-'
+    list_display = (
+        'id', 'author', 'name', 'text',
+        'cooking_time', 'favorites_count')
+    search_fields = (
+        'name', 'cooking_time',
+        'author__email', 'ingredients__name')
+    list_filter = ('name', 'author__username', 'tags')
+    inlines = (RecipeIngredientInLine, )
 
-    def added_to_favorites(self, obj: Recipe):
-        return obj.favorite.count()
-
-
-class IngredientAdmin(ImportExportMixin, admin.ModelAdmin):
-    list_display = ('name', 'measurement_unit')
-    list_filter = ('name',)
-
-
-class FavoriteRecipeAdmin(admin.ModelAdmin):
-    list_display = ('id', 'recipe', 'user')
+    @admin.display(description='В избранном')
+    def favorites_count(self, obj):
+        return obj.favorites.count()
 
 
-admin.site.register(Recipe, RecipeAdmin)
-admin.site.register(Ingredient, IngredientAdmin)
-admin.site.register(Tag)
-admin.site.register(FavoriteRecipe, FavoriteRecipeAdmin)
-admin.site.register(ShoppingCart, FavoriteRecipeAdmin)
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'name', 'color', 'slug',)
+    search_fields = ('name', 'slug',)
+
+
+@admin.register(Ingredient)
+class IngredientAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'name', 'measurement_unit',)
+    search_fields = ('^name',)
+
+
+@admin.register(Subscription)
+class SubscribeAdmin(admin.ModelAdmin):
+    list_display = (
+        'id', 'user', 'author')
+    search_fields = (
+        'user__email', 'author__email',)
+
+
+@admin.register(FavoritRecipe)
+class FavoritRecipeAdmin(admin.ModelAdmin):
+    pass
+
+
+@admin.register(Cart)
+class CartAdmin(admin.ModelAdmin):
+    pass

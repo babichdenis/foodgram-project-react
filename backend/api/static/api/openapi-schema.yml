@@ -3,7 +3,7 @@ info:
   title: 'Foodgram'
   version: ''
 servers:
-- url: "https://api.server.test/v1"
+- url: "http://127.0.0.1:8000/"
   description: "Server description"
 paths:
   /api/users/:
@@ -645,6 +645,8 @@ paths:
       operationId: Изменение пароля
       description: 'Изменение пароля текущего пользователя'
       parameters: []
+      security:
+        - Token: [ ]
       requestBody:
         content:
           application/json:
@@ -698,6 +700,8 @@ paths:
           $ref: '#/components/responses/AuthenticationError'
       tags:
         - Пользователи
+security:
+- name: []
 components:
   schemas:
     User:
