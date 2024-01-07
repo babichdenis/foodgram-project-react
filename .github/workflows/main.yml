@@ -34,20 +34,19 @@ jobs:
       - name: copy file via ssh password
         uses: appleboy/scp-action@v0.1.4
         with:
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "infra/*, docs/*"
           target: ~/foodgram
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@v0.1.8
         with:
-          host: ${{ secrets.HOST }}
-          port: ${{ secrets.PORT }}
-          username: ${{ secrets.DOCKER_USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          passphrase: ${{ secrets.SSH_PASSPHRASE }}
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USER }}
+        key: ${{ secrets.SSH_KEY }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd ~/foodgram/infra
             docker compose down
