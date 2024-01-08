@@ -1,5 +1,6 @@
 from django.core.validators import RegexValidator
 from django.db import models
+from django.core import validators
 
 from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX
 from users.models import User
@@ -63,8 +64,8 @@ class Recipe(models.Model):
         max_length=MAX_CHAR_LENGTH,
     )
     image = models.ImageField(
+        "Изображение рецепта",
         upload_to="recipes/",
-        verbose_name="Изображение рецепта",
     )
     text = models.TextField(verbose_name="Описание рецепта")
     ingredients = models.ManyToManyField(
@@ -73,9 +74,15 @@ class Recipe(models.Model):
         verbose_name="Ингредиенты",
     )
     cooking_time = models.PositiveSmallIntegerField(
-        "Время приготовления, мин.")
+        "Время приготовления, мин.",
+        validators=[validators.MinValueValidator(
+            1, message='Мин. время приготовления 1 минута'), ]
+    )
     tags = models.ManyToManyField(
-        Tag, verbose_name="Тэги", related_name="recipes")
+        Tag,
+        verbose_name="Тэги",
+        related_name="recipes"
+    )
 
     class Meta:
         verbose_name = "Рецепт"
@@ -102,7 +109,13 @@ class RecipeIngredient(models.Model):
         verbose_name="Ингредиент",
     )
     amount = models.PositiveSmallIntegerField(
-        verbose_name="Количество ингредиента")
+        verbose_name="Количество ингредиента",
+        default=1,
+        validators=(
+            validators.MinValueValidator(
+                1, message='Мин. количество ингридиентов 1'),),
+        verbose_name='Количество',
+    )
 
     class Meta:
         verbose_name = "Количество ингредиента"
@@ -133,7 +146,7 @@ class FavoritRecipe(models.Model):
         Recipe,
         on_delete=models.CASCADE,
         related_name="favorites",
-        verbose_name="Рецепт",
+        verbose_name='Избранный рецепт'
     )
 
     class Meta:
@@ -147,7 +160,8 @@ class FavoritRecipe(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление избранного рецепта."""
-        return f"{self.user}, {self.recipe.name}"
+        list_ = [item['name'] for item in self.recipe.values('name')]
+        return f'Пользователь {self.user} добавил {list_} в избранные. {self.user}, {self.recipe.name}'
 
 
 class Cart(models.Model):
@@ -177,4 +191,5 @@ class Cart(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление списка покупок."""
-        return f"{self.user}, {self.recipe.name}"
+        list_ = [item['name'] for item in self.recipe.values('name')]
+        return f"Пользователь {self.user} добавил {list_} в покупки. {self.user}, {self.recipe.name}"
