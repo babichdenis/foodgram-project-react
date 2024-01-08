@@ -159,8 +159,7 @@ class FavoritRecipe(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление избранного рецепта."""
-        list_ = [item['name'] for item in self.recipe.values('name')]
-        return f'Пользователь {self.user} добавил {list_} в избранные. {self.user}, {self.recipe.name}'
+        return f"Пользователь {self.user} добавил {self.recipe.name} в избранное."
 
 
 class Cart(models.Model):
@@ -190,5 +189,4 @@ class Cart(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление списка покупок."""
-        list_ = [item['name'] for item in self.recipe.values('name')]
-        return f"Пользователь {self.user} добавил {list_} в покупки. {self.user}, {self.recipe.name}"
+        return f"Пользователь {self.user} добавил {self.recipe.name} в покупки."
