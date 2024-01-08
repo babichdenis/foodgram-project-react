@@ -5,19 +5,21 @@ from rest_framework.filters import SearchFilter
 
 
 class RecipeFilter(filters.FilterSet):
+    """Фильтр для рецептов."""
+
     author = filters.ModelChoiceFilter(queryset=User.objects.all())
     tags = filters.ModelMultipleChoiceFilter(
-        field_name='tags__slug',
-        to_field_name='slug',
+        field_name="tags__slug",
+        to_field_name="slug",
         queryset=Tag.objects.all(),
     )
 
-    is_favorited = filters.NumberFilter(method='_is_favorited')
-    is_in_shopping_cart = filters.NumberFilter(method='_is_in_shopping_cart')
+    is_favorited = filters.NumberFilter(method="_is_favorited")
+    is_in_shopping_cart = filters.NumberFilter(method="_is_in_shopping_cart")
 
     class Meta:
         model = Recipe
-        fields = ['tags', 'author']
+        fields = ["tags", "author", "is_favorited", "is_in_shopping_cart"]
 
     def _is_favorited(self, queryset, name, value):
         if value and self.request.user.is_authenticated:
@@ -31,4 +33,6 @@ class RecipeFilter(filters.FilterSet):
 
 
 class IngredientSearchFilter(SearchFilter):
-    search_param = 'name'
+    """Фильтр для ингредиентов."""
+
+    search_param = "name"
