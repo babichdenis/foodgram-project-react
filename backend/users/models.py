@@ -1,19 +1,24 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from foodgram.constants import MAX_EMAIL_LENGTH, MAX_USERNAME_LENGTH
+
 
 class User(AbstractUser):
+    """Модель пользователя, расширяющая AbstractUser."""
+
     email = models.EmailField(
-        verbose_name='Электронная почта',
+        'Электронная почта',
+        max_length=MAX_EMAIL_LENGTH,
         unique=True
     )
     first_name = models.CharField(
-        verbose_name='Имя',
-        max_length=30
+        'Имя',
+        max_length=MAX_USERNAME_LENGTH
     )
     last_name = models.CharField(
-        verbose_name='Фамилия',
-        max_length=30
+        'Фамилия',
+        max_length=MAX_USERNAME_LENGTH
     )
 
     USERNAME_FIELD = 'email'
@@ -25,17 +30,23 @@ class User(AbstractUser):
         ordering = ('id',)
 
     def __str__(self):
+        """Возвращает строковое представление пользователя."""
+
         return self.username
 
 
 class Subscription(models.Model):
+    """Модель для представления подписок пользователей."""
+
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE,
+        User,
+        on_delete=models.CASCADE,
         related_name='subscriber',
         verbose_name='Подписчик'
     )
     author = models.ForeignKey(
-        User, on_delete=models.CASCADE,
+        User,
+        on_delete=models.CASCADE,
         related_name='subscribe',
         verbose_name='Автор рецепта'
     )

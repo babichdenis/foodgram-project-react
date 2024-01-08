@@ -1,7 +1,7 @@
 from django.contrib import admin
 from users.models import User
 
-EMPTY_MESSAGE = '-пусто-'
+admin.site.empty_value_display = "Не задано"
 
 
 @admin.register(User)
@@ -27,7 +27,6 @@ class UserAdmin(admin.ModelAdmin):
         'first_name'
     )
     ordering = ('username', )
-    empty_value_display = EMPTY_MESSAGE
 
     def count_subscribers(self, obj):
         return obj.subscriber.count()

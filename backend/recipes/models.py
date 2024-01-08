@@ -1,14 +1,21 @@
-from django.contrib.auth import get_user_model
+from django.core.validators import RegexValidator
 from django.db import models
 
-User = get_user_model()
+from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX
+from users.models import User
 
 
 class Ingredient(models.Model):
     """Модель ингредиента."""
 
-    name = models.CharField("Ингредиент", max_length=200)
-    measurement_unit = models.CharField("Ед. измерения", max_length=50)
+    name = models.CharField(
+        "Ингредиент",
+        max_length=MAX_CHAR_LENGTH,
+    )
+    measurement_unit = models.CharField(
+        "Единица измерения",
+        max_length=MAX_CHAR_LENGTH,
+    )
 
     class Meta:
         verbose_name = "Ингредиент"
@@ -17,16 +24,20 @@ class Ingredient(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление ингредиента."""
-
         return f"{self.name}({self.measurement_unit})"
 
 
 class Tag(models.Model):
     """Модель тега."""
 
-    name = models.CharField("Тэг", max_length=200)
-    color = models.CharField("Цветовой HEX-код", max_length=7)
-    slug = models.SlugField("Slug", max_length=50, unique=True)
+    name = models.CharField("Название тэга", max_length=MAX_CHAR_LENGTH)
+    color = models.CharField("Цветовой HEX-код", max_length=MAX_COLOR_LENGTH)
+    slug = models.SlugField(
+        "Slug",
+        max_length=MAX_CHAR_LENGTH,
+        unique=True,
+        validators=[RegexValidator(regex=REGEX, message="Недопустимый символ")],
+    )
 
     class Meta:
         verbose_name = "Тэг"
@@ -46,11 +57,19 @@ class Recipe(models.Model):
         related_name="recipes",
         verbose_name="Автор рецепта",
     )
-    name = models.CharField(max_length=200, verbose_name="Название рецепта")
-    image = models.ImageField(upload_to="recipes/", verbose_name="Изображение рецепта")
+    name = models.CharField(
+        "Название рецепта",
+        max_length=MAX_CHAR_LENGTH,
+    )
+    image = models.ImageField(
+        upload_to="recipes/",
+        verbose_name="Изображение рецепта",
+    )
     text = models.TextField(verbose_name="Описание рецепта")
     ingredients = models.ManyToManyField(
-        Ingredient, through="RecipeIngredient", verbose_name="Ингредиенты"
+        Ingredient,
+        hrough="RecipeIngredient",
+        verbose_name="Ингредиенты",
     )
     cooking_time = models.PositiveSmallIntegerField("Время приготовления, мин.")
     tags = models.ManyToManyField(Tag, verbose_name="Тэги", related_name="recipes")
@@ -68,7 +87,8 @@ class RecipeIngredient(models.Model):
     """Связующая модель многие-ко-многим для ингредиентов и рецептов."""
 
     recipe = models.ForeignKey(
-        Recipe, on_delete=models.CASCADE,
+        Recipe,
+        on_delete=models.CASCADE,
         related_name="recipeingredients",
         verbose_name="Рецепт",
     )
@@ -78,9 +98,7 @@ class RecipeIngredient(models.Model):
         related_name="ingredient",
         verbose_name="Ингредиент",
     )
-    amount = models.PositiveSmallIntegerField(
-        verbose_name="Количество ингредиента"
-    )
+    amount = models.PositiveSmallIntegerField(verbose_name="Количество ингредиента")
 
     class Meta:
         verbose_name = "Количество ингредиента"
@@ -88,7 +106,8 @@ class RecipeIngredient(models.Model):
         ordering = ["-id"]
         constraints = [
             models.UniqueConstraint(
-                fields=["recipe", "ingredient"], name="unique_ingredient"
+                fields=["recipe", "ingredient"],
+                name="unique_ingredient",
             )
         ]
 
@@ -98,17 +117,19 @@ class RecipeIngredient(models.Model):
 
 
 class FavoritRecipe(models.Model):
-    """Модель для избранных рецептов."""
+    """Модель для представления избранных рецептов."""
 
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name="favorites",
+        verbose_name="Пользователь",
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
         related_name="favorites",
+        verbose_name="Рецепт",
     )
 
     class Meta:
@@ -121,7 +142,6 @@ class FavoritRecipe(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление избранного рецепта."""
-
         return f"{self.user}, {self.recipe.name}"
 
 
@@ -151,5 +171,4 @@ class Cart(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление списка покупок."""
-
         return f"{self.user}, {self.recipe.name}"
