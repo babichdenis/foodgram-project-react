@@ -36,7 +36,8 @@ class Tag(models.Model):
         "Slug",
         max_length=MAX_CHAR_LENGTH,
         unique=True,
-        validators=[RegexValidator(regex=REGEX, message="Недопустимый символ")],
+        validators=[RegexValidator(
+            regex=REGEX, message="Недопустимый символ")],
     )
 
     class Meta:
@@ -68,11 +69,13 @@ class Recipe(models.Model):
     text = models.TextField(verbose_name="Описание рецепта")
     ingredients = models.ManyToManyField(
         Ingredient,
-        hrough="RecipeIngredient",
+        through="RecipeIngredient",
         verbose_name="Ингредиенты",
     )
-    cooking_time = models.PositiveSmallIntegerField("Время приготовления, мин.")
-    tags = models.ManyToManyField(Tag, verbose_name="Тэги", related_name="recipes")
+    cooking_time = models.PositiveSmallIntegerField(
+        "Время приготовления, мин.")
+    tags = models.ManyToManyField(
+        Tag, verbose_name="Тэги", related_name="recipes")
 
     class Meta:
         verbose_name = "Рецепт"
@@ -98,7 +101,8 @@ class RecipeIngredient(models.Model):
         related_name="ingredient",
         verbose_name="Ингредиент",
     )
-    amount = models.PositiveSmallIntegerField(verbose_name="Количество ингредиента")
+    amount = models.PositiveSmallIntegerField(
+        verbose_name="Количество ингредиента")
 
     class Meta:
         verbose_name = "Количество ингредиента"
@@ -137,7 +141,8 @@ class FavoritRecipe(models.Model):
         verbose_name_plural = "Избранные рецепты"
         ordering = ["-id"]
         constraints = [
-            models.UniqueConstraint(fields=["user", "recipe"], name="unique_favorite")
+            models.UniqueConstraint(
+                fields=["user", "recipe"], name="unique_favorite")
         ]
 
     def __str__(self):
@@ -166,7 +171,8 @@ class Cart(models.Model):
         verbose_name_plural = "Списки покупок"
         ordering = ["-id"]
         constraints = [
-            models.UniqueConstraint(fields=["user", "recipe"], name="unique_recipe")
+            models.UniqueConstraint(
+                fields=["user", "recipe"], name="unique_recipe")
         ]
 
     def __str__(self):
