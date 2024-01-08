@@ -37,8 +37,7 @@ class Tag(models.Model):
         "Slug",
         max_length=MAX_CHAR_LENGTH,
         unique=True,
-        validators=[RegexValidator(
-            regex=REGEX, message="Недопустимый символ")],
+        validators=[RegexValidator(regex=REGEX, message="Недопустимый символ")],
     )
 
     class Meta:
@@ -75,14 +74,13 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveSmallIntegerField(
         "Время приготовления, мин.",
-        validators=[validators.MinValueValidator(
-            1, message='Мин. время приготовления 1 минута'), ]
+        validators=[
+            validators.MinValueValidator(
+                1, message="Мин. время приготовления 1 минута"
+            ),
+        ],
     )
-    tags = models.ManyToManyField(
-        Tag,
-        verbose_name="Тэги",
-        related_name="recipes"
-    )
+    tags = models.ManyToManyField(Tag, verbose_name="Тэги", related_name="recipes")
 
     class Meta:
         verbose_name = "Рецепт"
@@ -112,8 +110,8 @@ class RecipeIngredient(models.Model):
         "Количество ингредиента",
         default=1,
         validators=(
-            validators.MinValueValidator(
-                1, message='Мин. количество ингридиентов 1'),),
+            validators.MinValueValidator(1, message="Мин. количество ингридиентов 1"),
+        ),
     )
 
     class Meta:
@@ -145,7 +143,7 @@ class FavoritRecipe(models.Model):
         Recipe,
         on_delete=models.CASCADE,
         related_name="favorites",
-        verbose_name='Избранный рецепт'
+        verbose_name="Избранный рецепт",
     )
 
     class Meta:
@@ -153,8 +151,7 @@ class FavoritRecipe(models.Model):
         verbose_name_plural = "Избранные рецепты"
         ordering = ["-id"]
         constraints = [
-            models.UniqueConstraint(
-                fields=["user", "recipe"], name="unique_favorite")
+            models.UniqueConstraint(fields=["user", "recipe"], name="unique_favorite")
         ]
 
     def __str__(self):
@@ -183,9 +180,8 @@ class Cart(models.Model):
         verbose_name_plural = "Списки покупок"
         ordering = ["-id"]
         constraints = [
-            models.UniqueConstraint(
-                fields=["user", "recipe"], name="unique_recipe")
-        ]
+            models.UniqueConstraint(fields=["user", "recipe"], name="unique_recipe")
+            ]
 
     def __str__(self):
         """Возвращает строковое представление списка покупок."""
