@@ -180,8 +180,7 @@ class Cart(models.Model):
         verbose_name_plural = "Списки покупок"
         ordering = ["-id"]
         constraints = [
-            models.UniqueConstraint(fields=["user", "recipe"], name="unique_recipe")
-            ]
+            models.UniqueConstraint(fields=["user", "recipe"], name="unique_recipe")]
 
     def __str__(self):
         """Возвращает строковое представление списка покупок."""
