@@ -1,15 +1,9 @@
-from rest_framework import serializers, status
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from rest_framework import serializers, status
 
 from api.fields import Base64ImageField, Hex2NameColor
-from recipes.models import (
-    Cart,
-    FavoritRecipe,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    Tag,
-)
+from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
+                            RecipeIngredient, Tag)
 from users.models import Subscription, User
 
 
@@ -247,6 +241,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
 
 class FavoritRecipeSerializer(RecipeSerializer):
+    """Сериализатор для добавления рецепта в избранное."""
     class Meta:
         model = Recipe
         fields = ("id", "name", "cooking_time", "image")

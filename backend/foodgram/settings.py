@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+
 from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
@@ -77,18 +78,32 @@ else:
         }
     }
 
+PASSWORD_VALIDATION_USER = (
+    "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
+)
+
+PASSWORD_VALIDATION_MINIMUM = (
+    "django.contrib.auth.password_validation.MinimumLengthValidator"
+)
+PASSWORD_VALIDATION_COMMON = (
+    "django.contrib.auth.password_validation.CommonPasswordValidator"
+)
+PASSWORD_VALIDATION_NUMERIC = (
+    "django.contrib.auth.password_validation.NumericPasswordValidator"
+)
+
 AUTH_PASSWORD_VALIDATORS = [
     {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
+        "NAME": PASSWORD_VALIDATION_USER,
     },
     {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "NAME": PASSWORD_VALIDATION_MINIMUM,
     },
     {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
+        "NAME": PASSWORD_VALIDATION_COMMON,
     },
     {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
+        "NAME": PASSWORD_VALIDATION_NUMERIC,
     },
 ]
 
