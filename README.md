@@ -1,7 +1,4 @@
-![workflow status](https://github.com/babichdenis/foodgram-project-react
-/actions/workflows/main.yml/badge.svg)](https://github.com/babichdenis/foodgram-project-react
-/actions/workflows/main.yml)
-
+![example workflow](https://github.com/babichdenis/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg) 
 
 
 # О проекте
