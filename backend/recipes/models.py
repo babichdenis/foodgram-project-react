@@ -1,8 +1,8 @@
+from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
-from django.core import validators
-
 from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX
+
 from users.models import User
 
 
@@ -80,7 +80,10 @@ class Recipe(models.Model):
             ),
         ],
     )
-    tags = models.ManyToManyField(Tag, verbose_name="Тэги", related_name="recipes")
+    tags = models.ManyToManyField(Tag,
+                                  verbose_name="Тэги",
+                                  related_name="recipes"
+                                  )
 
     class Meta:
         verbose_name = "Рецепт"
