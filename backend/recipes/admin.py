@@ -27,7 +27,8 @@ class RecipeAdmin(admin.ModelAdmin):
                     "name",
                     "text",
                     "cooking_time",
-                    "favorites_count"
+                    "favorites_count",
+                    "get_ingredients"
                     )
     search_fields = ("name",
                      "cooking_time",

@@ -139,7 +139,7 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         """Возвращает строковое представление ингредиента для рецепта."""
-        return self.recipe.name
+        return f'{self.recipe} {self.ingredient}'
 
 
 class FavoritRecipe(models.Model):
