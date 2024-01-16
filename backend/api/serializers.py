@@ -36,7 +36,14 @@ class UserPostSerializer(UserCreateSerializer):
 
     class Meta:
         model = User
-        fields = ("email", "username", "first_name", "last_name", "password")
+        fields = (
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'password',
+        )
 
 
 class RecipeProfileSerializer(serializers.ModelSerializer):

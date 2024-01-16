@@ -3,35 +3,24 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.utils import timezone
 from django.utils.formats import date_format
+from django_filters.rest_framework import DjangoFilterBackend
+from djoser.views import UserViewSet
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet
 
-from users.models import Subscription, User
-from users.permissions import IsAuthorOrReadOnly
 from api.filters import IngredientSearchFilter, RecipeFilter
 from api.pagination import Pagination
-from recipes.models import (
-    Cart,
-    FavoritRecipe,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    Tag,
-)
-from api.serializers import (
-    CartSerializer,
-    FavoritRecipeSerializer,
-    IngredientSerializer,
-    RecipePostSerializer,
-    RecipeSerializer,
-    SubscribeSerializer,
-    TagSerializer,
-)
+from api.serializers import (CartSerializer, FavoritRecipeSerializer,
+                             IngredientSerializer, RecipePostSerializer,
+                             RecipeSerializer, SubscribeSerializer,
+                             TagSerializer)
+from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
+                            RecipeIngredient, Tag)
+from users.models import Subscription, User
+from users.permissions import IsAuthorOrReadOnly
 
 
 class CustomUserViewSet(UserViewSet):

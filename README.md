@@ -125,23 +125,21 @@ cd foodgram
 - Запускаем docker compose:
 ```
 
-sudo docker compose -f docker-compose.yml pull
-            
-sudo docker compose -f docker-compose.yml down
-            
-sudo docker compose -f docker-compose.yml up -d
-   ```
-
+- sudo docker compose -f docker-compose.yml pull
+- sudo docker compose -f docker-compose.yml down
+- sudo docker compose -f docker-compose.yml up -d
+```
 - Выполните миграции:
-```         
-docker compose exec backend python manage.py makemigrations users
-            
-docker compose exec backend python manage.py makemigrations recipes
-            sudo docker compose -f
-docker-compose.yml exec backend python manage.py migrate users
-            sudo docker compose -f
-docker-compose.yml exec backend python manage.py migrate recipes
-            sudo docker compose -f 
+```
+- sudo docker compose -f docker-compose.yml pull
+- sudo docker compose -f docker-compose.yml down
+- sudo docker compose -f docker-compose.yml up -d
+- sudo docker compose exec backend python manage.py makemigrations users
+- sudo docker compose exec backend python manage.py makemigrations recipes
+- sudo docker compose -f docker-compose.yml exec backend python manage.py migrate users
+- sudo docker compose -f docker-compose.yml exec backend python manage.py migrate recipes
+- sudo docker compose -f docker-compose.yml exec backend python manage.py collectstatic --no-input
+- sudo docker compose exec backend python manage.py importcsv
 ```
 
 - Команда для сбора статики:
