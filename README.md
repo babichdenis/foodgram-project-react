@@ -1,3 +1,7 @@
+![workflow status](https://github.com/babichdenis/foodgram-project-react/actions/workflows/foodgram_workflow.yml/badge.svg)
+
+
+
 # О проекте
 «Фудграм» — сайт, на котором пользователи будут публиковать рецепты, добавлять чужие рецепты в избранное и подписываться на публикации других авторов. Пользователям сайта также будет доступен сервис «Список покупок». Он позволит создавать список продуктов, которые нужно купить для приготовления выбранных блюд.
 У веб-приложения уже есть готовый фронтенд — это одностраничное SPA-приложение, написанное на фреймворке React. 
@@ -30,7 +34,7 @@ git clone https://github.com/babichdenis/foodgram-project-react.git
 ```
 
 ```
-cd foodgram/infra
+cd foodgram
 ```
 
 Cоздать и активировать виртуальное окружение:
@@ -93,7 +97,7 @@ docker-compose up -d
 
 ## Как задеплоить проект на сервер
 
-Подключаемся к удаленному серверу. У вас должен быть установлен Nginx. Устанавливаем Docker Compose:
+- Подключаемся к удаленному серверу. У вас должен быть установлен Nginx. Устанавливаем Docker Compose:
 
 ```bash
 sudo apt update
@@ -107,7 +111,7 @@ sudo sh ./get-docker.sh
 sudo apt install docker-compose-plugin 
 ```
 
-Создаем на сервере директорию и переходим в нее:
+- Создаем на сервере директорию и переходим в нее:
 
 ```bash
 mkdir foodgram
@@ -117,7 +121,7 @@ cd foodgram
 
 В директорию foodgram/infra копируем файлы docker-compose.yml, nginx.conf и .env.
 ```
-Запускаем docker compose:
+- Запускаем docker compose:
 ```
 
 sudo docker compose -f docker-compose.yml pull
@@ -127,7 +131,7 @@ sudo docker compose -f docker-compose.yml down
 sudo docker compose -f docker-compose.yml up -d
    ```
 
-Выполните миграции:
+- Выполните миграции:
 ```         
 docker compose exec backend python manage.py makemigrations users
             
@@ -139,7 +143,7 @@ docker-compose.yml exec backend python manage.py migrate recipes
             sudo docker compose -f 
 ```
 
-Команда для сбора статики:
+- Команда для сбора статики:
 ```
 docker-compose.yml exec backend python manage.py collectstatic --no-input
 ```
@@ -149,15 +153,14 @@ docker-compose.yml exec backend python manage.py collectstatic --no-input
 docker-compose exec backend python manage.py createsuperuser
 ```
 
-Команда для подгрузки ингредиентов:
+- Команда для подгрузки ингредиентов:
 ```
 docker compose exec backend python manage.py importcsv
 ```
+- В редакторе nano открываем конфигурацию Nginx, а затем добавляем следующие настройки:
+
+
 ```
-
-В редакторе nano открываем конфигурацию Nginx, а затем добавляем следующие настройки:
-
-```bash
 sudo nano /etc/nginx/sites-enabled/default
 
 location / {
@@ -166,9 +169,9 @@ location / {
 }
 ```
 
-1. Проверяем работоспособность и перезапускаем Nginx:
+- Проверяем работоспособность и перезапускаем Nginx:
 
-```bash
+```
 sudo nginx -t
 
 sudo service nginx reload
@@ -188,6 +191,33 @@ sudo service nginx reload
 - SECRET_KEY - секретный ключ проекта
 - DEBUG - режим отладки
 - ALLOWED_HOSTS - список разрешённых хостов для запуска проекта
+
+
+Workflow вызывается при пуше в репозиторий
+
+По завершению деплоя вы будете уведомлены в телеграме!
+
+### Файрвол и SSL-сертификат (Let's Encrypt)
+- Настройте файрвол на порты 80, 443 и 22, а затем включите и проверьте:
+```shell
+sudo ufw allow 'Nginx Full'
+sudo ufw allow OpenSSH
+
+sudo ufw enable
+sudo ufw status
+```
+- Установите certbot
+```shell
+sudo apt install snapd
+sudo snap install core; sudo snap refresh core
+sudo snap install --classic certbot
+sudo ln -s /snap/bin/certbot /usr/bin/certbot 
+```
+- Запустите certbot и укажите номер домена для активации HTTPS:
+```shell
+sudo certbot --nginx
+```
+
 ## Автор:
 **[Denis Babich](https://github.com/babichdenis/)**
 
