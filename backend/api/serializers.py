@@ -181,28 +181,6 @@ class RecipeSerializer(serializers.ModelSerializer):
             return False
         return user.cart.filter(recipe=obj).exists()
 
-    def validate(self, data):
-        tags = data.get('tags')
-        if not tags:
-            raise serializers.ValidationError(
-                {'tags': 'Нужно выбрать хотя бы один тег!'})
-        if len(tags) != len(set(tags)):
-            raise serializers.ValidationError({'tags': 'Теги не уникальны!'})
-        ingredients = data.get('ingredients')
-        if not ingredients:
-            raise serializers.ValidationError(
-                {'ingredients': 'Нужно выбрать ингердиенты!'})
-        items = [item['id'] for item in ingredients]
-        if len(items) != len(set(items)):
-            raise serializers.ValidationError(
-                {'ingredients': 'Ингредиенты не уникальны!'})
-        image = data.get('image')
-        if not image:
-            raise serializers.ValidationError(
-                {'image': 'Поле image не может быть пустым!'})
-
-        return data
-
 
 class RecipePostSerializer(serializers.ModelSerializer):
     """Сериализатор создания рецепта"""
