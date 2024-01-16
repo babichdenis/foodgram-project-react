@@ -31,14 +31,19 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     """Модель тега."""
 
-    name = models.CharField("Название тэга", max_length=MAX_CHAR_LENGTH)
-    color = models.CharField("Цветовой HEX-код", max_length=MAX_COLOR_LENGTH)
+    name = models.CharField("Название тэга",
+                            max_length=MAX_CHAR_LENGTH
+                            )
+    color = models.CharField("Цветовой HEX-код",
+                             max_length=MAX_COLOR_LENGTH
+                             )
     slug = models.SlugField(
         "Slug",
         max_length=MAX_CHAR_LENGTH,
         unique=True,
-        validators=[RegexValidator(regex=REGEX,
-                                   message="Недопустимый символ")],
+        validators=[RegexValidator(
+            regex=REGEX,
+            message="Недопустимый символ")],
     )
 
     class Meta:
