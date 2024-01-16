@@ -22,9 +22,22 @@ class RecipeIngredientInLine(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     """Административная панель для управления рецептами."""
 
-    list_display = ("id", "author", "name", "text", "cooking_time", "favorites_count")
-    search_fields = ("name", "cooking_time", "author__email", "ingredients__name")
-    list_filter = ("name", "author__username", "tags")
+    list_display = ("id",
+                    "author",
+                    "name",
+                    "text",
+                    "cooking_time",
+                    "favorites_count"
+                    )
+    search_fields = ("name",
+                     "cooking_time",
+                     "author__email",
+                     "ingredients__name"
+                     )
+    list_filter = ("name",
+                   "author__username",
+                   "tags"
+                   )
     inlines = (RecipeIngredientInLine,)
 
     @admin.display(description="В избранном")
@@ -50,7 +63,9 @@ class RecipeAdmin(admin.ModelAdmin):
                 f'{item["ingredient__name"]} - {item["amount"]}'
                 f' {item["ingredient__measurement_unit"]}.'
                 for item in obj.recipe.values(
-                    "ingredient__name", "amount", "ingredient__measurement_unit"
+                    "ingredient__name",
+                    "amount",
+                    "ingredient__measurement_unit"
                 )
             ]
         )
