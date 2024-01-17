@@ -1,14 +1,26 @@
 version: '3.3'
+
+
+volumes:
+  foodgram_static_volume:
+  foodgram_media_volume:
+  foodgram_db_volume:
+
+
+networks:
+  default:
+    name: foodgram-network
+
 services:
 
   frontend:
-    image: babichdenis/foodgram_frontend:latest
-    container_name: foodgram-frontend
+    build:
+      context: ../frontend
     volumes:
       - ../frontend/:/app/result_build/
-  
+
   db:
-    image: postgres:15.2-alpine3.17
+    image: postgres:13
     container_name: foodgram-db
     volumes:
       - foodgram_db_volume:/var/lib/postgresql/data/
@@ -16,8 +28,7 @@ services:
       - .env
 
   backend:
-    image: babichdenis/foodgram_backend:latest
-    container_name: foodgram-backend
+    build: ../backend/foodgram
     restart: always
     volumes:
       - foodgram_static_volume:/app/backend_static/
@@ -28,8 +39,7 @@ services:
       - .env
 
   nginx:
-    image: nginx:latest
-    container_name: foodgram-nginx
+    image: nginx:1.19.3
     ports:
       - "7000:80"
     volumes:
@@ -40,12 +50,5 @@ services:
       - foodgram_media_volume:/var/html/media/
     depends_on:
       - backend
+      - frontend
 
-volumes:
-  foodgram_static_volume:
-  foodgram_media_volume:
-  foodgram_db_volume:
-
-networks:
-  default:
-    name: foodgram-network

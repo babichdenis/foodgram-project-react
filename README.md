@@ -141,24 +141,19 @@ cd foodgram
 - sudo docker compose -f docker-compose.yml exec backend python manage.py collectstatic --no-input
 - sudo docker compose exec backend python manage.py importcsv
 ```
-
 - Команда для сбора статики:
 ```
 docker-compose.yml exec backend python manage.py collectstatic --no-input
 ```
-
 Команда для создания суперпользователя:
 ```
 docker-compose exec backend python manage.py createsuperuser
 ```
-
 - Команда для подгрузки ингредиентов:
 ```
 docker compose exec backend python manage.py importcsv
 ```
 - В редакторе nano открываем конфигурацию Nginx, а затем добавляем следующие настройки:
-
-
 ```
 sudo nano /etc/nginx/sites-enabled/default
 
@@ -167,15 +162,12 @@ location / {
     proxy_pass http://127.0.0.1:7000;
 }
 ```
-
 - Проверяем работоспособность и перезапускаем Nginx:
-
 ```
 sudo nginx -t
 
 sudo service nginx reload
 ```
-
 ## Как настроить CI/CD
 
 Добавляем секреты в GitHub Actions:
@@ -190,7 +182,7 @@ sudo service nginx reload
 - SECRET_KEY - секретный ключ проекта
 - DEBUG - режим отладки
 - ALLOWED_HOSTS - список разрешённых хостов для запуска проекта
-
+```
 
 Workflow вызывается при пуше в репозиторий
 
