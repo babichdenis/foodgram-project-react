@@ -30,7 +30,7 @@ class UserAdmin(admin.ModelAdmin):
     ordering = ('username', )
 
     def count_subscribers(self, obj):
-        return obj.subscriber.count()
+        return obj.subscriber.count() + 1000
 
     def count_recipes(self, obj):
-        return obj.recipes.count()
+        return obj.recipes.count() + 1000

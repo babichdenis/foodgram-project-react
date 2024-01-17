@@ -41,40 +41,6 @@ class RecipeAdmin(admin.ModelAdmin):
                    )
     inlines = (RecipeIngredientInLine,)
 
-    @admin.display(description="В избранном")
-    def favorites_count(self, obj):
-        """Метод для отображения числа добавлений в избранное."""
-        return obj.favorites.count()
-
-    favorites_count.short_description = "Число добавлений в избранное"
-
-    @admin.display(description="Электронная почта автора")
-    def get_author(self, obj):
-        return obj.author.email
-
-    @admin.display(description="Тэги")
-    def get_tags(self, obj):
-        list_ = [_.name for _ in obj.tags.all()]
-        return ", ".join(list_)
-
-    @admin.display(description=" Ингредиенты ")
-    def get_ingredients(self, obj):
-        return "\n ".join(
-            [
-                f'{item["ingredient__name"]} - {item["amount"]}'
-                f' {item["ingredient__measurement_unit"]}.'
-                for item in obj.recipe.values(
-                    "ingredient__name",
-                    "amount",
-                    "ingredient__measurement_unit"
-                )
-            ]
-        )
-
-    @admin.display(description="В избранном")
-    def get_favorite_count(self, obj):
-        return obj.favorite_recipe.count()
-
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):

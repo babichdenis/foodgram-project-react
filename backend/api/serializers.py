@@ -48,6 +48,7 @@ class UserPostSerializer(UserCreateSerializer):
 
 class RecipeProfileSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения рецептов в профиле пользователя."""
+    image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
         model = Recipe

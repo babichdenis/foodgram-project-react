@@ -1,7 +1,7 @@
 from django_filters import rest_framework as filters
+from rest_framework.filters import SearchFilter
 
 from recipes.models import Recipe, Tag, User
-from rest_framework.filters import SearchFilter
 
 
 class RecipeFilter(filters.FilterSet):
@@ -19,7 +19,7 @@ class RecipeFilter(filters.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = ["tags", "author", "is_favorited", "is_in_shopping_cart"]
+        fields = ("tags", "author", "is_favorited", "is_in_shopping_cart")
 
     def _is_favorited(self, queryset, name, value):
         if value and self.request.user.is_authenticated:
