@@ -15,7 +15,7 @@ services:
 
   frontend:
     build:
-      context: ../frontend
+      context: ../frontend/
     volumes:
       - ../frontend/:/app/result_build/
 
@@ -28,7 +28,7 @@ services:
       - .env
 
   backend:
-    build: ../backend/foodgram
+    build: ../backend/
     restart: always
     volumes:
       - foodgram_static_volume:/app/backend_static/
