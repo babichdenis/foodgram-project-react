@@ -92,9 +92,8 @@ class TagAdmin(admin.ModelAdmin):
     """Административная панель для управления тегами."""
 
     list_display = (
-        "name",
-        "color",
         "color_code",
+        "color",
         "slug",
     )
     search_fields = (
