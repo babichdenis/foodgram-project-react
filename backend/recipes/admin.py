@@ -1,10 +1,11 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
+from foodgram.constants import MAX_PAGE_SIZE
 
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
                             RecipeIngredient, Tag)
 from users.models import Subscription
-from foodgram.constants import MAX_PAGE_SIZE
+
 admin.site.empty_value_display = "Не задано"
 
 
@@ -31,7 +32,7 @@ class ShoppingCartInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     """Административная панель для управления рецептами."""
 
-    list_editable = ('name', 'text')
+    list_editable = ('name')
     list_display = ("id",
                     "author",
                     "name",
