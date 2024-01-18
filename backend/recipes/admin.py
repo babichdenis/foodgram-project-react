@@ -97,17 +97,16 @@ class SubscribeAdmin(admin.ModelAdmin):
 class FavoritRecipeAdmin(admin.ModelAdmin):
     """Административная панель для управления избранными рецептами."""
 
-    list_display = ("user", "recipe")
-    search_fields = ("user", "recipe")
+    list_display = ('user', 'recipe')
+    search_fields = ('user', 'recipe')
     list_filter = ('recipe',)
-    autocomplete_fields = ('user', 'recipe')
 
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
     """Административная панель для управления списком покупок."""
 
-    list_display = ("user", "recipe")
-    search_fields = ("user", "recipe")
+    list_display = ('user', 'recipe')
+    search_fields = ('user', 'recipe')
     list_filter = ('recipe',)
-    autocomplete_fields = ('user', 'recipe')
+

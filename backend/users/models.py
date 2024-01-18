@@ -29,8 +29,6 @@ class User(AbstractUser):
         ordering = ('id',)
 
     def __str__(self):
-        """Возвращает строковое представление пользователя."""
-
         return self.username
 
 
@@ -66,5 +64,5 @@ class Subscription(models.Model):
             )
         ]
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f'Пользователь {self.user} подписан на {self.author}'
