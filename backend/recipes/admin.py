@@ -106,7 +106,7 @@ class TagAdmin(admin.ModelAdmin):
     @admin.display(description="Colored")
     def color_code(self, obj: Tag):
         return format_html(
-            '<span style="color: #{};">{}</span>', obj.color[1:], obj.color
+            '<span style="color: {};">{}</span>', "color", obj.color
         )
 
     color_code.short_description = "Цветовой код тэга"
