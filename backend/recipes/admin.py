@@ -109,4 +109,3 @@ class CartAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
     search_fields = ('user', 'recipe')
     list_filter = ('recipe',)
-
