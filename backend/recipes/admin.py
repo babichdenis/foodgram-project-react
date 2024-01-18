@@ -1,5 +1,5 @@
 from django.contrib import admin
-from django.utils.safestring import mark_safe
+
 
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
                             RecipeIngredient, Tag)
@@ -13,12 +13,6 @@ class RecipeIngredientInLine(admin.TabularInline):
     """Inline для отображения ингредиентов в админ-панели рецепта."""
 
     model = RecipeIngredient
-    extra = 0
-
-
-class TagsInline(admin.TabularInline):
-    """Inline для отображения тэгов в админ-панели рецепта."""
-    model = Tag
     extra = 0
 
 
@@ -43,8 +37,6 @@ class RecipeAdmin(admin.ModelAdmin):
                     "name",
                     "text",
                     "cooking_time",
-                    "favorites_count",
-                    "get_ingredients"
                     )
     search_fields = ("name",
                      "cooking_time",
@@ -57,21 +49,8 @@ class RecipeAdmin(admin.ModelAdmin):
                    "tags"
                    )
     inlines = (RecipeIngredientInLine,
-               TagsInline,
                ShoppingCartInline,
                FavoriteInline)
-
-    def in_favorite(self, obj):
-        return obj.favorited_by.count()
-    in_favorite.short_description = 'В избранном'
-
-    def get_tags(self, obj):
-        return list(obj.tags.values_list('name', flat=True))
-    get_tags.short_description = 'Тэги'
-
-    def get_image(self, obj):
-        return mark_safe(f'<img src={obj.image.url} width="80" hieght="30"')
-    get_image.short_description = 'Картинка'
 
 
 @admin.register(Tag)
