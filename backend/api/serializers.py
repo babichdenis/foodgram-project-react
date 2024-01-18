@@ -2,8 +2,14 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers, status
 
 from api.fields import Base64ImageField, Hex2NameColor
-from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
-                            RecipeIngredient, Tag)
+from recipes.models import (
+    Cart,
+    FavoritRecipe,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    Tag,
+)
 from users.models import Subscription, User
 
 
@@ -37,17 +43,18 @@ class UserPostSerializer(UserCreateSerializer):
     class Meta:
         model = User
         fields = (
-            'id',
-            'email',
-            'username',
-            'first_name',
-            'last_name',
-            'password',
+            "id",
+            "email",
+            "username",
+            "first_name",
+            "last_name",
+            "password",
         )
 
 
 class RecipeProfileSerializer(serializers.ModelSerializer):
     """Сериализатор для отображения рецептов в профиле пользователя."""
+
     image = Base64ImageField(required=False, allow_null=True)
 
     class Meta:
@@ -87,14 +94,11 @@ class SubscribeSerializer(UserSerializer):
         request = self.context.get("request")
         recipes_limit = request.GET.get("recipes_limit")
         recipes = (
-            obj.author.recipe.all()[:int(recipes_limit)] if recipes_limit
+            obj.author.recipe.all()[: int(recipes_limit)]
+            if recipes_limit
             else obj.author.recipe.all()
         )
-        serializer = RecipeProfileSerializer(
-            recipes,
-            many=True,
-            read_only=True
-        )
+        serializer = RecipeProfileSerializer(recipes, many=True, read_only=True)
         return serializer.data
 
     def get_recipes_count(self, obj):
@@ -144,9 +148,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(source="ingredient.id")
     name = serializers.ReadOnlyField(source="ingredient.name")
-    measurement_unit = serializers.ReadOnlyField(
-        source="ingredient.measurement_unit"
-    )
+    measurement_unit = serializers.ReadOnlyField(source="ingredient.measurement_unit")
 
     class Meta:
         model = RecipeIngredient
@@ -160,10 +162,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     author = UserListSerializer()
-    ingredients = RecipeIngredientSerializer(
-        many=True,
-        source="recipeingredients"
-    )
+    ingredients = RecipeIngredientSerializer(many=True, source="recipeingredients")
     tags = TagSerializer(many=True)
     is_favorited = serializers.SerializerMethodField(read_only=True)
     is_in_shopping_cart = serializers.SerializerMethodField(read_only=True)
@@ -251,6 +250,7 @@ class RecipePostSerializer(serializers.ModelSerializer):
 
 class FavoritRecipeSerializer(RecipeSerializer):
     """Сериализатор для добавления рецепта в избранное."""
+
     class Meta:
         model = Recipe
         fields = ("id", "name", "cooking_time", "image")

@@ -4,7 +4,7 @@ from django.utils.safestring import mark_safe
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
                             RecipeIngredient, Tag)
 from users.models import Subscription
-
+from foodgram.constants import MAX_PAGE_SIZE
 admin.site.empty_value_display = "Не задано"
 
 
@@ -35,8 +35,11 @@ class RecipeAdmin(admin.ModelAdmin):
     list_display = ("id",
                     "author",
                     "name",
-                    "text",
-                    "cooking_time", "in_favorite", "get_tags", "get_image"
+                    "cooking_time",
+                    "in_favorite",
+                    "ingredients_list",
+                    "get_tags",
+                    "get_image"
                     )
     search_fields = ("name",
                      "cooking_time",
@@ -49,18 +52,29 @@ class RecipeAdmin(admin.ModelAdmin):
                ShoppingCartInline,
                FavoriteInline)
 
+    @admin.display(description='Добавили в избранное')
     def in_favorite(self, obj):
+        """Показывает сколько раз рецепт добавлен в избранное."""
         return obj.favorites.count()
     in_favorite.short_description = 'В избранном'
 
+    @admin.display(description='Теги')
     def get_tags(self, obj):
+        """Получение тегов рецепта."""
         return list(obj.tags.values_list('name', flat=True))
     get_tags.short_description = 'Тэги'
 
     def get_image(self, obj):
+        """Получение картинок рецепта."""
         return mark_safe(f'<img src={obj.image.url} width="80" hieght="30"')
     get_image.short_description = 'Картинка'
 
+    @admin.display(description='Ингридиенты')
+    def ingredients_list(self, obj):
+        """Получение ингридиентов рецепта."""
+        return '\n'.join(
+            (ingredient.name for ingredient in obj.ingredients.all())
+        )
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -88,7 +102,7 @@ class IngredientAdmin(admin.ModelAdmin):
         "measurement_unit",
     )
     search_fields = ("^name",)
-    list_per_page = 5
+    list_per_page = MAX_PAGE_SIZE
 
 
 @admin.register(Subscription)
@@ -109,7 +123,8 @@ class FavoritRecipeAdmin(admin.ModelAdmin):
 
     list_display = ('user', 'recipe')
     search_fields = ('user', 'recipe')
-#    list_filter = ('recipe',)
+    list_filter = ('recipe',)
+    list_per_page = MAX_PAGE_SIZE
 
 
 @admin.register(Cart)
