@@ -1,12 +1,12 @@
 from django.contrib import admin
-
+from django.contrib.auth.admin import UserAdmin
 from users.models import User, Subscription
 
 admin.site.empty_value_display = "Не задано"
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class UserAdmin(UserAdmin):
     """Административная панель для управления пользователями."""
 
     list_display = (
@@ -17,7 +17,7 @@ class UserAdmin(admin.ModelAdmin):
         'last_name',
         'date_joined',
         'count_subscribers',
-        'count_recipes'
+        'count_recipes',
     )
     search_fields = (
         'email',
