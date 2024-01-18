@@ -13,23 +13,12 @@ from rest_framework.response import Response
 
 from api.filters import IngredientSearchFilter, RecipeFilter
 from api.pagination import Pagination
-from api.serializers import (
-    CartSerializer,
-    FavoritRecipeSerializer,
-    IngredientSerializer,
-    RecipePostSerializer,
-    RecipeSerializer,
-    SubscribeSerializer,
-    TagSerializer,
-)
-from recipes.models import (
-    Cart,
-    FavoritRecipe,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    Tag,
-)
+from api.serializers import (CartSerializer, FavoritRecipeSerializer,
+                             IngredientSerializer, RecipePostSerializer,
+                             RecipeSerializer, SubscribeSerializer,
+                             TagSerializer)
+from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
+                            RecipeIngredient, Tag)
 from users.models import Subscription, User
 from users.permissions import IsAuthorOrReadOnly
 
@@ -59,7 +48,9 @@ class CustomUserViewSet(UserViewSet):
             Subscription.objects.create(user=user, author=author)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        subscription = get_object_or_404(Subscription, user=user, author=author)
+        subscription = get_object_or_404(
+            Subscription, user=user, author=author
+        )
         subscription.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -68,7 +59,9 @@ class CustomUserViewSet(UserViewSet):
         user = request.user
         queryset = User.objects.filter(subscribe__user=user)
         pages = self.paginate_queryset(queryset)
-        serializer = SubscribeSerializer(pages, many=True, context={"request": request})
+        serializer = SubscribeSerializer(
+            pages, many=True, context={"request": request}
+        )
         return self.get_paginated_response(serializer.data)
 
 
@@ -129,7 +122,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
             FavoritRecipe.objects.create(user=user, recipe=recipe)
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        favorite_recipe = get_object_or_404(FavoritRecipe, user=user, recipe=recipe)
+        favorite_recipe = get_object_or_404(
+            FavoritRecipe, user=user, recipe=recipe
+        )
         favorite_recipe.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
