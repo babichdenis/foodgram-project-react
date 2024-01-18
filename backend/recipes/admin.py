@@ -1,10 +1,9 @@
 from django.contrib import admin
-
+from django.utils.safestring import mark_safe
 
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
                             RecipeIngredient, Tag)
 from users.models import Subscription
-
 
 admin.site.empty_value_display = "Не задано"
 
@@ -32,11 +31,12 @@ class ShoppingCartInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     """Административная панель для управления рецептами."""
 
+    list_editable = ('name', 'text')
     list_display = ("id",
                     "author",
                     "name",
                     "text",
-                    "cooking_time",
+                    "cooking_time", "in_favorite", "get_tags", "get_image"
                     )
     search_fields = ("name",
                      "cooking_time",
@@ -44,14 +44,22 @@ class RecipeAdmin(admin.ModelAdmin):
                      "ingredients__name"
                      )
     autocomplete_fields = ('author', 'tags')
-    list_filter = ("name",
-                   "author__username",
-                   "tags"
-                   )
+    list_filter = ('author', 'tags__name')
     inlines = (RecipeIngredientInLine,
                ShoppingCartInline,
                FavoriteInline)
 
+    def in_favorite(self, obj):
+        return obj.favorited_by.count()
+    in_favorite.short_description = 'В избранном'
+
+    def get_tags(self, obj):
+        return list(obj.tags.values_list('name', flat=True))
+    get_tags.short_description = 'Тэги'
+
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url} width="80" hieght="30"')
+    get_image.short_description = 'Картинка'
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
@@ -79,7 +87,7 @@ class IngredientAdmin(admin.ModelAdmin):
         "measurement_unit",
     )
     search_fields = ("^name",)
-
+    list_per_page = 30
 
 @admin.register(Subscription)
 class SubscribeAdmin(admin.ModelAdmin):
@@ -99,7 +107,7 @@ class FavoritRecipeAdmin(admin.ModelAdmin):
 
     list_display = ('user', 'recipe')
     search_fields = ('user', 'recipe')
-    list_filter = ('recipe',)
+#    list_filter = ('recipe',)
 
 
 @admin.register(Cart)
