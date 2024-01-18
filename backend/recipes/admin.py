@@ -83,7 +83,8 @@ class RecipeAdmin(admin.ModelAdmin):
     @admin.display(description="Ингридиенты")
     def ingredients_list(self, obj):
         """Получение ингридиентов рецепта."""
-        return "\n".join((ingredient.name for ingredient in obj.ingredients.all()))
+        return "\n".join((
+            ingredient.name for ingredient in obj.ingredients.all()))
 
 
 @admin.register(Tag)
@@ -100,7 +101,7 @@ class TagAdmin(admin.ModelAdmin):
         "name",
         "color",
     )
-    list_editable = ("name", "slug")
+    list_editable = ("slug",)
 
     @admin.display(description="Colored")
     def color_code(self, obj: Tag):
