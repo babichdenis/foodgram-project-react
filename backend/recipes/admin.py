@@ -1,20 +1,30 @@
 from django.contrib import admin
+from django.utils.safestring import mark_safe
 
+from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
+                            RecipeIngredient, Tag)
 from users.models import Subscription
-from recipes.models import (
-    Cart,
-    FavoritRecipe,
-    Ingredient,
-    Recipe,
-    RecipeIngredient,
-    Tag,
-)
 
 
 class RecipeIngredientInLine(admin.TabularInline):
     """Inline для отображения ингредиентов в админ-панели рецепта."""
 
     model = RecipeIngredient
+    extra = 0
+
+
+class TagsInline(admin.TabularInline):
+    model = Tag
+    extra = 0
+
+
+class FavoriteInline(admin.TabularInline):
+    model = FavoritRecipe
+    extra = 0
+
+
+class ShoppingCartInline(admin.TabularInline):
+    model = Cart
     extra = 0
 
 
@@ -39,7 +49,22 @@ class RecipeAdmin(admin.ModelAdmin):
                    "author__username",
                    "tags"
                    )
-    inlines = (RecipeIngredientInLine,)
+    inlines = (RecipeIngredientInLine,
+               TagsInline,
+               ShoppingCartInline,
+               FavoriteInline)
+
+    def in_favorite(self, obj):
+        return obj.favorited_by.count()
+    in_favorite.short_description = 'В избранном'
+
+    def get_tags(self, obj):
+        return list(obj.tags.values_list('name', flat=True))
+    get_tags.short_description = 'Тэги'
+
+    def get_image(self, obj):
+        return mark_safe(f'<img src={obj.image.url} width="80" hieght="30"')
+    get_image.short_description = 'Картинка'
 
 
 @admin.register(Tag)
@@ -74,9 +99,12 @@ class IngredientAdmin(admin.ModelAdmin):
 class SubscribeAdmin(admin.ModelAdmin):
     list_display = ("id", "user", "author")
     search_fields = (
-        "user__email",
-        "author__email",
+        'author__username',
+        'author__email',
+        'user__username',
+        'user__email'
     )
+    list_filter = ('author__username', 'user__username')
 
 
 @admin.register(FavoritRecipe)

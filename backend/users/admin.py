@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-from users.models import User, Subscription
+
+from users.models import User
 
 admin.site.empty_value_display = "Не задано"
 
@@ -15,9 +16,7 @@ class UserAdmin(UserAdmin):
         'email',
         'first_name',
         'last_name',
-        'date_joined',
-        'count_subscribers',
-        'count_recipes',
+        'date_joined'
     )
     search_fields = (
         'email',
@@ -30,21 +29,3 @@ class UserAdmin(UserAdmin):
         'first_name'
     )
     ordering = ('username', )
-
-    def count_subscribers(self, obj):
-        return obj.subscriber.count()
-
-    def count_recipes(self, obj):
-        return obj.recipes.count()
-
-
-@admin.register(Subscription)
-class SubscriptionAdmin(admin.ModelAdmin):
-    list_display = ('user', 'author')
-    search_fields = (
-        'author__username',
-        'author__email',
-        'user__username',
-        'user__email'
-    )
-    list_filter = ('author__username', 'user__username')
