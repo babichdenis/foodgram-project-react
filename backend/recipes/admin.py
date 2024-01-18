@@ -76,6 +76,7 @@ class RecipeAdmin(admin.ModelAdmin):
             (ingredient.name for ingredient in obj.ingredients.all())
         )
 
+
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     """Административная панель для управления тегами."""

@@ -14,7 +14,7 @@ fields = (
     ('name', 'measurement_unit')
 )
 
-CSV_FILE_PATH = BASE_DIR / 'data'
+csv_file_path = BASE_DIR / 'data'
 
 
 class Command(BaseCommand):
@@ -25,7 +25,7 @@ class Command(BaseCommand):
         try:
             for model, csv_f in TABLES:
                 with open(
-                    f'CSV_FILE_PATH / {csv_f}', encoding='utf-8'
+                    f'{csv_file_path}/{csv_f}', encoding='utf-8'
                 ) as f:
                     reader = csv.DictReader(f, delimiter=',')
                     for row in reader:
