@@ -130,7 +130,7 @@ class FavoritRecipeAdmin(admin.ModelAdmin):
 
     list_display = ("user", "recipe", "date_added")
     search_fields = ("user__username", "recipe__name")
-    list_editable = ('recipe', 'user')
+    list_editable = ('user', 'recipe')
     list_filter = ('recipe',)
     list_per_page = MAX_PAGE_SIZE
 
@@ -140,6 +140,6 @@ class CartAdmin(admin.ModelAdmin):
     """Административная панель для управления списком покупок."""
 
     list_display = ('user', 'recipe')
-    list_editable = ('recipe', 'user')
+    list_editable = ('user', 'recipe')
     search_fields = ('user', 'recipe')
     list_filter = ('recipe',)
