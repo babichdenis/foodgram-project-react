@@ -61,6 +61,7 @@ class RecipeAdmin(admin.ModelAdmin):
         return mark_safe(f'<img src={obj.image.url} width="80" hieght="30"')
     get_image.short_description = 'Картинка'
 
+
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     """Административная панель для управления тегами."""
@@ -88,6 +89,7 @@ class IngredientAdmin(admin.ModelAdmin):
     )
     search_fields = ("^name",)
     list_per_page = 30
+
 
 @admin.register(Subscription)
 class SubscribeAdmin(admin.ModelAdmin):
