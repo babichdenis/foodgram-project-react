@@ -50,7 +50,7 @@ class RecipeAdmin(admin.ModelAdmin):
                FavoriteInline)
 
     def in_favorite(self, obj):
-        return obj.favorited_by.count()
+        return obj.favorites.count()
     in_favorite.short_description = 'В избранном'
 
     def get_tags(self, obj):
