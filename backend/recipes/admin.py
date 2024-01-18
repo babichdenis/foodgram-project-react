@@ -32,7 +32,7 @@ class ShoppingCartInline(admin.TabularInline):
 class RecipeAdmin(admin.ModelAdmin):
     """Административная панель для управления рецептами."""
 
-    list_editable = ('name')
+    list_editable = ('name',)
     list_display = ("id",
                     "author",
                     "name",
