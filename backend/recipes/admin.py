@@ -92,7 +92,6 @@ class TagAdmin(admin.ModelAdmin):
     """Административная панель для управления тегами."""
 
     list_display = (
-        "name",
         "color",
         "color_code",
         "slug",
@@ -100,15 +99,15 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = (
         "name",
         "color",
+        "color_code",
     )
     list_editable = ("slug",)
 
     @admin.display(description="Colored")
     def color_code(self, obj: Tag):
         return format_html(
-            '<span style="color: {};">{}</span>', "color", obj.color
+            '<span style="color: {};">{}</span>', obj.color[1:], "color"
         )
-
     color_code.short_description = "Цветовой код тэга"
     list_per_page = MAX_PAGE_SIZE
 
@@ -156,6 +155,6 @@ class CartAdmin(admin.ModelAdmin):
 
     list_display = ("user", "recipe")
     list_editable = ("recipe",)
-    search_fields = ("user", "recipe")
+    search_fields = ("recipe",)
     list_filter = ("recipe",)
     list_per_page = MAX_PAGE_SIZE
