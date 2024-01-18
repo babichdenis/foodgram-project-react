@@ -3,6 +3,8 @@ from django.contrib.auth.admin import UserAdmin
 
 from users.models import User
 
+admin.site.site_header = 'Администрирование Foodgram'
+admin.site.index_title = 'Администрирование сайта Foodgram'
 admin.site.empty_value_display = "Не задано"
 
 

@@ -2,12 +2,8 @@ from colorfield.fields import ColorField
 from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
-from foodgram.constants import (
-    MAX_CHAR_LENGTH,
-    MAX_COLOR_LENGTH,
-    REGEX,
-    REGEXCOLOR
-)
+from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX,
+                                REGEXCOLOR, STRLENGTH)
 
 from users.models import User
 
@@ -37,7 +33,10 @@ class Ingredient(models.Model):
 class Tag(models.Model):
     """Модель тега."""
 
-    name = models.CharField("Название тэга", max_length=MAX_CHAR_LENGTH)
+    name = models.CharField(
+        "Название тэга",
+        max_length=MAX_CHAR_LENGTH
+    )
     color = ColorField(
         "Цветовой HEX-код",
         max_length=MAX_COLOR_LENGTH,
@@ -50,7 +49,6 @@ class Tag(models.Model):
             )
         ],
     )
-
     slug = models.SlugField(
         "Slug",
         max_length=MAX_CHAR_LENGTH,
@@ -116,7 +114,7 @@ class Recipe(models.Model):
         ordering = ("-id",)
 
     def __str__(self):
-        return f"{self.author}, {self.name}"
+        return f'{self.name}: {self.text[:STRLENGTH]}'
 
 
 class RecipeIngredient(models.Model):

@@ -6,6 +6,9 @@ from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
 from users.models import Subscription
 
 
+admin.site.empty_value_display = "Не задано"
+
+
 class RecipeIngredientInLine(admin.TabularInline):
     """Inline для отображения ингредиентов в админ-панели рецепта."""
 
@@ -14,16 +17,19 @@ class RecipeIngredientInLine(admin.TabularInline):
 
 
 class TagsInline(admin.TabularInline):
+    """Inline для отображения тэгов в админ-панели рецепта."""
     model = Tag
     extra = 0
 
 
 class FavoriteInline(admin.TabularInline):
+    """Inline для отображения избранных в админ-панели рецепта."""
     model = FavoritRecipe
     extra = 0
 
 
 class ShoppingCartInline(admin.TabularInline):
+    """Inline для отображения покупок админ-панели рецепта."""
     model = Cart
     extra = 0
 
@@ -45,6 +51,7 @@ class RecipeAdmin(admin.ModelAdmin):
                      "author__email",
                      "ingredients__name"
                      )
+    autocomplete_fields = ('author', 'tags')
     list_filter = ("name",
                    "author__username",
                    "tags"
@@ -113,6 +120,8 @@ class FavoritRecipeAdmin(admin.ModelAdmin):
 
     list_display = ("user", "recipe")
     search_fields = ("user", "recipe")
+    list_filter = ('recipe',)
+    autocomplete_fields = ('user', 'recipe')
 
 
 @admin.register(Cart)
@@ -121,3 +130,5 @@ class CartAdmin(admin.ModelAdmin):
 
     list_display = ("user", "recipe")
     search_fields = ("user", "recipe")
+    list_filter = ('recipe',)
+    autocomplete_fields = ('user', 'recipe')

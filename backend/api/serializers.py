@@ -86,9 +86,10 @@ class SubscribeSerializer(UserSerializer):
         """Показывает рецепты текущего пользователя."""
         request = self.context.get("request")
         recipes_limit = request.GET.get("recipes_limit")
-        recipes = obj.recipes.all()
-        if recipes_limit:
-            recipes = recipes[: int(recipes_limit)]
+        recipes = (
+            obj.author.recipe.all()[:int(recipes_limit)] if recipes_limit
+            else obj.author.recipe.all()
+        )
         serializer = RecipeProfileSerializer(
             recipes,
             many=True,

@@ -66,5 +66,5 @@ class Subscription(models.Model):
             )
         ]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'Пользователь {self.user} подписан на {self.author}'

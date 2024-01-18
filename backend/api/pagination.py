@@ -7,3 +7,4 @@ class Pagination(PageNumberPagination):
 
     page_size = api_settings.PAGE_SIZE
     page_size_query_param = 'limit'
+    max_page_size = 30
