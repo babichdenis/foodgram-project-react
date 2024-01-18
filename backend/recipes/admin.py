@@ -88,7 +88,7 @@ class IngredientAdmin(admin.ModelAdmin):
         "measurement_unit",
     )
     search_fields = ("^name",)
-    list_per_page = 30
+    list_per_page = 5
 
 
 @admin.register(Subscription)
