@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from django.utils.safestring import mark_safe
 from foodgram.constants import MAX_PAGE_SIZE
 
@@ -33,21 +34,19 @@ class RecipeAdmin(admin.ModelAdmin):
     """Административная панель для управления рецептами."""
 
     list_editable = ('name',)
-    list_display = ("id",
-                    "author",
+    list_display = ("get_image",
                     "name",
-                    "cooking_time",
-                    "in_favorite",
                     "ingredients_list",
+                    "in_favorite",
+                    "cooking_time",
                     "get_tags",
-                    "get_image"
+                    "author"
                     )
     search_fields = ("name",
                      "cooking_time",
                      "author__email",
                      "ingredients__name"
                      )
-    autocomplete_fields = ('author', 'tags')
     list_filter = ('author', 'tags__name')
     inlines = (RecipeIngredientInLine,
                ShoppingCartInline,
@@ -83,15 +82,21 @@ class TagAdmin(admin.ModelAdmin):
     """Административная панель для управления тегами."""
 
     list_display = (
-        "id",
         "name",
         "color",
         "slug",
     )
     search_fields = (
         "name",
-        "slug",
+        "color",
     )
+
+    @admin.display(description="Colored")
+    def color_code(self, obj: Tag):
+        return format_html(
+            '<span style="color: #{};">{}</span>', obj.color[1:], obj.color
+        )
+    color_code.short_description = "Цветовой код тэга"
 
 
 @admin.register(Ingredient)
@@ -123,8 +128,9 @@ class SubscribeAdmin(admin.ModelAdmin):
 class FavoritRecipeAdmin(admin.ModelAdmin):
     """Административная панель для управления избранными рецептами."""
 
-    list_display = ('user', 'recipe')
-    search_fields = ('user', 'recipe')
+    list_display = ("user", "recipe", "date_added")
+    search_fields = ("user__username", "recipe__name")
+    list_editable = ('recipe', 'user')
     list_filter = ('recipe',)
     list_per_page = MAX_PAGE_SIZE
 
@@ -134,5 +140,6 @@ class CartAdmin(admin.ModelAdmin):
     """Административная панель для управления списком покупок."""
 
     list_display = ('user', 'recipe')
+    list_editable = ('recipe', 'user')
     search_fields = ('user', 'recipe')
     list_filter = ('recipe',)

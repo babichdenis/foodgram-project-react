@@ -2,6 +2,7 @@ from colorfield.fields import ColorField
 from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
+from django.db.models import DateTimeField
 from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX,
                                 REGEXCOLOR, STRLENGTH)
 
@@ -26,7 +27,6 @@ class Ingredient(models.Model):
         ordering = ["id"]
 
     def __str__(self):
-        """Возвращает строковое представление ингредиента."""
         return f"{self.name}({self.measurement_unit})"
 
 
@@ -173,6 +173,9 @@ class FavoritRecipe(models.Model):
         on_delete=models.CASCADE,
         related_name="favorites",
         verbose_name="Избранный рецепт",
+    )
+    date_added = DateTimeField(
+        verbose_name="Дата добавления", auto_now_add=True, editable=False
     )
 
     class Meta:
