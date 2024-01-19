@@ -12,7 +12,8 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+# ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "").split(",")
+ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -21,13 +22,13 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_filters",
-    "djoser",
     "rest_framework",
     "rest_framework.authtoken",
     "users.apps.UsersConfig",
     "recipes.apps.RecipesConfig",
     "api.apps.ApiConfig",
+    "django_filters",
+    "djoser",
     "colorfield",
 ]
 
@@ -45,6 +46,8 @@ ROOT_URLCONF = "foodgram.urls"
 
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates/')
+
+
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -63,7 +66,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "foodgram.wsgi.application"
 
-if os.getenv("DATABASES", "postgres") == "sqlite":
+''' if os.getenv("DATABASES", "postgres") == "sqlite":
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -80,8 +83,18 @@ else:
             "HOST": os.getenv("DB_HOST", ""),
             "PORT": os.getenv("DB_PORT", 5432),
         }
-    }
+    } '''
 
+DATABASES = {
+    "default": {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("POSTGRES_DB", "postgres"),
+        "USER": os.getenv("POSTGRES_USER", "postgres"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", ""),
+        "HOST": os.getenv("DB_HOST", ""),
+        "PORT": os.getenv("DB_PORT", 5432),
+    }
+}
 
 PASSWORD_VALIDATION_USER = (
     "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"
