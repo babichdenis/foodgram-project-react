@@ -3,8 +3,8 @@ from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import DateTimeField
-from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX,
-                                REGEXCOLOR, STRLENGTH)
+from foodgram.constants import (MAX_CHAR_LENGTH, REGEX,
+                                STRLENGTH)
 
 from users.models import User
 
@@ -45,18 +45,18 @@ class Tag(models.Model):
     color = ColorField(samples=COLOR_PALETTE)
 
     # restrictive, it is mandatory to choose a color from the palette
-    color = ColorField(choices=COLOR_PALETTE)
-    color = ColorField(
-        "Цветовой HEX-код",
-        max_length=MAX_COLOR_LENGTH,
-        default="#FF0000",
-        validators=[
-            RegexValidator(
-                regex=REGEXCOLOR,
-                message="Проверьте вводимый формат",
-            )
-        ],
-    )
+    # color = ColorField(choices=COLOR_PALETTE)
+    # color = ColorField(
+    #    "Цветовой HEX-код",
+    #    max_length=MAX_COLOR_LENGTH,
+    #    default="#FF0000",
+    #    validators=[
+    #        RegexValidator(
+    #            regex=REGEXCOLOR,
+    #            message="Проверьте вводимый формат",
+    #        )
+    #    ],
+    # )
     slug = models.SlugField(
         "Slug",
         max_length=MAX_CHAR_LENGTH,
