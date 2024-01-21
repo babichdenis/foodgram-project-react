@@ -23,20 +23,6 @@ class RecipeIngredientInLine(admin.TabularInline):
     extra = 0
 
 
-class FavoriteInline(admin.TabularInline):
-    """Inline для отображения избранных в админ-панели рецепта."""
-
-    model = FavoritRecipe
-    extra = 0
-
-
-class ShoppingCartInline(admin.TabularInline):
-    """Inline для отображения покупок админ-панели рецепта."""
-
-    model = Cart
-    extra = 0
-
-
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
     """Административная панель для управления рецептами."""
@@ -58,7 +44,7 @@ class RecipeAdmin(admin.ModelAdmin):
         "ingredients__name" "tags__name",
     )
     list_filter = ("author", "tags__name")
-    inlines = (RecipeIngredientInLine, ShoppingCartInline, FavoriteInline)
+    inlines = (RecipeIngredientInLine)
 
     @admin.display(description="Добавили в избранное")
     def in_favorite(self, obj):
