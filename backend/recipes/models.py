@@ -3,8 +3,7 @@ from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import DateTimeField
-from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX,
-                                REGEXCOLOR, STRLENGTH)
+from foodgram.constants import MAX_CHAR_LENGTH, REGEX, STRLENGTH
 
 from users.models import User
 
