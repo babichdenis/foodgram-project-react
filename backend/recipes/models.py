@@ -37,18 +37,8 @@ class Tag(models.Model):
         "Название тэга",
         max_length=MAX_CHAR_LENGTH
     )
-    color = ColorField(
-        "Цветовой HEX-код",
-        max_length=MAX_COLOR_LENGTH,
-        format="hex",
-        default="#FF0000",
-        validators=[
-            RegexValidator(
-                regex=REGEXCOLOR,
-                message="Проверьте вводимый формат",
-            )
-        ],
-    )
+    color = ColorField(image_field="image")
+
     slug = models.SlugField(
         "Slug",
         max_length=MAX_CHAR_LENGTH,
