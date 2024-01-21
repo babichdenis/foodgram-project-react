@@ -41,6 +41,11 @@ class Tag(models.Model):
         ("#FFFFFF", "white", ),
         ("#000000", "black", ),
     ]
+    # not restrictive, allows the selection of another color from the spectrum.
+    color = ColorField(samples=COLOR_PALETTE)
+
+    # restrictive, it is mandatory to choose a color from the palette
+    color = ColorField(choices=COLOR_PALETTE)
     color = ColorField(
         "Цветовой HEX-код",
         max_length=MAX_COLOR_LENGTH,
