@@ -36,7 +36,7 @@ class Tag(models.Model):
         "Название тэга",
         max_length=MAX_CHAR_LENGTH
     )
-    color = ColorField(image_field="image")
+    color = ColorField(verbose_name="Color", default="#000000")
 
     slug = models.SlugField(
         "Slug",

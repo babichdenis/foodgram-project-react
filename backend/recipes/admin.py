@@ -99,6 +99,7 @@ class TagAdmin(admin.ModelAdmin):
     search_fields = (
         "name",
         "color",
+        "color_code",
     )
     list_editable = ("slug",)
 
