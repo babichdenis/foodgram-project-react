@@ -36,7 +36,15 @@ class Tag(models.Model):
         "Название тэга",
         max_length=MAX_CHAR_LENGTH
     )
-    color = ColorField(verbose_name="Color", default="#000000")
+    COLOR_PALETTE = [
+        ("#FFFFFF", "white", ),
+        ("#000000", "black", ),
+    ]
+    # not restrictive, allows the selection of another color from the spectrum.
+    color = ColorField(samples=COLOR_PALETTE)
+
+    # restrictive, it is mandatory to choose a color from the palette
+    color = ColorField(choices=COLOR_PALETTE)
 
     slug = models.SlugField(
         "Slug",

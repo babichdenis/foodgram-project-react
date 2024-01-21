@@ -40,6 +40,3 @@ class Command(BaseCommand):
 
         except Exception as error:
             print(f"Сбой в работе импорта: {error}.")
-
-        finally:
-            print("Завершена работа импорта.")
