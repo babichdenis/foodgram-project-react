@@ -154,7 +154,6 @@ class RecipeIngredient(models.Model):
         ]
 
     def __str__(self):
-        """Возвращает строковое представление ингредиента для рецепта."""
         return f"{self.recipe} {self.ingredient}"
 
 
@@ -189,7 +188,6 @@ class FavoritRecipe(models.Model):
         ]
 
     def __str__(self):
-        """Возвращает строковое представление избранного рецепта."""
         return f"Пользователь {self.user} добавил \
             {self.recipe.name} в избранное."
 
@@ -222,6 +220,5 @@ class Cart(models.Model):
         ]
 
     def __str__(self):
-        """Возвращает строковое представление списка покупок."""
         return f"Пользователь {self.user} добавил \
             {self.recipe.name} в покупки."
