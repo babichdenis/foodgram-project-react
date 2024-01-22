@@ -33,7 +33,7 @@ class CustomUserViewSet(UserViewSet):
 
     @action(
         detail=True,
-        methods=["post", "delete"],
+        methods=("post", "delete"),
         permission_classes=[IsAuthenticated],
     )
     def subscribe(self, request, **kwargs):
@@ -149,8 +149,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
         cart_recipe.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def save_file(list_for_print):
+        """Сохранение списка покупок в файл."""
+
+        today = date_format(timezone.now(), use_l10n=True)
+        headline = f"Дата: {today} \n\n" f"Список покупок: \n\n"
+        lines = []
+        for ingredient in list_for_print:
+            line = (
+                f'➤ {ingredient["ingredient__name"]} '
+                f'({ingredient["ingredient__measurement_unit"]})'
+                f' -- {ingredient["sum_amount"]}'
+            )
+            lines.append(line)
+
+        shopping_list = headline + "\n".join(lines)
+        filename = "shopping_list.txt"
+        response = HttpResponse(shopping_list, content_type="text/plain")
+        response["Content-Disposition"] = f"attachment; filename={filename}"
+        return response
+
     @action(detail=False, permission_classes=[IsAuthenticated])
     def download_shopping_cart(self, request):
+        """Скачать список покупок."""
         user = request.user
         if not user.cart.exists():
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -164,20 +185,4 @@ class RecipeViewSet(viewsets.ModelViewSet):
             .annotate(sum_amount=Sum("amount"))
             .order_by()
         )
-
-        today = date_format(timezone.now(), use_l10n=True)
-        headline = f"Дата: {today} \n\n" f"Список покупок: \n\n"
-        lines = []
-        for ingredient in ingredients:
-            line = (
-                f'➤ {ingredient["ingredient__name"]} '
-                f'({ingredient["ingredient__measurement_unit"]})'
-                f' -- {ingredient["sum_amount"]}'
-            )
-            lines.append(line)
-
-        shopping_list = headline + "\n".join(lines)
-        filename = "shopping_list.txt"
-        response = HttpResponse(shopping_list, content_type="text/plain")
-        response["Content-Disposition"] = f"attachment; filename={filename}"
-        return response
+        return self.save_file(ingredients)

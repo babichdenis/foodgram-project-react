@@ -34,9 +34,10 @@ class Command(BaseCommand):
                         obj, created = model.objects.get_or_create(**row)
                     if created:
                         print(f'{obj} загружен в таблицу {model.__name__}')
-                    print(
-                        f'{obj} уже загружен в таблицу {model.__name__}')
             print("Загрузка данных завершена.")
 
         except Exception as error:
             print(f"Сбой в работе импорта: {error}.")
+
+        finally:
+            print("Завершена работа импорта.")
