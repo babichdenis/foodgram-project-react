@@ -109,7 +109,7 @@ class TagAdmin(admin.ModelAdmin):
             '<span style="color: #{};">{}</span>', obj.color[1:], obj.name
         )
 
-    color_code.short_description = "Цветовой код тэга"
+    color_code.short_description = "Название тэга"
     list_per_page = MAX_PAGE_SIZE
 
 
