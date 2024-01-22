@@ -130,6 +130,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           source: "infra/docker-compose.yml"
           target: "foodgram"
+
       - name: Copy nginx.conf via ssh
         uses: appleboy/scp-action@master
         with:
@@ -157,7 +158,6 @@ jobs:
             sudo docker compose -f docker-compose.yml exec backend python manage.py migrate recipes
             sudo docker compose -f docker-compose.yml exec backend python manage.py collectstatic --no-input
             sudo docker compose -f docker-compose.yml exec backend python manage.py importcsv
-          #  sudo docker system prune -a
 
   send_message:
     runs-on: ubuntu-latest
