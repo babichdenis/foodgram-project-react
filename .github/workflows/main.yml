@@ -159,9 +159,13 @@ jobs:
             sudo docker compose -f docker-compose.yml exec backend python manage.py collectstatic --no-input
             sudo docker compose -f docker-compose.yml exec backend python manage.py importcsv
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
             sudo docker system prune -a
 >>>>>>> parent of a117483 (Final_13.4)
+=======
+          #  sudo docker system prune -a
+>>>>>>> parent of 5986db4 (Final_docs_1.1)
 
   send_message:
     runs-on: ubuntu-latest
