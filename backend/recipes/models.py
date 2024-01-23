@@ -3,8 +3,8 @@ from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import DateTimeField
-from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX,
-                                REGEXCOLOR, STRLENGTH)
+from foodgram.constants import (MAX_CHAR_LENGTH, REGEX,
+                                STRLENGTH, MAX_COLOR_LENGTH, REGEXCOLOR)
 
 from users.models import User
 
@@ -40,12 +40,11 @@ class Tag(models.Model):
     color = ColorField(
         "Цветовой HEX-код",
         max_length=MAX_COLOR_LENGTH,
-        format="hex",
         default="#FF0000",
         validators=[
             RegexValidator(
                 regex=REGEXCOLOR,
-                message="Проверьте вводимый формат",
+                message="Введите правильный цвет в формате HEX",
             )
         ],
     )
@@ -155,7 +154,6 @@ class RecipeIngredient(models.Model):
         ]
 
     def __str__(self):
-        """Возвращает строковое представление ингредиента для рецепта."""
         return f"{self.recipe} {self.ingredient}"
 
 
@@ -190,7 +188,6 @@ class FavoritRecipe(models.Model):
         ]
 
     def __str__(self):
-        """Возвращает строковое представление избранного рецепта."""
         return f"Пользователь {self.user} добавил \
             {self.recipe.name} в избранное."
 
@@ -223,6 +220,5 @@ class Cart(models.Model):
         ]
 
     def __str__(self):
-        """Возвращает строковое представление списка покупок."""
         return f"Пользователь {self.user} добавил \
             {self.recipe.name} в покупки."
