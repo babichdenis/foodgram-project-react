@@ -1,5 +1,4 @@
 {
     "python.linting.flake8Enabled": true,
-    "python.linting.pycodestyleEnabled": true,
-    "search.useGlobalIgnoreFiles": true
+    "python.linting.pycodestyleEnabled": true
 }
