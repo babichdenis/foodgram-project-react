@@ -4,7 +4,7 @@ volumes:
   foodgram_static_volume:
   foodgram_media_volume:
   foodgram_db_volume:
-  redoc:
+    #  redoc:
 
 
 networks:
@@ -35,7 +35,7 @@ services:
     volumes:
       - foodgram_static_volume:/app/backend_static/
       - foodgram_media_volume:/app/media/
-      - redoc:/app/api/docs/
+    #  - redoc:/app/api/docs/
     depends_on:
       - db
     env_file:
@@ -52,6 +52,6 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - foodgram_static_volume:/var/html/backend_static/
       - foodgram_media_volume:/var/html/media/
-      - redoc:/usr/share/nginx/html/api/docs/
+    #  - redoc:/usr/share/nginx/html/api/docs/
     depends_on:
       - backend
