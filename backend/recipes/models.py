@@ -3,8 +3,7 @@ from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
 from django.db.models import DateTimeField
-from foodgram.constants import (MAX_CHAR_LENGTH, REGEX,
-                                STRLENGTH, MAX_COLOR_LENGTH, REGEXCOLOR)
+from foodgram.constants import MAX_CHAR_LENGTH, REGEX, STRLENGTH
 
 from users.models import User
 
@@ -37,17 +36,12 @@ class Tag(models.Model):
         "Название тэга",
         max_length=MAX_CHAR_LENGTH
     )
-    color = ColorField(
-        "Цветовой HEX-код",
-        max_length=MAX_COLOR_LENGTH,
-        default="#FF0000",
-        validators=[
-            RegexValidator(
-                regex=REGEXCOLOR,
-                message="Введите правильный цвет в формате HEX",
-            )
-        ],
-    )
+    COLOR_CHOICES = [
+        ("#8b0000", "red"),
+        ("#ffff00", "yellow"),
+        ("#006400","green")
+    ]
+    color = ColorField(choices=COLOR_CHOICES)
     slug = models.SlugField(
         "Slug",
         max_length=MAX_CHAR_LENGTH,
