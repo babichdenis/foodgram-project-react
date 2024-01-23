@@ -8,7 +8,6 @@ jobs:
 
   tests:
     runs-on: ubuntu-latest
-    using: 'node20'
     services:
       postgres:
         image: postgres:13
@@ -47,7 +46,6 @@ jobs:
   build_and_push_to_docker_hub:
     name: Build Docker image and push to Docker Hub
     runs-on: ubuntu-latest
-    using: 'node20'
     if: github.ref == 'refs/heads/master'
     needs: tests
     steps:
@@ -70,7 +68,6 @@ jobs:
   build_frontend_and_push_to_docker_hub:
     name: Push frontend Docker image to DockerHub
     runs-on: ubuntu-latest
-    using: 'node20'
     if: github.ref == 'refs/heads/master'
     needs: tests
     steps:
@@ -93,7 +90,6 @@ jobs:
   deploy:
     name: Deploy to VPS
     runs-on: ubuntu-latest
-    using: 'node20'
     needs: 
       - build_and_push_to_docker_hub
       - build_frontend_and_push_to_docker_hub
