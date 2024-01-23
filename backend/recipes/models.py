@@ -39,7 +39,7 @@ class Tag(models.Model):
     COLOR_CHOICES = [
         ("#8b0000", "red"),
         ("#ffff00", "yellow"),
-        ("#006400","green")
+        ("#006400", "green")
     ]
     color = ColorField(choices=COLOR_CHOICES)
     slug = models.SlugField(
