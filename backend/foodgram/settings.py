@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     "api.apps.ApiConfig",
     "rest_framework",
     "rest_framework.authtoken",
+    'corsheaders',
     "django_filters",
     "djoser",
     "colorfield",
@@ -34,6 +35,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -41,13 +43,19 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+# CORS_URLS_REGEX = r'^/api/.*$'
+CORS_ALLOWED_ORIGINS = ['http://localhost:3000',]
 
 ROOT_URLCONF = "foodgram.urls"
+
+
+TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates/')
+
 
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [TEMPLATES_DIR],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
