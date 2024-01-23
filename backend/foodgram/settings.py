@@ -12,7 +12,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost").split(",")
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", "localhost,127.0.0.1").split(",")
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -44,7 +44,7 @@ MIDDLEWARE = [
 ]
 
 # CORS_URLS_REGEX = r'^/api/.*$'
-CORS_ALLOWED_ORIGINS = ['http://localhost:3000',]
+# CORS_ALLOWED_ORIGINS = ['http://localhost:3000',]
 
 ROOT_URLCONF = "foodgram.urls"
 
