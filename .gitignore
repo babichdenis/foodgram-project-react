@@ -133,7 +133,9 @@ dmypy.json
 .idea
 
 #
-#static/
+backend_static/
+static/
 media/
 migrations/
 *.DS_Store
+node_modules/
