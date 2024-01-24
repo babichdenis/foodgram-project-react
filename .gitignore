@@ -35,7 +35,6 @@ MANIFEST
 
 # Installer logs
 pip-log.txt
-text.txt
 pip-delete-this-directory.txt
 
 # Unit test / coverage reports
@@ -104,16 +103,13 @@ celerybeat.pid
 
 # Environments
 .env
+.env.bak
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
-text.txt
-docker-compose.copy.yml
-*.DS_Store
-._*
 
 # Spyder project settings
 .spyderproject
@@ -135,12 +131,8 @@ dmypy.json
 
 # .idea
 .idea
-.vscode/
-# папки со статикой и медиа
+
+#
+#static/
 media/
-# migrations/
-static/
-backend_static/
-node_modules/
-*.json
-*.hintrc
+migrations/
