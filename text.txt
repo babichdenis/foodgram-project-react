@@ -1,0 +1,452 @@
+python3 -m venv venv
+source venv/bin/activate      -    deactivate
+python3 -m pip install --upgrade pip
+
+django-admin startproject backend
+pip install Django==3.2.16
+pip install -r requirements.txt
+python3 manage.py runserver
+python manage.py migrate 
+python manage.py startapp users
+
+login: yc-user
+passphrase: JlOv3bJ-5z
+ip: 158.160.22.131
+ssh -i /Users/Denis/.ssh/ssh_Den/yc-babichdenis yc-user@158.160.22.131
+
+git checkout d14ff27
+
+pip freeze > requirements.txt
+
+brew install postgresql
+createdb postgres
+
+docker-compose exec backend python manage.py createsuperuser
+
+
+
+docker system prune --all --force --volumes - Очистите кэш docker
+
+docker-compose up --build
+
+sudo nano /etc/nginx/sites-enabled/default
+
+npm install react-facebook-login --legacy-peer-deps
+
+sudo docker compose -f docker-compose.copy.yml pull
+sudo docker compose -f docker-compose.copy.yml down
+sudo docker compose -f docker-compose.copy.yml up -d
+sudo docker compose -f docker-compose.copy.yml exec backend python manage.py makemigrations users
+sudo docker compose -f docker-compose.copy.yml exec backend python manage.py makemigrations recipes
+sudo docker compose -f docker-compose.copy.yml exec backend python manage.py migrate users
+sudo docker compose -f docker-compose.copy.yml exec backend python manage.py migrate recipes
+sudo docker compose -f docker-compose.copy.yml exec backend python manage.py collectstatic --no-input
+sudo docker compose -f docker-compose.copy.yml exec backend python manage.py importcsv
+
+sudo nginx -t
+sudo systemctl reload nginx 
+
+docker run --name db \
+       --env-file .env \
+       -v postgres:/var/lib/postgresql/data \
+       postgres:13.10
+
+
+
+docker-compose up --build
+
+
+# Старт контейнера с именем db, переменные окружения в .env, 
+# контейнер запустить из образа postgres:13.10
+# Эта команда – для демонстрации, запускать ее не надо
+docker run --name postgres --env-file .env postgres:13.10 
+
+
+Just add in your requirement.txt to psycopg2=2.9.3 
+or run the below command manually to your virtual environment pip install psycopg2
+
+
+
+Увидеть список таких безымянных образов (они называются dangling, англ. «болтающиеся») можно так:
+docker image ls -f "dangling=true" -q 
+Почистить компьютер от таких образов можно такой командой:
+docker image rm $(docker image ls -f "dangling=true" -q) 
+
+удалить контейнеры
+docker rm -f $(docker ps -a -q)
+образы
+docker rmi -f $(docker images -a -q)
+тома
+docker volume rm $ (docker volume Is -q)
+
+sudo service docker stop
+sudo service docker start
+
+docker-compose down
+docker network prune
+sudo service docker restart // If this doesn't work manually restart docker
+docker-compose up
+
+$ docker run -it -p 8080:80 $(docker build -q .)
+In our case, port 8080 was already allocated by other docker image container. We had to find the name of the docker container by running the following command:
+
+$ docker container ls
+This showed us the container that was holding 8080 port. In our case, the docker container was fairly old and was not in use. We removed it using the following command:
+
+$ docker rm -f <CONTAINER_ID>
+
+
+  GNU nano 6.2    /etc/nginx/sites-enabled/default              
+server {
+    server_name kittygramden.ddns.net;
+    server_tokens off;
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_pass http://127.0.0.1:9000;
+        client_max_body_size 20M;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/kittygramden.ddns.net>
+    ssl_certificate_key /etc/letsencrypt/live/kittygramden.ddns>
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed >
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by>
+
+
+}
+
+server {
+    server_name babichden.ddns.net;
+    server_tokens off;
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_pass http://127.0.0.1:8000;
+        client_max_body_size 20M;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/kittygramden.ddns.net>
+    ssl_certificate_key /etc/letsencrypt/live/kittygramden.ddns>
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed >
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by>
+
+
+}
+
+
+
+server {
+    if ($host = babichden.ddns.net) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    server_name babichden.ddns.net;
+    listen 80;
+    return 404; # managed by Certbot
+
+
+}
+
+server {
+    if ($host = kittygramden.ddns.net) {
+        return 301 https://$host$request_uri;
+
+server {
+    server_name babichden.ddns.net;
+    server_tokens off;
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_pass http://127.0.0.1:8000;
+        client_max_body_size 20M;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/kittygramden.ddns.net>
+    ssl_certificate_key /etc/letsencrypt/live/kittygramden.ddns>
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed >
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by>
+
+
+}
+
+
+
+server {
+    if ($host = babichden.ddns.net) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    server_name babichden.ddns.net;
+    listen 80;
+    return 404; # managed by Certbot
+
+
+}
+
+server {
+    if ($host = kittygramden.ddns.net) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    server_name kittygramden.ddns.net;
+    listen 80;
+    return 404; # managed by Certbot
+
+
+}
+
+server {
+    server_name 158.160.22.131 foodgramden.ddns.net;
+
+    location / {
+        proxy_set_header Host $http_host;
+        proxy_pass http://127.0.0.1:8090;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/kittygramden.ddns.net>
+    ssl_certificate_key /etc/letsencrypt/live/kittygramden.ddns>
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed >
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by>
+
+}
+
+
+
+server {
+    if ($host = foodgramden.ddns.net) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name foodgramden.ddns.net;
+    return 404; # managed by Certbot
+
+
+}
+
+login: yc-user
+passphrase: JlOv3bJ-5z
+ip: 158.160.22.131
+ssh -i /Users/Denis/.ssh/ssh_Den/yc-babichdenis yc-user@158.160.22.131
+
+sudo kill -9 $(sudo lsof -t -i:9000)
+
+
+# Создать образ (build); 
+# присвоить образу имя и тег (-t); 
+# Dockerfile взять в указанной директории.
+docker build -t babichdenis//kittygram_backend:latest backend/
+docker build -t babichdenis//kittygram_frontend:latest frontend/ 
+
+docker push babichdenis/kittygram_backend:latest
+docker push babichdenis/kittygram_frontend:latest
+
+Запускаем PostgreSQL в контейнере
+
+Всё готово, можно запускать контейнер. В итоге команда для запуска будет такой:
+# Символ \ в конце строки указывает терминалу, что команда
+# продолжится на следующей строке
+docker run --name db \
+       --env-file .env \
+       -v pg_data:/var/lib/postgresql/data \
+       postgres:13.10
+# Запустить контейнер с именем db, 
+# передать в контейнер переменные окружения из файла .env, 
+# подключить Docker volume с названием pg_data,
+# контейнер создать из образа postgres с тегом 13.10 
+По этой команде будет создан контейнер db, а в нём запустится сервер PostgreSQL. Если контейнер запущен успешно — в консоли будет примерно такой ответ:
+
+
+
+git clone git@github.com:babichdenis/kittygram_final.git
+
+новое SHA256:sZBRBftFu8wDuuhPQJzgDUxt3aeDVzmaTwYLDHTJnSc yc-user@epdjiksgvoi3iaa1h9qe
+SHA256:5Pg00zlA51yKNij1N63Dg8RN0GfgYO2tk8EnNvDT6Lk Denis@MacBook-ProDen.local
+ssh-rsa ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDBTIVtjZ7R/46OB0BbTZlDLK11t4CpGDd7wkrm2JdZy9sOcb8WBn26Sw2DjdLPN9mmfwGf/b4++wfPkXVDNo2It6qDqx/vTxkBtpLt4XcOS4+y3Z1Rf8dpHWnomF4L7izWpOeJvQyaXTaLXwPvWQ2W//Qq1NTGP7Hqt1394J7T07Ey2lCy4mCev0eB5WmrsaYJfrIqfuB0VYiYWacEiSYnm3ydoKQPXTCap5Ugbl22g6cD7oY/qyEQ2K8R/KyvwbrhSfvw3JaQAquOJMLTHTfhc6Lig6YpZ1AlfQQBDXWrJbY27pz95VVZCSFbd2DF5lSpde83wNzfFsCujQJ6VTwXskkW4muYhhcehWMIpzYEh+MyMR4uvjIcTwEHxcCwJrykFNRNXEhrfMdQ/nJy1qjQN1llZ6oNvRFSo8SkLXUuIWT3nCJ9cctG3hF10GM3o2DlIJ+FH/OX1b6YFjqIODd2CtgcInKF/jS6o2Kw2nVglk7uY5Iey6OktGL4l/8L5GU= yc-user@epdjiksgvoi3iaa1h9qe
+
+docker run --rm -p порт_хоста:порт_контейнера --name имя_контейнера имя_образа
+
+scp -i path_to_SSH/SSH_name docker-compose.production.yml babichdenis@158.160.22.131:/home/babichdenis/kittygram/docker-compose.production.yml
+scp -i /Users/Denis/.ssh/ssh_Den/yc-babichdenis docker-compose.production.yml babichdenis@158.160.22.131:/home/babichdenis/taski/docker-compose.production.yml 
+scp -i path_to_SSH/SSH_name docker-compose.production.yml username@server_ip:/home/username/taski/docker-compose.production.yml 
+
+/Users/Denis/.ssh/ssh_Den
+
+git clone git@github.com:babichdenis/taski.git
+git clone git@github.com:babichdenis/infra_sprint1.git
+
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+python manage.py createsuperuser
+
+sudo cp -r /home/yc-user/kittygram_final/frontend/build/. /var/www/kittygram_final/ 
+sudo cp -r /home/yc-user/kittygram_final/backend/static_backend/ /var/www/kittygram_final/
+
+sudo systemctl restart gunicorn 
+
+sudo cp -r /home/yc-user/infra_sprint1/backend/static_backend/. /var/www/infra_sprint1
+sudo cp -r /home/yc-user/infra_sprint1/frontend/build/. /var/www/infra_sprint1/
+
+curl -fsSL https://deb.nodesource.com/setup_18.x | sudo -E bash - &&\
+sudo apt install -y nodejs
+
+npm i
+npm run start 
+npm run build
+
+pip install gunicorn==20.1.0
+
+sudo apt install nginx -y
+sudo systemctl start nginx
+npm -v
+/etc/systemd/system/gunicorn.service
+sudo nginx -t
+
+WorkingDirectory=/home/yc-user/gunicorn_infra_sprint1/backend/manage.py/
+sudo nano /etc/systemd/system/gunicorn_infra_sprint1.service
+
+sudo systemctl enable gunicorn_infra_sprint1
+sudo nano /etc/systemd/system/gunicorn_infra_sprint1
+.service  
+
+sudo nano /etc/nginx/sites-enabled/default
+
+sudo systemctl start gunicorn_infra_sprint1
+sudo systemctl start gunicorn
+sudo systemctl enable gunicorn
+sudo systemctl status gunicorn 
+
+sudo nginx -t 
+
+
+ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQDcCOenO4VabhzWncYZAJTGB6CEZeE3kSfWjMy9kTm59okHfzd33+JH9+hk7boOwLLAU6il7kR8/Wyq04kE5IVE4z5cYjgbdxonviODEtsYXBTHaxd2AzUbdGkmkQbZrdlo0fBG21dTcNwMNSlPzDtqG/RqB1eftKHVhhZ3cJIkZLPUMsf5M1TbOn8Hnzr9salZbHOHzw4VZpoYH6vpbvfJQpUcF64ePkVZUXuJmlLweODqUqRUbHzcrDaIxDAnEJQYM2hmy5u06mt9gvSQUlhUgd3SaPjO9xOPhvKZ3oM9dYClEXiec/+pK0Cz/6BRlZn2CIUiBFLcbEp/sJucu7IPUIB8YS4LSEDNrtgJf45hwa1+sURy0/P8MRiiYfuibvWTwir18ELYQTij5o13PH51fa4KPQwQJzci+cHLyMMwhW2mkrHjRnn3G7HBSFl1k6FU12belfUMEKKdzLIxYcJ1bolpyAOD+KBtP17WAPGif6L0hS23XGAweKPACkkc5t8= yc-user@epdjiksgvoi3iaa1h9qe
+
+
+server {
+    server_name 158.160.22.131 kittygramden.ddns.net;
+
+    location /api/ {
+        # Эта команда определяет, куда нужно перенаправить запрос.
+        proxy_pass http://127.0.0.1:9000;
+    }
+
+    # Новый блок.
+    location /admin/ {
+        proxy_pass http://127.0.0.1:9000;
+    }
+
+    location / {
+        root   /var/www/kittygram_final;
+        index  index.html index.htm;
+        try_files $uri /index.html;
+    }
+
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/kittygramden.ddns.net/fullchain.pem; # mana>
+    ssl_certificate_key /etc/letsencrypt/live/kittygramden.ddns.net/privkey.pem; # ma>
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+
+}
+server {
+    if ($host = kittygramden.ddns.net) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+
+    listen 80;
+    server_name 158.160.22.131 kittygramden.ddns.net;
+    return 404; # managed by Certbot
+
+
+}
+
+
+
+
+------------------
+
+server {
+    server_name kittygramden.ddns.net;
+
+    location /api/ { 
+        proxy_pass http://127.0.0.1:9000;
+        client_max_body_size 20M; 
+    } 
+
+    location /admin/ {
+        proxy_pass http://127.0.0.1:9000;
+        client_max_body_size 20M;
+    }
+
+    location /media/ {
+        root /var/www/kittygram;
+    }
+
+    location / {
+        root   /var/www/kittygram;
+        index  index.html index.htm;
+        try_files $uri /index.html;
+    }
+
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/kittygramden.ddns.net/full>
+    ssl_certificate_key /etc/letsencrypt/live/kittygramden.ddns.net/>
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Ce>
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Cert>
+}
+ 
+server {
+    server_name babichden.ddns.net;
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+    }
+    listen 443 ssl; # managed by Certbot
+    ssl_certificate /etc/letsencrypt/live/kittygramden.ddns.net/full>
+    ssl_certificate_key /etc/letsencrypt/live/kittygramden.ddns.net/>
+    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Ce>
+    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Cert>
+}
+
+server {
+    if ($host = babichden.ddns.net) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+    listen 80;
+    server_name babichden.ddns.net;
+    return 404; # managed by Certbot
+}
+
+server {
+    if ($host = kittygramden.ddns.net) {
+        return 301 https://$host$request_uri;
+    } # managed by Certbot
+
+
+    listen 80;
+    server_name kittygramden.ddns.net;
+    return 404; # managed by Certbot
+}
+
+
+            sudo docker compose -f docker-compose.copy.yml pull
+            sudo docker compose -f docker-compose.copy.yml down
+            sudo docker compose -f docker-compose.copy.yml up -d
+            sudo docker compose -f docker-compose.copy.yml exec backend python manage.py makemigrations users
+            sudo docker compose -f docker-compose.copy.yml exec backend python manage.py makemigrations recipes
+            sudo docker compose -f docker-compose.copy.yml exec backend python manage.py migrate users
+            sudo docker compose -f docker-compose.copy.yml exec backend python manage.py migrate recipes
+            sudo docker compose -f docker-compose.copy.yml exec backend python manage.py collectstatic --no-input
+            sudo docker compose -f docker-compose.copy.yml exec backend python manage.py importcsv
