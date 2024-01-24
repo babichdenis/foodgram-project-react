@@ -18,12 +18,20 @@ git checkout d14ff27
 
 pip freeze > requirements.txt
 
+
+
+npm install
+
 brew install postgresql
 createdb postgres
 
 docker-compose exec backend python manage.py createsuperuser
 
+export NODE_OPTIONS=--openssl-legacy-provider
 
+rm -rf /usr/local/{lib/node{,/.npm,_modules},bin,share/man}/npm*
+brew uninstall node
+brew install node
 
 docker system prune --all --force --volumes - Очистите кэш docker
 
@@ -121,7 +129,7 @@ server {
     server_tokens off;
     location / {
         proxy_set_header Host $http_host;
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:7000;
         client_max_body_size 20M;
     }
 
@@ -159,7 +167,7 @@ server {
     server_tokens off;
     location / {
         proxy_set_header Host $http_host;
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:7000;
         client_max_body_size 20M;
     }
 
@@ -410,7 +418,7 @@ server {
 server {
     server_name babichden.ddns.net;
     location / {
-        proxy_pass http://127.0.0.1:8000;
+        proxy_pass http://127.0.0.1:7000;
     }
     listen 443 ssl; # managed by Certbot
     ssl_certificate /etc/letsencrypt/live/kittygramden.ddns.net/full>
