@@ -46,7 +46,7 @@ ROOT_URLCONF = "foodgram.urls"
 if DEBUG:
     CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
 if not DEBUG:
-    CSRF_TRUSTED_ORIGINS = ["https://foodgramden.ddns.net"]
+    CSRF_TRUSTED_ORIGINS = ['https://foodgramden.ddns.net', 'http://*']
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates/')
 
