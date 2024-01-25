@@ -2,7 +2,9 @@ from colorfield.fields import ColorField
 from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
-from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX)
+from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH,
+                                REGEX, STRLENGTH)
+
 from recipes.validators import hex_color_validator
 from users.models import User
 
@@ -26,11 +28,6 @@ class Ingredient(models.Model):
 
     def __str__(self):
         return f"{self.name}({self.measurement_unit})"
-
-    def clean(self):
-        self.name = self.name.lower()
-        self.measurement_unit = self.measurement_unit.lower()
-        super().clean()
 
 
 class Tag(models.Model):
@@ -113,13 +110,10 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
+        ordering = ("-id",)
 
     def __str__(self):
-        return f"{self.name}. Автор: {self.author.username}"
-
-    def clean(self):
-        self.name = self.name.capitalize()
-        return super().clean()
+        return f'{self.name}: {self.text[:STRLENGTH]}'
 
 
 class RecipeIngredient(models.Model):
@@ -151,7 +145,13 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = "Количество ингредиента"
         verbose_name_plural = "Количество ингредиентов"
-        ordering = ("recipe",)
+        ordering = ["-id"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["recipe", "ingredient"],
+                name="unique_ingredient",
+            )
+        ]
 
     def __str__(self):
         return f"{self.recipe} {self.ingredient}"
