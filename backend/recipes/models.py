@@ -62,10 +62,10 @@ class Tag(models.Model):
         verbose_name_plural = "Тэги"
         ordering = ("name",)
 
-    def __str__(self) -> str:
+    def __str__(self):
         return f"{self.name} (цвет: {self.color})"
 
-    def clean(self) -> None:
+    def clean(self):
         self.name = self.name.strip().lower()
         self.slug = self.slug.strip().lower()
         self.color = hex_color_validator(self.color)
@@ -113,7 +113,6 @@ class Recipe(models.Model):
     class Meta:
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
-        ordering = ("-pub_date",)
 
     def __str__(self):
         return f"{self.name}. Автор: {self.author.username}"
