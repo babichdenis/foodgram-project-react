@@ -137,10 +137,6 @@ backend_static/
 static/
 media/
 migrations/
-*.DS_Store
+.DS_Store
 node_modules/
-.DS_Store
-.DS_Store
-.DS_Store
-frontend/.DS_Store
-.DS_Store
+text.txt
