@@ -1,7 +1,10 @@
+from colorfield.fields import ColorField
 from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
-from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX
+from django.db.models import DateTimeField
+from foodgram.constants import (MAX_CHAR_LENGTH, REGEX,
+                                STRLENGTH, MAX_COLOR_LENGTH, REGEXCOLOR)
 
 from users.models import User
 
@@ -24,26 +27,37 @@ class Ingredient(models.Model):
         ordering = ["id"]
 
     def __str__(self):
-        """Возвращает строковое представление ингредиента."""
         return f"{self.name}({self.measurement_unit})"
 
 
 class Tag(models.Model):
     """Модель тега."""
 
-    name = models.CharField("Название тэга",
-                            max_length=MAX_CHAR_LENGTH
-                            )
-    color = models.CharField("Цветовой HEX-код",
-                             max_length=MAX_COLOR_LENGTH
-                             )
+    name = models.CharField(
+        "Название тэга",
+        max_length=MAX_CHAR_LENGTH
+    )
+    color = ColorField(
+        "Цветовой HEX-код",
+        max_length=MAX_COLOR_LENGTH,
+        default="#FF0000",
+        validators=[
+            RegexValidator(
+                regex=REGEXCOLOR,
+                message="Введите правильный цвет в формате HEX",
+            )
+        ],
+    )
     slug = models.SlugField(
         "Slug",
         max_length=MAX_CHAR_LENGTH,
         unique=True,
-        validators=[RegexValidator(
-            regex=REGEX,
-            message="Недопустимый символ")],
+        validators=[
+            RegexValidator(
+                regex=REGEX,
+                message="Недопустимый символ"
+            )
+        ],
     )
 
     class Meta:
@@ -82,14 +96,16 @@ class Recipe(models.Model):
         "Время приготовления, мин.",
         validators=[
             validators.MinValueValidator(
-                1, message="Мин. время приготовления 1 минута"
+                1,
+                message="Мин. время приготовления 1 минута"
             ),
         ],
     )
-    tags = models.ManyToManyField(Tag,
-                                  verbose_name="Тэги",
-                                  related_name="recipes"
-                                  )
+    tags = models.ManyToManyField(
+        Tag,
+        verbose_name="Тэги",
+        related_name="recipes"
+    )
 
     class Meta:
         verbose_name = "Рецепт"
@@ -97,7 +113,7 @@ class Recipe(models.Model):
         ordering = ("-id",)
 
     def __str__(self):
-        return f"{self.author}, {self.name}"
+        return f'{self.name}: {self.text[:STRLENGTH]}'
 
 
 class RecipeIngredient(models.Model):
@@ -119,10 +135,10 @@ class RecipeIngredient(models.Model):
         "Количество ингредиента",
         default=1,
         validators=(
-            validators.MinValueValidator(1,
-                                         message="Мин. количество \
-                                             ингридиентов 1"
-                                         ),
+            validators.MinValueValidator(
+                1,
+                message="Мин. количество ингридиентов 1",
+            ),
         ),
     )
 
@@ -138,8 +154,7 @@ class RecipeIngredient(models.Model):
         ]
 
     def __str__(self):
-        """Возвращает строковое представление ингредиента для рецепта."""
-        return f'{self.recipe} {self.ingredient}'
+        return f"{self.recipe} {self.ingredient}"
 
 
 class FavoritRecipe(models.Model):
@@ -157,19 +172,22 @@ class FavoritRecipe(models.Model):
         related_name="favorites",
         verbose_name="Избранный рецепт",
     )
+    date_added = DateTimeField(
+        verbose_name="Дата добавления", auto_now_add=True, editable=False
+    )
 
     class Meta:
         verbose_name = "Избранный рецепт"
         verbose_name_plural = "Избранные рецепты"
         ordering = ["-id"]
         constraints = [
-            models.UniqueConstraint(fields=["user", "recipe"],
-                                    name="unique_favorite"
-                                    )
+            models.UniqueConstraint(
+                fields=["user", "recipe"],
+                name="unique_favorite"
+            )
         ]
 
     def __str__(self):
-        """Возвращает строковое представление избранного рецепта."""
         return f"Пользователь {self.user} добавил \
             {self.recipe.name} в избранное."
 
@@ -195,11 +213,12 @@ class Cart(models.Model):
         verbose_name_plural = "Списки покупок"
         ordering = ["-id"]
         constraints = [
-            models.UniqueConstraint(fields=["user", "recipe"],
-                                    name="unique_recipe"
-                                    )]
+            models.UniqueConstraint(
+                fields=["user", "recipe"],
+                name="unique_recipe"
+            )
+        ]
 
     def __str__(self):
-        """Возвращает строковое представление списка покупок."""
         return f"Пользователь {self.user} добавил \
             {self.recipe.name} в покупки."
