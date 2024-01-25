@@ -44,7 +44,7 @@ MIDDLEWARE = [
 ROOT_URLCONF = "foodgram.urls"
 
 if DEBUG:
-    CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
+    CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*', '']
 if not DEBUG:
     CSRF_TRUSTED_ORIGINS = ['https://foodgramden.ddns.net', 'http://*']
 
