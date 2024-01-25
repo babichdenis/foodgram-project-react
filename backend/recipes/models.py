@@ -2,13 +2,10 @@ from colorfield.fields import ColorField
 from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
-from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX,
-                                STRLENGTH)
-from django.db.models import (
-    CheckConstraint,
-    UniqueConstraint,
-    DateTimeField,
-)
+from django.db.models import (CheckConstraint, DateTimeField, Q,
+                              UniqueConstraint)
+from foodgram.constants import MAX_CHAR_LENGTH, REGEX
+
 from recipes.validators import hex_color_validator
 from users.models import User
 
@@ -60,11 +57,7 @@ class Tag(models.Model):
         "Название тэга",
         max_length=MAX_CHAR_LENGTH
     )
-    color = ColorField(
-        "Цветовой HEX-код",
-        max_length=MAX_COLOR_LENGTH,
-        default="#FF0000",
-    )
+    color = ColorField(samples="#FFFFFF")
     slug = models.SlugField(
         "Slug",
         max_length=MAX_CHAR_LENGTH,
@@ -210,6 +203,7 @@ class FavoritRecipe(models.Model):
     date_added = DateTimeField(
         verbose_name="Дата добавления", auto_now_add=True, editable=False
     )
+
     class Meta:
         verbose_name = "Избранный рецепт"
         verbose_name_plural = "Избранные рецепты"
@@ -244,6 +238,7 @@ class Cart(models.Model):
     date_added = DateTimeField(
         verbose_name="Дата добавления", auto_now_add=True, editable=False
     )
+
     class Meta:
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
