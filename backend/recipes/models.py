@@ -3,8 +3,13 @@ from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
 from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX,
-                                REGEXCOLOR, STRLENGTH)
-
+                                STRLENGTH)
+from django.db.models import (
+    CheckConstraint,
+    UniqueConstraint,
+    DateTimeField,
+)
+from recipes.validators import hex_color_validator
 from users.models import User
 
 
@@ -21,12 +26,31 @@ class Ingredient(models.Model):
     )
 
     class Meta:
-        verbose_name = "Ингредиент"
-        verbose_name_plural = "Ингредиенты"
-        ordering = ["id"]
+        verbose_name = "Ингридиент"
+        verbose_name_plural = "Ингридиенты"
+        ordering = ("name",)
+        constraints = (
+            UniqueConstraint(
+                fields=("name", "measurement_unit"),
+                name="unique_for_ingredient",
+            ),
+            CheckConstraint(
+                check=Q(name__length__gt=0),
+                name="\n%(app_label)s_%(class)s_name is empty\n",
+            ),
+            CheckConstraint(
+                check=Q(measurement_unit__length__gt=0),
+                name="\n%(app_label)s_%(class)s_measurement_unit is empty\n",
+            ),
+        )
 
     def __str__(self):
         return f"{self.name}({self.measurement_unit})"
+
+    def clean(self):
+        self.name = self.name.lower()
+        self.measurement_unit = self.measurement_unit.lower()
+        super().clean()
 
 
 class Tag(models.Model):
@@ -40,12 +64,6 @@ class Tag(models.Model):
         "Цветовой HEX-код",
         max_length=MAX_COLOR_LENGTH,
         default="#FF0000",
-        validators=[
-            RegexValidator(
-                regex=REGEXCOLOR,
-                message="Введите правильный цвет в формате HEX",
-            )
-        ],
     )
     slug = models.SlugField(
         "Slug",
@@ -62,10 +80,16 @@ class Tag(models.Model):
     class Meta:
         verbose_name = "Тэг"
         verbose_name_plural = "Тэги"
-        ordering = ["id"]
+        ordering = ("name",)
 
-    def __str__(self):
-        return self.name
+    def __str__(self) -> str:
+        return f"{self.name} (цвет: {self.color})"
+
+    def clean(self) -> None:
+        self.name = self.name.strip().lower()
+        self.slug = self.slug.strip().lower()
+        self.color = hex_color_validator(self.color)
+        return super().clean()
 
 
 class Recipe(models.Model):
@@ -105,14 +129,23 @@ class Recipe(models.Model):
         verbose_name="Тэги",
         related_name="recipes"
     )
+    pub_date = DateTimeField(
+        verbose_name="Дата публикации",
+        auto_now_add=True,
+        editable=False,
+    )
 
     class Meta:
         verbose_name = "Рецепт"
         verbose_name_plural = "Рецепты"
-        ordering = ("-id",)
+        ordering = ("-pub_date",)
 
     def __str__(self):
-        return f'{self.name}: {self.text[:STRLENGTH]}'
+        return f"{self.name}. Автор: {self.author.username}"
+
+    def clean(self) -> None:
+        self.name = self.name.capitalize()
+        return super().clean()
 
 
 class RecipeIngredient(models.Model):
@@ -144,13 +177,16 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = "Количество ингредиента"
         verbose_name_plural = "Количество ингредиентов"
-        ordering = ["-id"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["recipe", "ingredient"],
+        ordering = ("recipe",)
+        constraints = (
+            UniqueConstraint(
+                fields=(
+                    "recipe",
+                    "ingredients",
+                ),
                 name="unique_ingredient",
-            )
-        ]
+            ),
+        )
 
     def __str__(self):
         return f"{self.recipe} {self.ingredient}"
@@ -171,7 +207,9 @@ class FavoritRecipe(models.Model):
         related_name="favorites",
         verbose_name="Избранный рецепт",
     )
-
+    date_added = DateTimeField(
+        verbose_name="Дата добавления", auto_now_add=True, editable=False
+    )
     class Meta:
         verbose_name = "Избранный рецепт"
         verbose_name_plural = "Избранные рецепты"
@@ -203,7 +241,9 @@ class Cart(models.Model):
         related_name="cart",
         verbose_name="Рецепт",
     )
-
+    date_added = DateTimeField(
+        verbose_name="Дата добавления", auto_now_add=True, editable=False
+    )
     class Meta:
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
