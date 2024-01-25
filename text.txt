@@ -18,9 +18,10 @@ git checkout d14ff27
 
 pip freeze > requirements.txt
 
-
+https://nodejs.org/en/blog/release/v16.16.0
 
 npm install
+npm install react-facebook-login --legacy-peer-deps
 
 brew install postgresql
 createdb postgres
@@ -39,7 +40,7 @@ docker-compose up --build
 
 sudo nano /etc/nginx/sites-enabled/default
 
-npm install react-facebook-login --legacy-peer-deps
+rm -f tmp.db db.sqlite3 rm -r recipes/migrations rm -r users/migrations python manage.py makemigrations users python manage.py makemigrations recipes python manage.py migrate
 
 sudo docker compose -f docker-compose.copy.yml pull
 sudo docker compose -f docker-compose.copy.yml down

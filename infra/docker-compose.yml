@@ -1,4 +1,16 @@
 version: '3.3'
+
+volumes:
+  foodgram_static_volume:
+  foodgram_media_volume:
+  foodgram_db_volume:
+  redoc:
+
+
+networks:
+  default:
+    name: foodgram-network
+
 services:
 
   frontend:
@@ -22,6 +34,7 @@ services:
     volumes:
       - foodgram_static_volume:/app/backend_static/
       - foodgram_media_volume:/app/media/
+      - redoc:/app/api/docs/
     depends_on:
       - db
     env_file:
@@ -40,10 +53,3 @@ services:
       - foodgram_media_volume:/var/html/media/
     depends_on:
       - backend
-
-volumes:
-  foodgram_static_volume:
-  foodgram_media_volume:
-  foodgram_db_volume:
-
-
