@@ -2,24 +2,42 @@ import csv
 
 from django.core.management import BaseCommand
 from foodgram.settings import BASE_DIR
+
 from recipes.models import Ingredient, Tag
 
-TABLES = {
-    Ingredient: 'ingredients.csv',
-    Tag: 'tags.csv'
-}
+TABLES = (
+    (Tag, 'tags.csv'),
+    (Ingredient, 'ingredients.csv')
+)
+fields = (
+    ('name', 'color', 'slug'),
+    ('name', 'measurement_unit')
+)
 
-CSV_FILE_PATH = BASE_DIR / 'data'
+csv_file_path = BASE_DIR / 'data'
 
 
 class Command(BaseCommand):
+    help = 'Команда для создания БД на основе имеющихся csv файлов'
 
     def handle(self, *args, **kwargs):
-        for model, csv_f in TABLES.items():
-            with open(
-                    CSV_FILE_PATH / csv_f, encoding='utf-8'
-            ) as csv_file:
-                for record in csv.DictReader(csv_file):
-                    model.objects.get_or_create(**record)
-        self.stdout.write(
-            self.style.SUCCESS('Success write to database'))
+        print("Старт импорта")
+        try:
+            for model, csv_f in TABLES:
+                with open(
+                    f'{csv_file_path}/{csv_f}', encoding='utf-8'
+                ) as f:
+                    reader = csv.DictReader(f, delimiter=',')
+                    for row in reader:
+                        if model in fields:
+                            row[fields[model][2]] = row.pop(fields[model][0])
+                        obj, created = model.objects.get_or_create(**row)
+                    if created:
+                        print(f'{obj} загружен в таблицу {model.__name__}')
+            print("Загрузка данных завершена.")
+
+        except Exception as error:
+            print(f"Сбой в работе импорта: {error}.")
+
+        finally:
+            print("Завершена работа импорта.")

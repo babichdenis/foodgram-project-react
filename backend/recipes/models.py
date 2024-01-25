@@ -3,12 +3,6 @@ from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
 from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX)
-from django.db.models import (
-    CheckConstraint,
-    UniqueConstraint,
-    DateTimeField,
-    Q,
-)
 from recipes.validators import hex_color_validator
 from users.models import User
 
@@ -115,11 +109,6 @@ class Recipe(models.Model):
         verbose_name="Тэги",
         related_name="recipes"
     )
-    pub_date = DateTimeField(
-        verbose_name="Дата публикации",
-        auto_now_add=True,
-        editable=False,
-    )
 
     class Meta:
         verbose_name = "Рецепт"
@@ -184,9 +173,6 @@ class FavoritRecipe(models.Model):
         related_name="favorites",
         verbose_name="Избранный рецепт",
     )
-    date_added = DateTimeField(
-        verbose_name="Дата добавления", auto_now_add=True, editable=False
-    )
 
     class Meta:
         verbose_name = "Избранный рецепт"
@@ -218,9 +204,6 @@ class Cart(models.Model):
         on_delete=models.CASCADE,
         related_name="cart",
         verbose_name="Рецепт",
-    )
-    date_added = DateTimeField(
-        verbose_name="Дата добавления", auto_now_add=True, editable=False
     )
 
     class Meta:
