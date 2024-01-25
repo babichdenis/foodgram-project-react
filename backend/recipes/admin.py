@@ -137,7 +137,7 @@ class SubscribeAdmin(admin.ModelAdmin):
 class FavoritRecipeAdmin(admin.ModelAdmin):
     """Административная панель для управления избранными рецептами."""
 
-    list_display = ("user", "recipe", "date_added")
+    list_display = ("user", "recipe",)
     search_fields = ("user__username", "recipe__name")
     list_editable = ("recipe",)
     list_filter = ("recipe",)
