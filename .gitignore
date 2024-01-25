@@ -110,7 +110,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
-
+text.txt
 # Spyder project settings
 .spyderproject
 .spyproject
@@ -139,4 +139,4 @@ media/
 migrations/
 .DS_Store
 node_modules/
-text.txt
+

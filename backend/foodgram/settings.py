@@ -43,7 +43,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "foodgram.urls"
 
-CSRF_TRUSTED_ORIGINS = ["https://foodgramden.ddns.net"]
+if DEBUG:
+    CSRF_TRUSTED_ORIGINS = ['http://*', 'https://*']
+if not DEBUG:
+    CSRF_TRUSTED_ORIGINS = ["https://foodgramden.ddns.net"]
 
 TEMPLATES_DIR = os.path.join(BASE_DIR, 'templates/')
 

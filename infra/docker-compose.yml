@@ -51,5 +51,6 @@ services:
       - ../docs/:/usr/share/nginx/html/api/docs/
       - foodgram_static_volume:/var/html/backend_static/
       - foodgram_media_volume:/var/html/media/
+      - redoc:/usr/share/nginx/html/api/docs/
     depends_on:
       - backend
