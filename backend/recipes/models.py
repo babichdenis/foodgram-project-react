@@ -2,10 +2,13 @@ from colorfield.fields import ColorField
 from django.core import validators
 from django.core.validators import RegexValidator
 from django.db import models
-from django.db.models import (CheckConstraint, DateTimeField, Q,
-                              UniqueConstraint)
-from foodgram.constants import MAX_CHAR_LENGTH, REGEX
-
+from foodgram.constants import (MAX_CHAR_LENGTH, MAX_COLOR_LENGTH, REGEX)
+from django.db.models import (
+    CheckConstraint,
+    UniqueConstraint,
+    DateTimeField,
+    Q,
+)
 from recipes.validators import hex_color_validator
 from users.models import User
 
@@ -26,20 +29,6 @@ class Ingredient(models.Model):
         verbose_name = "Ингридиент"
         verbose_name_plural = "Ингридиенты"
         ordering = ("name",)
-        constraints = (
-            UniqueConstraint(
-                fields=("name", "measurement_unit"),
-                name="unique_for_ingredient",
-            ),
-            CheckConstraint(
-                check=Q(name__length__gt=0),
-                name="\n%(app_label)s_%(class)s_name is empty\n",
-            ),
-            CheckConstraint(
-                check=Q(measurement_unit__length__gt=0),
-                name="\n%(app_label)s_%(class)s_measurement_unit is empty\n",
-            ),
-        )
 
     def __str__(self):
         return f"{self.name}({self.measurement_unit})"
@@ -57,7 +46,11 @@ class Tag(models.Model):
         "Название тэга",
         max_length=MAX_CHAR_LENGTH
     )
-    color = ColorField(samples="#FFFFFF")
+    color = ColorField(
+        "Цветовой HEX-код",
+        max_length=MAX_COLOR_LENGTH,
+        default="#FF0000",
+    )
     slug = models.SlugField(
         "Slug",
         max_length=MAX_CHAR_LENGTH,
@@ -136,7 +129,7 @@ class Recipe(models.Model):
     def __str__(self):
         return f"{self.name}. Автор: {self.author.username}"
 
-    def clean(self) -> None:
+    def clean(self):
         self.name = self.name.capitalize()
         return super().clean()
 
@@ -171,15 +164,6 @@ class RecipeIngredient(models.Model):
         verbose_name = "Количество ингредиента"
         verbose_name_plural = "Количество ингредиентов"
         ordering = ("recipe",)
-        constraints = (
-            UniqueConstraint(
-                fields=(
-                    "recipe",
-                    "ingredients",
-                ),
-                name="unique_ingredient",
-            ),
-        )
 
     def __str__(self):
         return f"{self.recipe} {self.ingredient}"
@@ -243,12 +227,6 @@ class Cart(models.Model):
         verbose_name = "Список покупок"
         verbose_name_plural = "Списки покупок"
         ordering = ["-id"]
-        constraints = [
-            models.UniqueConstraint(
-                fields=["user", "recipe"],
-                name="unique_recipe"
-            )
-        ]
 
     def __str__(self):
         return f"Пользователь {self.user} добавил \
