@@ -14,7 +14,7 @@ networks:
 services:
 
   frontend:
-    image: babichdenis/foodgram_frontend:latest
+    image: nucluster/foodgram_frontend:latest
     container_name: foodgram-frontend
     volumes:
       - ../frontend/:/app/result_build/
@@ -28,13 +28,12 @@ services:
       - ./.env
 
   backend:
-    image: babichdenis/foodgram_backend:latest
+    image: nucluster/foodgram_backend:latest
     container_name: foodgram-backend
     restart: always
     volumes:
       - foodgram_static_volume:/app/backend_static/
       - foodgram_media_volume:/app/media/
-      - redoc:/app/api/docs/
     depends_on:
       - db
     env_file:

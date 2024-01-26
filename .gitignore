@@ -36,7 +36,7 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-
+text.txt
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -80,7 +80,7 @@ target/
 # IPython
 profile_default/
 ipython_config.py
-
+text.txt
 # pyenv
 .python-version
 
@@ -109,7 +109,7 @@ env/
 venv/
 ENV/
 env.bak/
-venv.bak/
+
 text.txt
 # Spyder project settings
 .spyderproject
