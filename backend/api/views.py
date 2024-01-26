@@ -50,7 +50,7 @@ class CustomUserViewSet(UserViewSet):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, permission_classes=[IsAuthenticated])
-    def subscription(self, request):
+    def subscriptions(self, request):
         user = request.user
         queryset = User.objects.filter(subscribe__user=user)
         pages = self.paginate_queryset(queryset)
