@@ -45,6 +45,7 @@ jobs:
           host: ${{ secrets.HOST }}
           port: ${{ secrets.PORT }}
           username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd foodgram/infra
             docker compose down
