@@ -1,7 +1,7 @@
 import os
 from pathlib import Path
-from django.core.management.utils import get_random_secret_key
 
+from django.core.management.utils import get_random_secret_key
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -27,6 +27,7 @@ INSTALLED_APPS = [
     'djoser',
     'rest_framework',
     'rest_framework.authtoken',
+    'django_filters',
 
     'users.apps.UsersConfig',
     'recipes.apps.RecipesConfig',
