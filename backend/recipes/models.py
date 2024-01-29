@@ -1,18 +1,26 @@
+from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.db import models
+from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH
 
 User = get_user_model()
 
 
 class Ingredient(models.Model):
     """Модель ингредиента."""
-    name = models.CharField('Ингредиент', max_length=200)
-    measurement_unit = models.CharField('Ед. измерения', max_length=50)
+    name = models.CharField(
+        "Ингредиент",
+        max_length=MAX_CHAR_LENGTH,
+    )
+    measurement_unit = models.CharField(
+        "Единица измерения",
+        max_length=MAX_CHAR_LENGTH,
+    )
 
     class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
-        ordering = ['id']
+        verbose_name = "Ингридиент"
+        verbose_name_plural = "Ингридиенты"
+        ordering = ("name",)
 
     def __str__(self):
         return f'{self.name}({self.measurement_unit})'
@@ -20,9 +28,13 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
     """Модель тега."""
-    name = models.CharField('Тэг', max_length=200)
-    color = models.CharField('Цветовой HEX-код', max_length=7)
-    slug = models.SlugField('Slug', max_length=50, unique=True)
+    name = models.CharField('Тэг', max_length=MAX_CHAR_LENGTH)
+    color = ColorField(
+        "Цветовой HEX-код",
+        max_length=MAX_COLOR_LENGTH,
+        default="#FF0000",
+    )
+    slug = models.SlugField('Slug', max_length=MAX_CHAR_LENGTH, unique=True)
 
     class Meta:
         verbose_name = 'Тэг'
@@ -39,7 +51,8 @@ class Recipe(models.Model):
         User, on_delete=models.CASCADE, related_name='recipes',
         verbose_name='Автор рецепта'
     )
-    name = models.CharField(max_length=200, verbose_name='Название рецепта')
+    name = models.CharField(max_length=MAX_CHAR_LENGTH,
+                            verbose_name='Название рецепта')
     image = models.ImageField(
         upload_to='recipes/', verbose_name='Изображение рецепта'
     )

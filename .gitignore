@@ -140,3 +140,4 @@ migrations/
 .DS_Store
 node_modules/
 
+text.txt
