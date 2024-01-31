@@ -1,6 +1,11 @@
+from foodgram.constants import MAX_PAGE_SIZE
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.settings import api_settings
 
 
 class Pagination(PageNumberPagination):
-    page_size = 5
-    page_size_query_param = 'limit'
+    """Кастомная пагинация."""
+
+    page_size = api_settings.PAGE_SIZE
+    page_size_query_param = "limit"
+    max_page_size = MAX_PAGE_SIZE

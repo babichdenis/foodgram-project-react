@@ -104,7 +104,7 @@ class TagAdmin(admin.ModelAdmin):
         )
 
     color_code.short_description = "Название тэга"
-    list_per_page = MAX_PAGE_SIZE
+#    list_per_page = MAX_PAGE_SIZE
 
 
 @admin.register(Ingredient)
@@ -117,7 +117,7 @@ class IngredientAdmin(admin.ModelAdmin):
         "measurement_unit",
     )
     search_fields = ("^name",)
-    list_per_page = MAX_PAGE_SIZE
+#    list_per_page = MAX_PAGE_SIZE
 
 
 @admin.register(Subscription)
