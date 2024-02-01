@@ -5,6 +5,8 @@ from recipes.models import Recipe, Tag, User
 
 
 class RecipeFilter(filters.FilterSet):
+    """ Фильтр для рецепта. """
+
     author = filters.ModelChoiceFilter(queryset=User.objects.all())
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
@@ -12,12 +14,21 @@ class RecipeFilter(filters.FilterSet):
         queryset=Tag.objects.all(),
     )
 
-    is_favorited = filters.NumberFilter(method='_is_favorited')
-    is_in_shopping_cart = filters.NumberFilter(method='_is_in_shopping_cart')
+    is_favorited = filters.BooleanFilter(
+        field_name='is_favorited',
+        method='filter_favorited')
+    is_in_shopping_cart = filters.BooleanFilter(
+        field_name='is_in_shopping_cart',
+        method='filter_in_shopping_cart')
 
     class Meta:
         model = Recipe
-        fields = ('tags', 'author', 'is_favorited', 'is_in_shopping_cart')
+        fields = (
+            'tags',
+            'author',
+            'is_favorited',
+            'is_in_shopping_cart'
+        )
 
     def _is_favorited(self, queryset, name, value):
         if value and self.request.user.is_authenticated:
@@ -31,4 +42,6 @@ class RecipeFilter(filters.FilterSet):
 
 
 class IngredientSearchFilter(SearchFilter):
+    """ Поиск по имени Ингредиента. """
+
     search_param = 'name'

@@ -66,10 +66,20 @@ class SubscribeSerializer(UserSerializer):
 
     class Meta(UserSerializer.Meta):
         fields = (
-            'id', 'email', 'username', 'first_name', 'last_name',
-            'is_subscribed', 'recipes', 'recipes_count',
+            'id',
+            'email',
+            'username',
+            'first_name',
+            'last_name',
+            'is_subscribed',
+            'recipes',
+            'recipes_count',
         )
-        read_only_fields = ('email', 'username', 'first_name', 'last_name')
+        read_only_fields = ('email',
+                            'username',
+                            'first_name',
+                            'last_name'
+                            )
 
     def get_is_subscribed(self, obj):
         """Проверяет подписку на текущего пользователя."""
@@ -201,23 +211,17 @@ class RecipePostSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('author',)
 
-    def validate_ingredients(self, ingredients):
-        if not ingredients:
-            raise serializers.ValidationError(
-                'Ингредиенты должны быть заданы.'
-            )
-        ingredient_tuples = [
-            (ingredient['ingredient'],
-             ingredient['amount'])
-            for ingredient in ingredients
-        ]
-
-        if len(set(ingredient_tuples)) != len(ingredients):
-            raise serializers.ValidationError(
-                'Такой ингредиент уже в рецепте.'
-            )
-
-        return ingredients
+    def validate_ingredients(self, value):
+        """Проверяет, чтобы ингредиенты для одного рецепта не повтоялись."""
+        unique_ingredients_pk = []
+        for ingredient in value:
+            current_pk = ingredient['ingredient'].pk
+            if current_pk in unique_ingredients_pk:
+                raise serializers.ValidationError(
+                    'Ингредиенты в списке не должны повторяться.'
+                )
+            unique_ingredients_pk.append(current_pk)
+        return value
 
     def validate_image(self, image):
         if not image:
