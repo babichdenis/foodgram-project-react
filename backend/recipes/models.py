@@ -118,7 +118,7 @@ class RecipeIngredient(models.Model):
         default=0,
         validators=(
             MinValueValidator(
-                1, 'Количество должно быть не меньше 1',
+                0, 'Количество должно быть не меньше 1',
             ),
             MaxValueValidator(
                 3000,
@@ -140,6 +140,11 @@ class RecipeIngredient(models.Model):
     def __str__(self):
         return (f'{self.recipe}: {self.ingredient.name},'
                 f' {self.amount}, {self.ingredient.measurement_unit}')
+
+    def save(self, *args, **kwargs):
+        """Добавлена проверка валидаторами перед сохранением в БД."""
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 
 class FavoritRecipe(models.Model):
@@ -172,7 +177,7 @@ class FavoritRecipe(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user}, {self.recipe.name}'
+        return f'Пользователь: {self.user} добавил {self.recipe.name}'
 
 
 class Cart(models.Model):
