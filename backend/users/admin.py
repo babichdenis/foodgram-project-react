@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
-from recipes.models import FavoriteRecipe, Cart
+from recipes.models import FavoritRecipe, Cart
 from .models import Subscription
 
 User = get_user_model()
@@ -13,7 +13,7 @@ admin.site.empty_value_display = "Не задано"
 
 
 class FavoriteInline(admin.TabularInline):
-    model = FavoriteRecipe
+    model = FavoritRecipe
     extra = 1
 
 
