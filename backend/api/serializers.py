@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from djoser.serializers import UserCreateSerializer, UserSerializer
+from foodgram import constants
 from rest_framework import serializers, status
 
 from api.fields import Base64ImageField, Hex2NameColor
@@ -212,29 +213,6 @@ class RecipePostSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ('author',)
 
-    def validate(self, data):
-        ingredient_ids = set()
-        tags_ids = set()
-        tags = data.get('tags', [])
-        if not tags:
-            raise serializers.ValidationError('Пустое поля tags!!')
-        ingredients = data.get('ingredients', [])
-        if not ingredients:
-            raise serializers.ValidationError('Пустое поля ingredients!!')
-        for ingredient in ingredients:
-            if ingredient.get('id') in ingredient_ids:
-                raise serializers.ValidationError(
-                    'Ингредиенты не должны повторяться!!'
-                )
-            ingredient_ids.add(ingredient.get('id'))
-        for tag in tags:
-            if tag in tags_ids:
-                raise serializers.ValidationError(
-                    'Теги не должны повторяться!!'
-                )
-            tags_ids.add(tag)
-        return data
-
     def validate_image(self, image):
         if not image:
             raise serializers.ValidationError(
@@ -271,18 +249,15 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return recipe
 
     def update(self, instance, validated_data):
-
-        instance.image = validated_data.get('image', instance.image)
-        instance.name = validated_data.get('name', instance.name)
-        instance.text = validated_data.get('text', instance.text)
-        instance.cooking_time = validated_data.get(
-            'cooking_time',
-            instance.cooking_time,
+        """ Обновление рецепта. """
+        instance.tags.clear()
+        instance.tags.set(validated_data.pop('tags'))
+        RecipeIngredient.objects.filter(recipe=instance).delete()
+        self.__create_ingredients(
+            recipe=instance,
+            ingredients=validated_data.pop('ingredients')
         )
-        instance.tags.set(validated_data.get('tags'))
-        ingredients = validated_data.pop('ingredients', [])
-        self.create_ingredients(ingredients, instance)
-        instance.save()
+        super().update(instance, validated_data)
         return instance
 
     def to_representation(self, instance):
@@ -291,6 +266,41 @@ class RecipePostSerializer(serializers.ModelSerializer):
         if isinstance(instance, Recipe):
             serializer = RecipeSerializer(instance)
         return serializer.data
+
+    def validate(self, data):
+        """ Валидация различных данных на уровне сериализатора. """
+        ingredients = data.get('ingredients')
+        errors = []
+        if not ingredients:
+            errors.append('Добавьте минимум один ингредиент для рецепта.')
+        added_ingredients = []
+        for ingredient in ingredients:
+            if int(ingredient['amount']) < constants.MIN_INGREDIENT_AMOUNT:
+                errors.append(
+                    f'Количество ингредиента с id {ingredient["id"]} должно '
+                    f'быть целым и не меньше '
+                    f'{constants.MIN_INGREDIENT_AMOUNT}.'
+                )
+            if ingredient['id'] in added_ingredients:
+                errors.append(
+                    'Дважды один тот же ингредиент в рецепт поместить нельзя.'
+                )
+            added_ingredients.append(ingredient['id'])
+        cooking_time = data.get('cooking_time')
+        if cooking_time < constants.MIN_COOKING_TIME:
+            errors.append(
+                f'Время приготовления должно быть не меньше '
+                f'{constants.MIN_COOKING_TIME} минут(ы).'
+            )
+        if cooking_time > constants.MAX_COOKING_TIME:
+            errors.append(
+                f'Время приготовления должно быть не больше '
+                f'{constants.MAX_COOKING_TIME} минут(ы).'
+            )
+        if errors:
+            raise serializers.ValidationError({'errors': errors})
+        data['ingredients'] = ingredients
+        return data
 
 
 class FavoritRecipeSerializer(RecipeSerializer):
