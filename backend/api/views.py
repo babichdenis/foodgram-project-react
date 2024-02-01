@@ -29,8 +29,11 @@ class CustomUserViewSet(UserViewSet):
     def get_queryset(self):
         return User.objects.all()
 
-    @action(detail=True, methods=['post', 'delete'],
-            permission_classes=[IsAuthenticated])
+    @action(
+        detail=True,
+        methods=['POST', 'DELETE'],
+        permission_classes=(IsAuthenticated,),
+    )
     def subscribe(self, request, **kwargs):
         user = get_object_or_404(User, username=request.user)
         author = get_object_or_404(User, id=self.kwargs.get('id'))
@@ -70,6 +73,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     filter_backends = (IngredientSearchFilter,)
     search_fields = ('^name',)
+    pagination_class = None
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
@@ -89,21 +93,39 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return RecipePostSerializer
         return RecipeSerializer
 
-    @action(detail=True, methods=['post', 'delete'],
+    @action(detail=True,
+            methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
     def favorite(self, request, **kwargs):
-        user = get_object_or_404(User, username=request.user)
-        recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
+        user = get_object_or_404(
+            User,
+            username=request.user
+        )
+        recipe = get_object_or_404(
+            Recipe,
+            id=self.kwargs.get('pk')
+        )
 
         if request.method == 'POST':
             serializer = FavoritRecipeSerializer(
-                recipe, data=request.data, context={'request': request})
+                recipe,
+                data=request.data,
+                context={'request': request}
+            )
             serializer.is_valid(raise_exception=True)
-            FavoritRecipe.objects.create(user=user, recipe=recipe)
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            FavoritRecipe.objects.create(
+                user=user,
+                recipe=recipe
+            )
+            return Response(
+                serializer.data,
+                status=status.HTTP_201_CREATED
+            )
 
         favorite_recipe = get_object_or_404(
-            FavoritRecipe, user=user, recipe=recipe
+            FavoritRecipe,
+            user=user,
+            recipe=recipe
         )
         favorite_recipe.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -111,14 +133,26 @@ class RecipeViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post', 'delete'],
             permission_classes=[IsAuthenticated])
     def shopping_cart(self, request, **kwargs):
-        user = get_object_or_404(User, username=request.user)
-        recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
+        user = get_object_or_404(
+            User,
+            username=request.user
+        )
+        recipe = get_object_or_404(
+            Recipe,
+            id=self.kwargs.get('pk')
+        )
 
         if request.method == 'POST':
             serializer = CartSerializer(
-                recipe, data=request.data, context={'request': request})
+                recipe,
+                data=request.data,
+                context={'request': request}
+            )
             serializer.is_valid(raise_exception=True)
-            Cart.objects.create(user=user, recipe=recipe)
+            Cart.objects.create(
+                user=user,
+                recipe=recipe
+            )
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
         cart_recipe = get_object_or_404(
@@ -144,7 +178,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             .annotate(sum_amount=Sum('amount')).order_by()
         )
 
-        today = date_format(timezone.now(), use_l10n=True)
+        today = date_format(
+            timezone.now(),
+            use_l10n=True
+        )
         headline = (
             f'Дата: {today} \n\n'
             f'Список покупок: \n\n'
