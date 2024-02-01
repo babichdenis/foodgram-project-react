@@ -3,7 +3,6 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from recipes.models import FavoritRecipe, Cart
-from .models import Subscription
 
 User = get_user_model()
 
@@ -46,10 +45,3 @@ class UserAdmin(UserAdmin):
     )
     inlines = (FavoriteInline, ShoppingCartInline)
     ordering = ('username', )
-
-
-@admin.register(Subscription)
-class SubscribeAdmin(admin.ModelAdmin):
-    """Oтображение в админке модели Subscribe"""
-
-    list_display = ('author', 'user')
