@@ -2,6 +2,7 @@ from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from django.db.models import DateTimeField
 from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH
 
 User = get_user_model()
@@ -130,7 +131,7 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количество ингредиентов'
-        ordering = ['-id']
+        ordering = ('-id')
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
@@ -153,11 +154,16 @@ class FavoritRecipe(models.Model):
         on_delete=models.CASCADE,
         verbose_name='Рецепт',
         related_name='favorites')
+    date_added = DateTimeField(
+        'Дата добавления',
+        auto_now_add=True,
+        editable=False
+    )
 
     class Meta:
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты пользователя'
-        ordering = ['-id']
+        ordering = ('-id')
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
@@ -187,7 +193,7 @@ class Cart(models.Model):
     class Meta:
         verbose_name = "Рецепт в корзине"
         verbose_name_plural = "Рецепты в корзине"
-        ordering = ['-id']
+        ordering = ('-id')
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
