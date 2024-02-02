@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH
+from colorfield.fields import ColorField
 
 User = get_user_model()
 
@@ -26,33 +27,21 @@ class Ingredient(models.Model):
 
 
 class Tag(models.Model):
-    ORANGE = '#FFA500'
-    GREEN = '#008000'
-    YELLOW = '#FFFF00'
-    BLUE = '#0000FF'
 
-    COLOR_CHOICES = [
-        (ORANGE, 'Оранжевый'),
-        (GREEN, 'Зеленый'),
-        (YELLOW, 'Желтый'),
-        (BLUE, 'Синий'),
-    ]
-    name = models.CharField(
+    name = models.ColorField(
         max_length=MAX_CHAR_LENGTH,
         unique=True,
         verbose_name='Название тэга'
     )
-    color = models.CharField(
+    color = ColorField(
+        "Цветовой HEX-код",
         max_length=MAX_COLOR_LENGTH,
-        unique=True,
-        choices=COLOR_CHOICES,
-        default=BLUE,
-        verbose_name='Цвет'
+        default="#FF0000",
     )
     slug = models.SlugField(
+        'Slug',
         max_length=MAX_CHAR_LENGTH,
-        unique=True,
-        verbose_name='Слаг'
+        unique=True
     )
 
     class Meta:
