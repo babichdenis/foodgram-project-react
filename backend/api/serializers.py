@@ -2,6 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from djoser.serializers import UserCreateSerializer, UserSerializer
 from foodgram import constants
 from rest_framework import serializers, status
+from rest_framework.validators import UniqueTogetherValidator
 
 from api.fields import Base64ImageField, Hex2NameColor
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
@@ -326,20 +327,15 @@ class CartSerializer(RecipeSerializer):
 
     class Meta:
         model = Cart
-        fields = ("id", "name", "image", "cooking_time")
-        read_only_fields = ('name', 'cooking_time', 'image')
+        fields = (
+            'user',
+            'recipe',
+        )
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Cart.objects.all(),
+                fields=('user', 'recipe'),
+                message='Рецепт уже добавлен!'
 
-    def validate(self, data):
-        user = self.context['request'].user
-        recipe = data['recipe']
-        cart = user.shopingcarts.filter(recipe=recipe).exists()
-
-        if self.context.get('request').method == 'POST' and cart:
-            raise serializers.ValidationError(
-                'Этот рецепт уже добавлен в корзину'
             )
-        if self.context.get('request').method == 'DELETE' and not cart:
-            raise serializers.ValidationError(
-                'Этот рецепт отсутствует в корзине'
-            )
-        return data
+        ]
