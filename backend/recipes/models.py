@@ -131,20 +131,11 @@ class RecipeIngredient(models.Model):
     class Meta:
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количество ингредиентов'
-        ordering = ('-id',)
+        ordering = ['-id']
         constraints = [
             models.UniqueConstraint(
                 fields=['recipe', 'ingredient'],
                 name='unique_ingredient')]
-
-    def __str__(self):
-        return (f'{self.recipe}: {self.ingredient.name},'
-                f' {self.amount}, {self.ingredient.measurement_unit}')
-
-    def save(self, *args, **kwargs):
-        """Добавлена проверка валидаторами перед сохранением в БД."""
-        self.full_clean()
-        super().save(*args, **kwargs)
 
 
 class FavoritRecipe(models.Model):
