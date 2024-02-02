@@ -325,17 +325,18 @@ class FavoritRecipeSerializer(RecipeSerializer):
 class CartSerializer(RecipeSerializer):
     """Сериализатор добавления рецепта в корзину"""
 
+    user = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
+
     class Meta:
         model = Cart
-        fields = (
-            'user',
-            'recipe',
-        )
+        fields = ('user', 'recipe')
         validators = [
             UniqueTogetherValidator(
                 queryset=Cart.objects.all(),
-                fields=('user', 'recipe'),
-                message='Рецепт уже добавлен!'
-
+                fields=('user', 'recipe')
             )
         ]
