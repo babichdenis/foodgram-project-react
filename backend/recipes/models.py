@@ -28,7 +28,7 @@ class Ingredient(models.Model):
 
 class Tag(models.Model):
 
-    name = models.ColorField(
+    name = models.CharField(
         max_length=MAX_CHAR_LENGTH,
         unique=True,
         verbose_name='Название тэга'
