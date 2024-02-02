@@ -1,5 +1,5 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from rest_framework import serializers, status
+from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
 
 from api.fields import Base64ImageField, Hex2NameColor
@@ -64,13 +64,6 @@ class SubscribeSerializer(UserSerializer):
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
-    def get_is_subscribed(self, obj):
-        """Проверяет подписку на текущего пользователя."""
-        user = self.context.get('request').user
-        if user.is_anonymous:
-            return False
-        return user.subscriber.filter(author=obj).exists()
-
     def get_recipes(self, obj):
         """Показывает рецепты текущего пользователя."""
         request = self.context.get('request')
@@ -78,28 +71,15 @@ class SubscribeSerializer(UserSerializer):
         recipes = obj.recipes.all()
         if recipes_limit:
             recipes = recipes[: int(recipes_limit)]
-        serializer = RecipeProfileSerializer(recipes,
-                                             many=True, read_only=True)
+        serializer = RecipeProfileSerializer(
+            recipes,
+            many=True,
+            read_only=True)
         return serializer.data
 
     def get_recipes_count(self, obj):
         """Счетчик рецептов текущего пользователя."""
         return obj.recipes.count()
-
-    def validate(self, data):
-        author = self.instance
-        user = self.context.get('request').user
-        if Subscription.objects.filter(author=author, user=user).exists():
-            raise serializers.ValidationError(
-                detail='Подписка уже существует',
-                code=status.HTTP_400_BAD_REQUEST,
-            )
-        if user == author:
-            raise serializers.ValidationError(
-                detail='Нельзя подписаться на самого себя',
-                code=status.HTTP_400_BAD_REQUEST,
-            )
-        return data
 
 
 class TagSerializer(serializers.ModelSerializer):
