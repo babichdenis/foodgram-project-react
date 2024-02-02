@@ -7,7 +7,13 @@ from rest_framework.validators import UniqueTogetherValidator
 from api.fields import Base64ImageField, Hex2NameColor
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
                             RecipeIngredient, Tag)
+from rest_framework.serializers import (CurrentUserDefault, HiddenField,
+                                        ModelSerializer,
+                                        PrimaryKeyRelatedField,
+                                        )
 from users.models import Subscription, User
+from rest_framework.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 
 
 class UserListSerializer(UserSerializer):
@@ -322,21 +328,61 @@ class FavoritRecipeSerializer(RecipeSerializer):
         return data
 
 
+class SimpleRecipeSerializer(ModelSerializer):
+    """
+    Сериализатор для упрощённого отображения рецептов при работе с подписками
+    и списками избранного и покупок."""
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+        read_only_fields = fields
+
+
 class CartSerializer(RecipeSerializer):
     """Сериализатор добавления рецепта в корзину"""
 
-    user = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
+    user = HiddenField(default=CurrentUserDefault())
+    recipe = PrimaryKeyRelatedField(queryset=Recipe.objects.all())
 
     class Meta:
         model = Cart
         fields = ('user', 'recipe')
-        validators = [
+        validators = (
             UniqueTogetherValidator(
                 queryset=Cart.objects.all(),
                 fields=('user', 'recipe')
+            ),
+        )
+
+    def is_valid(self, raise_exception=False):
+        if self.context['request'].method == 'DELETE':
+            return True
+        return super().is_valid(raise_exception=True)
+
+    def save(self, **kwargs):
+        instance = super().save(**kwargs)
+        serializer = self.__class__(instance, context=self.context)
+        return serializer.data
+
+    def delete(self):
+        request = self.context.get('request')
+        user = request.user
+        recipe_id = self.context.get('recipe_id')
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        favorite = Cart.objects.filter(
+            user=user, recipe=recipe
+        )
+        if not favorite.exists():
+            raise ValidationError(
+                detail=(
+                    f'{recipe.name} не в корзине.'
+                ),
+                code=status.HTTP_400_BAD_REQUEST
             )
-        ]
+        favorite.delete()
+
+    def to_representation(self, instance):
+        recipe_serializer = SimpleRecipeSerializer(
+            instance.recipe, context=self.context
+        )
+        return recipe_serializer.data
