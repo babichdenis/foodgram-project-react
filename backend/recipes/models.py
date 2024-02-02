@@ -1,33 +1,64 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from foodgram.constants import MAX_CHAR_LENGTH, MAX_COLOR_LENGTH
 
 User = get_user_model()
 
 
 class Ingredient(models.Model):
     """Модель ингредиента."""
-    name = models.CharField('Ингредиент', max_length=200)
-    measurement_unit = models.CharField('Ед. измерения', max_length=50)
+    name = models.CharField(
+        "Ингредиент",
+        max_length=MAX_CHAR_LENGTH,
+    )
+    measurement_unit = models.CharField(
+        "Единица измерения",
+        max_length=MAX_CHAR_LENGTH,
+    )
 
     class Meta:
-        verbose_name = 'Ингредиент'
-        verbose_name_plural = 'Ингредиенты'
-        ordering = ['id']
+        verbose_name = "Ингридиент"
+        verbose_name_plural = "Ингридиенты"
+        ordering = ("name",)
 
     def __str__(self):
         return f'{self.name}({self.measurement_unit})'
 
 
 class Tag(models.Model):
-    """Модель тега."""
-    name = models.CharField('Тэг', max_length=200)
-    color = models.CharField('Цветовой HEX-код', max_length=7)
-    slug = models.SlugField('Slug', max_length=50, unique=True)
+    ORANGE = '#FFA500'
+    GREEN = '#008000'
+    YELLOW = '#FFFF00'
+    BLUE = '#0000FF'
+
+    COLOR_CHOICES = [
+        (ORANGE, 'Оранжевый'),
+        (GREEN, 'Зеленый'),
+        (YELLOW, 'Желтый'),
+        (BLUE, 'Синий'),
+    ]
+    name = models.CharField(
+        max_length=MAX_CHAR_LENGTH,
+        unique=True,
+        verbose_name='Название тэга'
+    )
+    color = models.CharField(
+        max_length=MAX_COLOR_LENGTH,
+        unique=True,
+        choices=COLOR_CHOICES,
+        default=BLUE,
+        verbose_name='Цвет'
+    )
+    slug = models.SlugField(
+        max_length=MAX_CHAR_LENGTH,
+        unique=True,
+        verbose_name='Слаг'
+    )
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Тэг'
         verbose_name_plural = 'Тэги'
-        ordering = ['id']
 
     def __str__(self):
         return self.name
