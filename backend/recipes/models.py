@@ -87,10 +87,14 @@ class RecipeIngredient(models.Model):
 
 class FavoritRecipe(models.Model):
     """Модель для избранных рецептов."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='favorites')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
-                               related_name='favorites')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='favorites')
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        related_name='favorites')
 
     class Meta:
         verbose_name = 'Избранный рецепт'
@@ -107,15 +111,27 @@ class FavoritRecipe(models.Model):
 
 class Cart(models.Model):
     """Модель для списка покупок."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='cart')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
-                               related_name='cart')
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        verbose_name='Владелец списка',
+        related_name='shopping_cart',
+        blank=False,
+        null=False
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE,
+        verbose_name='Рецепт',
+        related_name='in_shopping_cart',
+        blank=False,
+        null=False
+    )
 
     class Meta:
         verbose_name = "Рецепт в корзине"
         verbose_name_plural = "Рецепты в корзине"
-        ordering = ['-id']
+        ordering = ('user',)
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
@@ -124,4 +140,4 @@ class Cart(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user}, {self.recipe.name}'
+        return f'{self.user} добавил {self.recipe.name} в Список покупок'
