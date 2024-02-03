@@ -1,33 +1,57 @@
+from colorfield.fields import ColorField
 from django.contrib.auth import get_user_model
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+from foodgram.constants import Constants
 
 User = get_user_model()
 
 
 class Ingredient(models.Model):
     """Модель ингредиента."""
-    name = models.CharField('Ингредиент', max_length=200)
-    measurement_unit = models.CharField('Ед. измерения', max_length=50)
+
+    name = models.CharField('Ингредиент', max_length=Constants.MAX_CHAR_LENGTH)
+    measurement_unit = models.CharField('Ед. измерения',
+                                        max_length=Constants.MAX_CHAR_LENGTH)
 
     class Meta:
         verbose_name = 'Ингредиент'
         verbose_name_plural = 'Ингредиенты'
-        ordering = ['id']
+        ordering = ('name',)
+        constraints = (
+            models.UniqueConstraint(
+                fields=('name', 'measurement_unit'),
+                name='unique_ingredient'),)
 
     def __str__(self):
         return f'{self.name}({self.measurement_unit})'
 
 
 class Tag(models.Model):
-    """Модель тега."""
-    name = models.CharField('Тэг', max_length=200)
-    color = models.CharField('Цветовой HEX-код', max_length=7)
-    slug = models.SlugField('Slug', max_length=50, unique=True)
+    """ Модель тега. """
+
+    name = models.CharField(
+        max_length=Constants.MAX_CHAR_LENGTH,
+        unique=True,
+        verbose_name='Название тэга'
+    )
+    color = ColorField(
+        "Цветовой HEX-код",
+        max_length=Constants.MAX_COLOR_LENGTH,
+        verbose_name='Цветовой код',
+        default="#FF0000",
+    )
+    slug = models.SlugField(
+        'Slug',
+        max_length=Constants.MAX_CHAR_LENGTH,
+        unique=True,
+        verbose_name='Слаг'
+    )
 
     class Meta:
+        ordering = ('name',)
         verbose_name = 'Тэг'
         verbose_name_plural = 'Тэги'
-        ordering = ['id']
 
     def __str__(self):
         return self.name
@@ -35,31 +59,63 @@ class Tag(models.Model):
 
 class Recipe(models.Model):
     """Модель рецепта."""
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='recipes',
-        verbose_name='Автор рецепта'
+
+    name = models.CharField(
+        max_length=Constants.MAX_CHAR_LENGTH,
+        verbose_name='Название'
     )
-    name = models.CharField(max_length=200, verbose_name='Название рецепта')
+    text = models.TextField(verbose_name='Описание')
     image = models.ImageField(
-        upload_to='recipes/', verbose_name='Изображение рецепта'
+        upload_to='recipes/images/',
+        verbose_name='Изображение'
     )
-    text = models.TextField(verbose_name='Описание рецепта')
     ingredients = models.ManyToManyField(
-        Ingredient, through='RecipeIngredient', verbose_name='Ингредиенты'
+        'Ingredient',
+        verbose_name='Ингредиент',
+        related_name='recipes',
+        through='RecipeIngredient'
     )
     cooking_time = models.PositiveSmallIntegerField(
-        'Время приготовления, мин.')
+        validators=[
+            MinValueValidator(
+                limit_value=Constants.MIN_COOKING_TIME,
+                message='Минимальное значение "1".'),
+            MaxValueValidator(
+                limit_value=Constants.MAX_COOKING_TIME,
+                message='Слишком большое значение.')
+        ],
+        verbose_name='Время приготовления'
+    )
     tags = models.ManyToManyField(
-        Tag, verbose_name='Тэги', related_name='recipes'
+        'Tag',
+        verbose_name='Тег',
+        related_name='recipes',
+    )
+    author = models.ForeignKey(
+        User,
+        verbose_name='Автор',
+        related_name='recipes',
+        on_delete=models.CASCADE
+    )
+    pub_date = models.DateTimeField(
+        verbose_name='Дата публикации',
+        auto_now_add=True,
+        editable=False
     )
 
     class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('name', 'author'),
+                name='recipe_name_author_uniq'
+            ),
+        )
+        ordering = ('-pub_date',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
-        ordering = ('-id', )
 
     def __str__(self):
-        return f'{self.author}, {self.name}'
+        return self.name
 
 
 class RecipeIngredient(models.Model):
