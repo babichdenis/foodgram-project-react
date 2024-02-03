@@ -104,11 +104,11 @@ class Recipe(models.Model):
         related_name='recipes',
         on_delete=models.CASCADE
     )
-    pub_dated = models.DateTimeField(
-        verbose_name='Дата публикации',
-        auto_now_add=True,
-        editable=False
-    )
+#    pub_dated = models.DateTimeField(
+#        verbose_name='Дата публикации',
+#        auto_now_add=True,
+#        editable=False
+#    )
 
     class Meta:
         constraints = (

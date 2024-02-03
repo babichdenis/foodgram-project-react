@@ -1,7 +1,6 @@
 import csv
 
 from django.core.management import BaseCommand
-from foodgram.settings import BASE_DIR
 
 from recipes.models import Ingredient, Tag
 
@@ -14,7 +13,7 @@ fields = (
     ('name', 'measurement_unit')
 )
 
-csv_file_path = BASE_DIR / 'data'
+csv_file_path = './data/'
 
 
 class Command(BaseCommand):
