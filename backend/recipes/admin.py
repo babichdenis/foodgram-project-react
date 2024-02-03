@@ -1,13 +1,20 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from foodgram.constants import MAX_PAGE_SIZE
+from foodgram.constants import Constants
 
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
                             RecipeIngredient, Tag)
 from users.models import Subscription
 
 admin.site.empty_value_display = "Не задано"
+
+
+class BaseFoodgramAdmin(admin.ModelAdmin):
+    """Базовая админ-модель с пагинацией."""
+
+    list_per_page = Constants.MAX_PAGE_SIZE
+    list_max_show_all = Constants.MAX_PAGE_SIZE
 
 
 class RecipeIngredientInLine(admin.TabularInline):
@@ -32,7 +39,7 @@ class ShoppingCartInline(admin.TabularInline):
 
 
 @admin.register(Recipe)
-class RecipeAdmin(admin.ModelAdmin):
+class RecipeAdmin(BaseFoodgramAdmin):
     """Административная панель для управления рецептами."""
 
     list_editable = ("name",)
@@ -52,14 +59,15 @@ class RecipeAdmin(admin.ModelAdmin):
         "ingredients__name" "tags__name",
     )
     list_filter = ("author", "tags__name")
+    list_display_links = ('name', 'id')
+    date_hierarchy = 'pub_date'
+    filter_horizontal = ('tags',)
     inlines = (RecipeIngredientInLine, ShoppingCartInline, FavoriteInline)
 
     @admin.display(description="Добавили в избранное")
     def in_favorite(self, obj):
-        """Показывает сколько раз рецепт добавлен в избранное."""
+        """Счетчик добавлений рецепта в избранное."""
         return obj.favorites.count()
-
-    in_favorite.short_description = "В избранном"
 
     @admin.display(description="Теги")
     def get_tags(self, obj):
@@ -76,13 +84,13 @@ class RecipeAdmin(admin.ModelAdmin):
 
     @admin.display(description="Ингридиенты")
     def ingredients_list(self, obj):
-        """Получение ингридиентов рецепта."""
+        """Список ингредиентов рецепта."""
         return "\n".join((
             ingredient.name for ingredient in obj.ingredients.all()))
 
 
 @admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(BaseFoodgramAdmin):
     """Административная панель для управления тегами."""
 
     list_display = (
@@ -104,11 +112,10 @@ class TagAdmin(admin.ModelAdmin):
         )
 
     color_code.short_description = "Название тэга"
-    list_per_page = MAX_PAGE_SIZE
 
 
 @admin.register(Ingredient)
-class IngredientAdmin(admin.ModelAdmin):
+class IngredientAdmin(BaseFoodgramAdmin):
     """Административная панель для управления ингредиентами."""
 
     list_display = (
@@ -117,11 +124,10 @@ class IngredientAdmin(admin.ModelAdmin):
         "measurement_unit",
     )
     search_fields = ("^name",)
-    list_per_page = MAX_PAGE_SIZE
 
 
 @admin.register(Subscription)
-class SubscribeAdmin(admin.ModelAdmin):
+class SubscribeAdmin(BaseFoodgramAdmin):
     list_display = ("id", "user", "author")
     search_fields = (
         "author__username",
@@ -130,26 +136,23 @@ class SubscribeAdmin(admin.ModelAdmin):
         "user__email",
     )
     list_filter = ("author__username", "user__username")
-    list_per_page = MAX_PAGE_SIZE
 
 
 @admin.register(FavoritRecipe)
-class FavoritRecipeAdmin(admin.ModelAdmin):
+class FavoritRecipeAdmin(BaseFoodgramAdmin):
     """Административная панель для управления избранными рецептами."""
 
     list_display = ("user", "recipe")
     search_fields = ("user__username", "recipe__name")
     list_editable = ("recipe",)
     list_filter = ("recipe",)
-    list_per_page = MAX_PAGE_SIZE
 
 
 @admin.register(Cart)
-class CartAdmin(admin.ModelAdmin):
+class CartAdmin(BaseFoodgramAdmin):
     """Административная панель для управления списком покупок."""
 
     list_display = ("user", "recipe")
     list_editable = ("recipe",)
     search_fields = ("recipe",)
     list_filter = ("recipe",)
-    list_per_page = MAX_PAGE_SIZE
