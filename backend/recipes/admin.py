@@ -42,8 +42,8 @@ class ShoppingCartInline(admin.TabularInline):
 class RecipeAdmin(BaseFoodgramAdmin):
     """Административная панель для управления рецептами."""
 
-    list_editable = ("name",)
     list_display = (
+        "id",
         "get_image",
         "name",
         "ingredients_list",
@@ -51,6 +51,7 @@ class RecipeAdmin(BaseFoodgramAdmin):
         "cooking_time",
         "get_tags",
         "author",
+        "pub_date"
     )
     search_fields = (
         "name",
@@ -69,10 +70,10 @@ class RecipeAdmin(BaseFoodgramAdmin):
         """Счетчик добавлений рецепта в избранное."""
         return obj.favorites.count()
 
-    @admin.display(description="Теги")
-    def get_tags(self, obj):
-        """Получение тегов рецепта."""
-        return list(obj.tags.values_list("name", flat=True))
+    @admin.display(description='Теги')
+    def get_tags(self, recipe: Recipe):
+        """Список ингредиентов рецепта."""
+        return list(recipe.tags.only('name'))
 
     get_tags.short_description = "Тэги"
 
@@ -82,11 +83,10 @@ class RecipeAdmin(BaseFoodgramAdmin):
 
     get_image.short_description = "Картинка"
 
-    @admin.display(description="Ингридиенты")
-    def ingredients_list(self, obj):
+    @admin.display(description='Ингредиенты')
+    def ingredients_list(self, recipe: Recipe):
         """Список ингредиентов рецепта."""
-        return "\n".join((
-            ingredient.name for ingredient in obj.ingredients.all()))
+        return list(recipe.ingredients.only('name'))
 
 
 @admin.register(Tag)
@@ -94,6 +94,8 @@ class TagAdmin(BaseFoodgramAdmin):
     """Административная панель для управления тегами."""
 
     list_display = (
+        "id",
+        "name",
         "color_code",
         "color",
         "slug",
@@ -104,6 +106,7 @@ class TagAdmin(BaseFoodgramAdmin):
         "color_code",
     )
     list_editable = ("slug",)
+    list_display_links = ('name', 'id')
 
     @admin.display(description="Colored")
     def color_code(self, obj: Tag):
@@ -118,12 +121,10 @@ class TagAdmin(BaseFoodgramAdmin):
 class IngredientAdmin(BaseFoodgramAdmin):
     """Административная панель для управления ингредиентами."""
 
-    list_display = (
-        "id",
-        "name",
-        "measurement_unit",
-    )
-    search_fields = ("^name",)
+    fields = (('name', 'measurement_unit'),)
+    list_display = ('id', 'name', 'measurement_unit')
+    list_display_links = ('name', 'id')
+    search_fields = ('name', 'id')
 
 
 @admin.register(Subscription)
@@ -152,7 +153,7 @@ class FavoritRecipeAdmin(BaseFoodgramAdmin):
 class CartAdmin(BaseFoodgramAdmin):
     """Административная панель для управления списком покупок."""
 
-    list_display = ("user", "recipe")
-    list_editable = ("recipe",)
-    search_fields = ("recipe",)
-    list_filter = ("recipe",)
+    fields = (('recipe', 'user'), )
+    list_display = ('id', '__str__', 'user', 'recipe', 'added_date')
+    list_display_links = ('__str__', 'id')
+    search_fields = ('recipe__name', 'user__username')
