@@ -117,7 +117,7 @@ class Recipe(models.Model):
                 name='recipe_name_author_uniq'
             ),
         )
-        ordering = ('-pub_dated',)
+        ordering = ('-name',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 

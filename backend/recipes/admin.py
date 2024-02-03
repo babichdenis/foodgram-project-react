@@ -51,7 +51,7 @@ class RecipeAdmin(BaseFoodgramAdmin):
         "cooking_time",
         "get_tags",
         "author",
-        "pub_dated"
+        #        "pub_dated"
     )
     search_fields = (
         "name",
@@ -61,7 +61,7 @@ class RecipeAdmin(BaseFoodgramAdmin):
     )
     list_filter = ("author", "tags__name")
     list_display_links = ('name', 'id')
-    date_hierarchy = 'pub_dated'
+#    date_hierarchy = 'pub_dated'
     filter_horizontal = ('tags',)
     inlines = (RecipeIngredientInLine, ShoppingCartInline, FavoriteInline)
 
