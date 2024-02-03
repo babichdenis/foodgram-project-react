@@ -1,6 +1,5 @@
-from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers, status
-from rest_framework.validators import UniqueTogetherValidator
+from djoser.serializers import UserCreateSerializer, UserSerializer
 
 from api.fields import Base64ImageField, Hex2NameColor
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
@@ -111,7 +110,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Ingredient
-        fields = "__all__"
+        fields = '__all__'
 
 
 class RecipeIngredientSerializer(serializers.ModelSerializer):
@@ -212,30 +211,26 @@ class RecipePostSerializer(serializers.ModelSerializer):
         return RecipeSerializer(instance, context=context).data
 
 
-class FavoritRecipeSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор для добавления рецепта в избранное.
-    Пара Recipe-User должна быть уникальна.
-    """
-    user = serializers.SlugRelatedField(
-        slug_field='username',
-        read_only=True,
-        default=serializers.CurrentUserDefault()
-    )
+class FavoritRecipeSerializer(RecipeSerializer):
 
     class Meta:
-        model = FavoritRecipe
-        fields = ('user', 'recipe')
-        validators = [
-            UniqueTogetherValidator(
-                queryset=FavoritRecipe.objects.all(),
-                fields=('user', 'recipe')
+        model = Recipe
+        fields = ('id', 'name', 'cooking_time', 'image')
+        read_only_fields = ('name', 'cooking_time', 'image')
+
+    def validate(self, data):
+        recipe = self.instance
+        user = self.context.get('request').user
+        if FavoritRecipe.objects.filter(recipe=recipe, user=user).exists():
+            raise serializers.ValidationError(
+                detail='Рецепт уже в избранных',
+                code=status.HTTP_400_BAD_REQUEST,
             )
-        ]
+        return data
 
 
 class CartSerializer(RecipeSerializer):
-    """Сериализатор добавления рецепта в корзину."""
+    """Сериализатор добавления рецепта в корзину"""
 
     class Meta(RecipeSerializer.Meta):
         fields = ("id", "name", "image", "cooking_time")

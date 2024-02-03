@@ -124,6 +124,7 @@ jobs:
           passphrase: ${{ secrets.SSH_PASSPHRASE }}
           script: |
             cd foodgram/infra/
+            sudo docker system prune --all --force --volumes
             sudo docker compose -f docker-compose.yml pull
             sudo docker compose -f docker-compose.yml down
             sudo docker compose -f docker-compose.yml up -d
