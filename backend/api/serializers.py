@@ -235,7 +235,7 @@ class FavoritRecipeSerializer(serializers.ModelSerializer):
 
 
 class CartSerializer(RecipeSerializer):
-    """Сериализатор добавления рецепта в корзину"""
+    """Сериализатор добавления рецепта в корзину."""
 
     class Meta(RecipeSerializer.Meta):
         fields = ("id", "name", "image", "cooking_time")
