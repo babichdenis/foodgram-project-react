@@ -1,5 +1,5 @@
 from djoser.serializers import UserCreateSerializer, UserSerializer
-from rest_framework import serializers
+from rest_framework import serializers, status
 from rest_framework.validators import UniqueTogetherValidator
 
 from api.fields import Base64ImageField, Hex2NameColor
@@ -9,30 +9,22 @@ from users.models import Subscription, User
 
 
 class UserListSerializer(UserSerializer):
-    """
-    Кастомный сериализатор,
-    унаследованный от стандартного UserSerializer Djoser'а.
-    Дополнительно выводит поле с информацией
-    о наличии/отсутствии подписки на просматриваемого юзера.
-    """
-    is_subscribed = serializers.SerializerMethodField(read_only=True)
+    """Cериализатор просмотра профиля пользователя"""
+    is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('email',
-                  'id',
-                  'username',
-                  'first_name',
-                  'last_name',
-                  'is_subscribed')
+        fields = (
+            'id', 'email', 'username', 'first_name',
+            'last_name', 'is_subscribed',
+        )
 
     def get_is_subscribed(self, obj):
+        """Проверяет подписку на текущего пользователя"""
         user = self.context.get('request').user
         if user.is_anonymous:
-
             return False
-
-        return Subscription.objects.filter(user=user, subscribing=obj).exists()
+        return user.subscriber.filter(author=obj).exists()
 
 
 class UserPostSerializer(UserCreateSerializer):
@@ -64,6 +56,13 @@ class SubscribeSerializer(UserSerializer):
         )
         read_only_fields = ('email', 'username', 'first_name', 'last_name')
 
+    def get_is_subscribed(self, obj):
+        """Проверяет подписку на текущего пользователя."""
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return False
+        return user.subscriber.filter(author=obj).exists()
+
     def get_recipes(self, obj):
         """Показывает рецепты текущего пользователя."""
         request = self.context.get('request')
@@ -71,15 +70,28 @@ class SubscribeSerializer(UserSerializer):
         recipes = obj.recipes.all()
         if recipes_limit:
             recipes = recipes[: int(recipes_limit)]
-        serializer = RecipeProfileSerializer(
-            recipes,
-            many=True,
-            read_only=True)
+        serializer = RecipeProfileSerializer(recipes,
+                                             many=True, read_only=True)
         return serializer.data
 
     def get_recipes_count(self, obj):
         """Счетчик рецептов текущего пользователя."""
         return obj.recipes.count()
+
+    def validate(self, data):
+        author = self.instance
+        user = self.context.get('request').user
+        if Subscription.objects.filter(author=author, user=user).exists():
+            raise serializers.ValidationError(
+                detail='Подписка уже существует',
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        if user == author:
+            raise serializers.ValidationError(
+                detail='Нельзя подписаться на самого себя',
+                code=status.HTTP_400_BAD_REQUEST,
+            )
+        return data
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -203,39 +215,38 @@ class RecipePostSerializer(serializers.ModelSerializer):
 class FavoritRecipeSerializer(serializers.ModelSerializer):
     """
     Сериализатор для добавления рецепта в избранное.
+    Пара Recipe-User должна быть уникальна.
     """
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
+    user = serializers.SlugRelatedField(
+        slug_field='username',
+        read_only=True,
+        default=serializers.CurrentUserDefault()
+    )
 
     class Meta:
         model = FavoritRecipe
         fields = ('user', 'recipe')
-        read_only_fields = ('user', 'recipe')
         validators = [
             UniqueTogetherValidator(
                 queryset=FavoritRecipe.objects.all(),
-                fields=('user', 'recipe'),
-                message='Нельзя добавить рецепт в избранное дважды!'
+                fields=('user', 'recipe')
             )
         ]
 
 
-class ShoppingCartSerializer(serializers.ModelSerializer):
-    """
-    Сериализатор ShoppingCart.
-    Проверяет, что рецепт не добавляется в ShoppingCart дважды.
-    """
-    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
-    recipe = serializers.PrimaryKeyRelatedField(queryset=Recipe.objects.all())
+class CartSerializer(RecipeSerializer):
+    """Сериализатор добавления рецепта в корзину"""
 
-    class Meta:
-        model = Cart
-        fields = ('user', 'recipe')
-        read_only_fields = ('user', 'recipe')
-        validators = [
-            UniqueTogetherValidator(
-                queryset=Cart.objects.all(),
-                fields=('user', 'recipe'),
-                message='Нельзя добавить рецепт в корзину покупок дважды!'
+    class Meta(RecipeSerializer.Meta):
+        fields = ("id", "name", "image", "cooking_time")
+        read_only_fields = ('name', 'cooking_time', 'image')
+
+    def validate(self, data):
+        recipe = self.instance
+        user = self.context.get('request').user
+        if Cart.objects.filter(recipe=recipe, user=user).exists():
+            raise serializers.ValidationError(
+                detail='Рецепт уже в корзине',
+                code=status.HTTP_400_BAD_REQUEST,
             )
-        ]
+        return data
