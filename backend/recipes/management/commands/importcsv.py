@@ -13,7 +13,7 @@ fields = (
     ('name', 'measurement_unit')
 )
 
-csv_file_path = './data/'
+csv_file_path = './data'
 
 
 class Command(BaseCommand):
