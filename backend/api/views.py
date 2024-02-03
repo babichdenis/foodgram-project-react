@@ -17,7 +17,7 @@ from api.filters import IngredientSearchFilter, RecipeFilter
 from api.pagination import Pagination
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
                             RecipeIngredient, Tag)
-from api.serializers import (ShoppingCartSerializer, FavoritRecipeSerializer,
+from api.serializers import (CartSerializer, FavoritRecipeSerializer,
                              IngredientSerializer, RecipePostSerializer,
                              RecipeSerializer, SubscribeSerializer,
                              TagSerializer)
@@ -115,7 +115,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         recipe = get_object_or_404(Recipe, id=self.kwargs.get('pk'))
 
         if request.method == 'POST':
-            serializer = ShoppingCartSerializer(
+            serializer = CartSerializer(
                 recipe, data=request.data, context={'request': request})
             serializer.is_valid(raise_exception=True)
             Cart.objects.create(user=user, recipe=recipe)

@@ -141,3 +141,5 @@ migrations/
 node_modules/
 
 text.txt
+backend/.DS_Store
+.DS_Store
