@@ -12,3 +12,5 @@ class Constants:
     MIN_INGREDIENT_AMOUNT: int = 1
     MIN_COOKING_TIME: int = 1
     MAX_COOKING_TIME: int = 1000
+    MIN_AMOUNT: int = 1
+    MAX_AMOUNT: int = 10000

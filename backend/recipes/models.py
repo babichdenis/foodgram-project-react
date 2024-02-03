@@ -8,11 +8,20 @@ User = get_user_model()
 
 
 class Ingredient(models.Model):
-    """Модель ингредиента."""
+    """
+    Модель ингредиентов.
+    Ограничения:
+        - Ингредиенты и их ед. измерения не должны повторяться.
+    """
 
-    name = models.CharField('Ингредиент', max_length=Constants.MAX_CHAR_LENGTH)
-    measurement_unit = models.CharField('Ед. измерения',
-                                        max_length=Constants.MAX_CHAR_LENGTH)
+    name = models.CharField(
+        'Ингредиент',
+        max_length=Constants.MAX_CHAR_LENGTH
+    )
+    measurement_unit = models.CharField(
+        'Ед. измерения',
+        max_length=Constants.MAX_CHAR_LENGTH
+    )
 
     class Meta:
         verbose_name = 'Ингредиент'
@@ -31,12 +40,12 @@ class Tag(models.Model):
     """ Модель тега. """
 
     name = models.CharField(
+        'Название тэга',
         max_length=Constants.MAX_CHAR_LENGTH,
         unique=True,
-        verbose_name='Название тэга'
     )
     color = ColorField(
-        "Цветовой HEX-код",
+        'Цветовой HEX-код',
         max_length=Constants.MAX_COLOR_LENGTH,
         default="#FF0000",
     )
@@ -44,7 +53,6 @@ class Tag(models.Model):
         'Slug',
         max_length=Constants.MAX_CHAR_LENGTH,
         unique=True,
-        verbose_name='Слаг'
     )
 
     class Meta:
@@ -118,26 +126,51 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    """Связующая модель многие-ко-многим для ингредиентов и рецептов."""
+    """
+    Вспомогательная модель для связи рецептов и ингредиентов.
+    Связи:
+        - recipe -- Foreign Key c моделью Recipe.
+        - ingredient -- Foreign Key c моделью Ingredient.
+    Ограничения:
+        - Количество ограничено минимальным и максимальным значением.
+    """
+
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name='recipeingredients')
+        verbose_name='Рецепт',
+        related_name='recipe_ingredient'
+    )
     ingredient = models.ForeignKey(
         Ingredient,
         on_delete=models.CASCADE,
-        related_name='ingredient')
+        verbose_name='Ингредиент',
+        related_name='ingredient_recipe'
+    )
     amount = models.PositiveSmallIntegerField(
-        verbose_name='Количество ингредиента')
+        validators=[
+            MinValueValidator(
+                limit_value=Constants.MIN_AMOUNT,
+                message='Минимальное значение "1".'),
+            MaxValueValidator(
+                limit_value=Constants.MAX_AMOUNT,
+                message='Слишком большое значение.')],
+        default=1,
+        verbose_name='Количество'
+    )
 
     class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('recipe', 'ingredient'),
+                name='recipe_ingredient_uniq'
+            ),
+        )
         verbose_name = 'Количество ингредиента'
         verbose_name_plural = 'Количество ингредиентов'
-        ordering = ['-id']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['recipe', 'ingredient'],
-                name='unique_ingredient')]
+
+    def __str__(self):
+        return f'{self.ingredient.name} -- {self.recipe.name}'
 
 
 class FavoritRecipe(models.Model):
