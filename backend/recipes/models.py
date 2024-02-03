@@ -104,7 +104,7 @@ class Recipe(models.Model):
         related_name='recipes',
         on_delete=models.CASCADE
     )
-    pub_date = models.DateTimeField(
+    pub_dated = models.DateTimeField(
         verbose_name='Дата публикации',
         auto_now_add=True,
         editable=False
@@ -117,7 +117,7 @@ class Recipe(models.Model):
                 name='recipe_name_author_uniq'
             ),
         )
-        ordering = ('-pub_date',)
+        ordering = ('-pub_dated',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
