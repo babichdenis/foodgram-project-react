@@ -41,7 +41,7 @@ class ShoppingCartInline(admin.TabularInline):
 @admin.register(Recipe)
 class RecipeAdmin(BaseFoodgramAdmin):
     """Административная панель для управления рецептами."""
-
+    fields = (('name', 'measurement_unit'),)
     list_display = (
         "id",
         "get_image",
@@ -51,7 +51,7 @@ class RecipeAdmin(BaseFoodgramAdmin):
         "cooking_time",
         "get_tags",
         "author",
-        #        "pub_dated"
+        "pub_date",
     )
     search_fields = (
         "name",
@@ -61,7 +61,7 @@ class RecipeAdmin(BaseFoodgramAdmin):
     )
     list_filter = ("author", "tags__name")
     list_display_links = ('name', 'id')
-#    date_hierarchy = 'pub_dated'
+    date_hierarchy = 'pub_date'
     filter_horizontal = ('tags',)
     inlines = (RecipeIngredientInLine, ShoppingCartInline, FavoriteInline)
 
@@ -153,7 +153,7 @@ class FavoritRecipeAdmin(BaseFoodgramAdmin):
 class CartAdmin(BaseFoodgramAdmin):
     """Административная панель для управления списком покупок."""
 
-    fields = (('recipe', 'user'), )
+    fields = (('recipe', 'user', 'added_date'), )
     list_display = ('id', '__str__', 'user', 'recipe', 'added_date')
     list_display_links = ('__str__', 'id')
     search_fields = ('recipe__name', 'user__username')

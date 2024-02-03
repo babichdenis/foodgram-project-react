@@ -104,11 +104,11 @@ class Recipe(models.Model):
         related_name='recipes',
         on_delete=models.CASCADE
     )
-#    pub_dated = models.DateTimeField(
-#        verbose_name='Дата публикации',
-#        auto_now_add=True,
-#        editable=False
-#    )
+    pub_date = models.DateTimeField(
+        verbose_name='Дата публикации',
+        auto_now_add=True,
+        editable=False
+    )
 
     class Meta:
         constraints = (
@@ -117,7 +117,7 @@ class Recipe(models.Model):
                 name='recipe_name_author_uniq'
             ),
         )
-        ordering = ('-name',)
+        ordering = ('-pub_date',)
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
 
