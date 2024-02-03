@@ -38,7 +38,6 @@ class Tag(models.Model):
     color = ColorField(
         "Цветовой HEX-код",
         max_length=Constants.MAX_COLOR_LENGTH,
-        verbose_name='Цветовой код',
         default="#FF0000",
     )
     slug = models.SlugField(
