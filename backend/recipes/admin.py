@@ -40,7 +40,7 @@ class ShoppingCartInline(admin.TabularInline):
 @admin.register(Recipe)
 class RecipeAdmin(BaseFoodgramAdmin):
     """Административная панель для управления рецептами."""
-    fields = (('name', 'measurement_unit'),)
+
     list_display = (
         "id",
         "get_image",

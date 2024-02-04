@@ -12,11 +12,10 @@ SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
 DEBUG = os.getenv("DEBUG", "False").lower() == "true"
 
-# ALLOWED_HOSTS = os.getenv(
-#    "ALLOWED_HOSTS",
-#    default='localhost,127.0.0.1').split(',')
+ALLOWED_HOSTS = os.getenv(
+    "ALLOWED_HOSTS",
+    default='localhost,127.0.0.1').split(',')
 
-ALLOWED_HOSTS = ["*"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -57,7 +56,7 @@ ROOT_URLCONF = 'foodgram.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
+        'DIRS': [os.path.join(BASE_DIR, 'backend')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -133,6 +132,8 @@ USE_L10N = True
 USE_TZ = True
 
 STATIC_URL = '/backend_static/'
+
+STATICFILES_DIRS = [BASE_DIR / 'backend',]
 
 STATIC_ROOT = BASE_DIR / 'backend_static'
 
