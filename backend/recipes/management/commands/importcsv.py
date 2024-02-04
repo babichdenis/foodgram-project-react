@@ -1,7 +1,7 @@
 import csv
 
 from django.core.management import BaseCommand
-
+from foodgram.settings import CSV_FILES_DIR
 from recipes.models import Ingredient, Tag
 
 TABLES = (
@@ -13,8 +13,6 @@ fields = (
     ('name', 'measurement_unit')
 )
 
-csv_file_path = './data'
-
 
 class Command(BaseCommand):
     help = 'Команда для создания БД на основе имеющихся csv файлов'
@@ -24,7 +22,7 @@ class Command(BaseCommand):
         try:
             for model, csv_f in TABLES:
                 with open(
-                    f'{csv_file_path}/{csv_f}', encoding='utf-8'
+                    f'{CSV_FILES_DIR}/{csv_f}', encoding='utf-8'
                 ) as f:
                     reader = csv.DictReader(f, delimiter=',')
                     for row in reader:

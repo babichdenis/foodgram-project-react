@@ -175,22 +175,37 @@ class RecipeIngredient(models.Model):
 
 class FavoritRecipe(models.Model):
     """Модель для избранных рецептов."""
-    user = models.ForeignKey(User, on_delete=models.CASCADE,
-                             related_name='favorites')
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
-                               related_name='favorites')
+
+    recipe = models.ForeignKey(
+        to=Recipe,
+        verbose_name='Избранное',
+        related_name='favorites',
+        on_delete=models.CASCADE
+    )
+    user = models.ForeignKey(
+        to=User,
+        verbose_name='Пользователь',
+        related_name='favorites',
+        on_delete=models.CASCADE
+    )
+    added_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата добавления в избранное',
+        editable=False
+    )
 
     class Meta:
+        constraints = (
+            models.UniqueConstraint(
+                fields=('recipe', 'user'),
+                name='favorite__recipe_user_uniq'
+            ),
+        )
         verbose_name = 'Избранный рецепт'
         verbose_name_plural = 'Избранные рецепты'
-        ordering = ['-id']
-        constraints = [
-            models.UniqueConstraint(
-                fields=['user', 'recipe'],
-                name='unique_favorite')]
 
     def __str__(self):
-        return f'{self.user}, {self.recipe.name}'
+        return f'{self.recipe.name} -- {self.user.username}'
 
 
 class Cart(models.Model):

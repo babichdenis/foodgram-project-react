@@ -140,6 +140,8 @@ MEDIA_URL = '/media/'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 
+CSV_FILES_DIR = os.path.join(BASE_DIR, 'api/data')
+
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
@@ -157,25 +159,4 @@ REST_FRAMEWORK = {
 
 DJOSER = {
     'LOGIN_FIELD': 'email',
-    'SERIALIZERS': {
-        'user': 'api.serializers.UserListSerializer',
-        'current_user': 'api.serializers.UserListSerializer',
-        'user_create': 'api.serializers.UserPostSerializer',
-    },
-    'PERMISSIONS': {
-        'token_create': ['rest_framework.permissions.AllowAny'],
-        'token_destroy': ['rest_framework.permissions.IsAuthenticated'],
-        'user_create': ['rest_framework.permissions.AllowAny'],
-        'user': ['rest_framework.permissions.IsAuthenticated'],
-        'user_list': ['rest_framework.permissions.AllowAny'],
-        'set_password': ['djoser.permissions.CurrentUserOrAdmin'],
-
-        'activation': ['rest_framework.permissions.IsAdminUser'],
-        'password_reset': ['rest_framework.permissions.IsAdminUser'],
-        'password_reset_confirm': ['rest_framework.permissions.IsAdminUser'],
-        'username_reset': ['rest_framework.permissions.IsAdminUser'],
-        'username_reset_confirm': ['rest_framework.permissions.IsAdminUser'],
-        'set_username': ['rest_framework.permissions.IsAdminUser'],
-        'user_delete': ['rest_framework.permissions.IsAdminUser'],
-    }
 }
