@@ -4,31 +4,34 @@ from foodgram.constants import Constants
 
 
 class FoodgramUser(AbstractUser):
-    '''Пользователь (В рецепте - автор рецепта)'''
+    """
+    Модель пользователя.
+    Поле email переопределено для установки уникальности электронных
+    почт пользователей.
+    Дополнительное поле role - Выбор пользователь или администратор.
+    """
+
+    class Role(models.TextChoices):
+        ADMIN = 'admin', 'admin'
+        USER = 'user', 'user'
 
     email = models.EmailField(
-        max_length=Constants.MAX_EMAIL_LENGTH,
         unique=True,
-        verbose_name='Адрес электронной почты'
+        verbose_name='Электронная почта'
     )
-    first_name = models.CharField(
+    role = models.CharField(
+        choices=Role.choices,
+        default=Role.USER,
         max_length=Constants.MAX_USERNAME_LENGTH,
-        blank=True,
-        verbose_name='Имя'
+        verbose_name='Роль'
     )
-    last_name = models.CharField(
-        max_length=Constants.MAX_USERNAME_LENGTH,
-        blank=True,
-        verbose_name='Фамилия'
-    )
-
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
 
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-        ordering = ('id',)
+
+    def is_admin(self):
+        return self.role == self.Role.ADMIN
 
     def __str__(self):
         return self.username

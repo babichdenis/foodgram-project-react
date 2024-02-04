@@ -17,7 +17,7 @@ from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
                              FavoritesSerializer, CartSerializer,)
 from api.services import ShoppingListCreator
 from recipes.models import Cart, FavoritRecipe, Ingredient, Recipe, Tag
-from users.permissions import IsAdminOrReadOnly
+from users.permissions import IsAuthorOrAdminOrHigherOrReadOnly
 
 
 class TagViewSet(viewsets.ReadOnlyModelViewSet):
@@ -72,7 +72,7 @@ class RecipeViewSet(ModelViewSet):
     """
 
     queryset = Recipe.objects.all()
-    permission_classes = [IsAdminOrReadOnly,
+    permission_classes = [IsAuthorOrAdminOrHigherOrReadOnly,
                           IsAuthenticatedOrReadOnly]
     filter_backends = [DjangoFilterBackend, ]
     filterset_class = RecipeFilter

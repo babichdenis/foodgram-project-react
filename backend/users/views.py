@@ -8,7 +8,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from api.pagination import Pagination
 from users.models import Subscription
-from users.permissions import IsAdminOrReadOnly
+from users.permissions import IsRequestUserOrAdminOrHigherOrReadonly
 from users.serializers import (SubscribeSerializer,
                                UserCreateSerializer,
                                UserReadSerializer
@@ -46,7 +46,7 @@ class CustomUserViewSet(viewsets.GenericViewSet,
     """
 
     queryset = User.objects.all()
-    permission_classes = [IsAdminOrReadOnly, ]
+    permission_classes = [IsRequestUserOrAdminOrHigherOrReadonly, ]
     pagination_class = Pagination
     serializer_class = UserCreateSerializer
 

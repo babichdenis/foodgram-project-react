@@ -24,8 +24,12 @@ class ShoppingCartInline(admin.TabularInline):
 
 
 @admin.register(User)
-class UserAdmin(UserAdmin):
-    """Административная панель для управления пользователями."""
+class FoodgramUserAdmin(UserAdmin):
+    """
+    Преставление, создание, редактирование и удаление пользователей.
+    Поля is_admin, followers_count, recipes_count получены с помощью
+    дополнительных методов.
+
 
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
@@ -33,10 +37,11 @@ class UserAdmin(UserAdmin):
                                                 'last_name',
                                                 'email')}),
         ('Права доступа', {
-            'fields': ('is_active', 'is_staff', 'is_superuser'),
+            'fields': ('is_active', 'is_staff', 'is_superuser', 'role'),
         }),
     )
-    list_display = ('id', 'username', 'email',
+    """
+    list_display = ('id', 'username', 'email', 'followers_count',
                     'recipes_count', 'is_admin', 'is_staff',
                     'is_superuser')
     list_display_links = ('username', 'id')
@@ -73,9 +78,6 @@ class UserAdmin(UserAdmin):
         else:
             obj.is_staff = False
         super().save_model(request, obj, form, change)
-
-    inlines = (FavoriteInline, ShoppingCartInline)
-    ordering = ('username', )
 
 
 @admin.register(Subscription)
