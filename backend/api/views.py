@@ -12,9 +12,9 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.filters import IngredientSearchFilter, RecipeFilter
 from api.pagination import Pagination
-from api.serializers import (IngredientSerializer, RecipeCreateSerializer,
-                             RecipeReadSerializer, TagSerializer,
-                             FavoritesSerializer, CartSerializer,)
+from api.serializers import (CartSerializer, FavoritesSerializer,
+                             IngredientSerializer, RecipeCreateSerializer,
+                             RecipeReadSerializer, TagSerializer)
 from api.services import ShoppingListCreator
 from recipes.models import Cart, FavoritRecipe, Ingredient, Recipe, Tag
 from users.permissions import IsAuthorOrAdminOrHigherOrReadOnly
