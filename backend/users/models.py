@@ -1,11 +1,26 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from foodgram.constants import Constants
 
 
 class User(AbstractUser):
-    email = models.EmailField(verbose_name='Электронная почта', unique=True)
-    first_name = models.CharField(verbose_name='Имя', max_length=30)
-    last_name = models.CharField(verbose_name='Фамилия', max_length=30)
+    '''Пользователь (В рецепте - автор рецепта)'''
+
+    email = models.EmailField(
+        max_length=Constants.MAX_EMAIL_LENGTH,
+        unique=True,
+        verbose_name='Адрес электронной почты'
+    )
+    first_name = models.CharField(
+        max_length=Constants.MAX_USERNAME_LENGTH,
+        blank=True,
+        verbose_name='Имя'
+    )
+    last_name = models.CharField(
+        max_length=Constants.MAX_USERNAME_LENGTH,
+        blank=True,
+        verbose_name='Фамилия'
+    )
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name', 'username']
@@ -20,29 +35,39 @@ class User(AbstractUser):
 
 
 class Subscription(models.Model):
+    '''Подписчики'''
     user = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='subscriber',
+        User,
+        related_name='follower',
+        on_delete=models.CASCADE,
         verbose_name='Подписчик'
     )
-    author = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name='subscribe',
-        verbose_name='Автор рецепта')
+    following = models.ForeignKey(
+        User,
+        verbose_name='Подписан',
+        related_name='following',
+        on_delete=models.CASCADE
+    )
+    added_date = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name='Дата подписки',
+        editable=False
+    )
 
     class Meta:
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
-        unique_together = ('user', 'author')
-
-        constraints = [
+        constraints = (
             models.UniqueConstraint(
-                fields=['author', 'user'],
-                name='unique_subscribe'
+                fields=('user', 'following'),
+                name='user_followed_uniq'
             ),
             models.CheckConstraint(
-                check=~models.Q(user=models.F('author')),
-                name='prevent_self_subscribe',
-            )
-        ]
+                check=~models.Q(following=models.F('user')),
+                name='user_is_not_following'
+            ),
+        )
+        ordering = ('-added_date', )
 
     def __str__(self):
-        return f'Пользователь {self.user} подписан на {self.author}'
+        return f'{self.user.username} -> {self.following.username}'

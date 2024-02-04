@@ -5,7 +5,6 @@ from foodgram.constants import Constants
 
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
                             RecipeIngredient, Tag)
-from users.models import Subscription
 
 admin.site.empty_value_display = "Не задано"
 
@@ -125,18 +124,6 @@ class IngredientAdmin(BaseFoodgramAdmin):
     list_display = ('id', 'name', 'measurement_unit')
     list_display_links = ('name', 'id')
     search_fields = ('name', 'id')
-
-
-@admin.register(Subscription)
-class SubscribeAdmin(BaseFoodgramAdmin):
-    list_display = ("id", "user", "author")
-    search_fields = (
-        "author__username",
-        "author__email",
-        "user__username",
-        "user__email",
-    )
-    list_filter = ("author__username", "user__username")
 
 
 @admin.register(FavoritRecipe)
