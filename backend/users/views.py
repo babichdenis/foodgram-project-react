@@ -9,8 +9,10 @@ from rest_framework.response import Response
 from api.pagination import Pagination
 from users.models import Subscription
 from users.permissions import IsAdminOrReadOnly
-from users.serializers import (SubscribeSerializer, UserCreateSerializer,
-                               UserReadSerializer)
+from users.serializers import (SubscribeSerializer,
+                               UserCreateSerializer,
+                               UserReadSerializer
+                               )
 
 User = get_user_model()
 
