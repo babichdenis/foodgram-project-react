@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
 from recipes.models import FavoritRecipe, Cart, Recipe
-from users.models import Subscription, User
+from users.models import Subscription, FoodgramUser
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import TokenProxy
 
@@ -47,21 +47,21 @@ class UserAdmin(UserAdmin):
 
     @admin.display(description='Статус администратора',
                    boolean=True)
-    def is_admin(self, user: User):
+    def is_admin(self, user: FoodgramUser):
         """Булево значение является ли пользователь администратором."""
         return user.role == 'admin'
 
-#    @admin.display(description='Подписчиков')
-#    def followers_count(self, user: User):
-#        """Счетчик подписчиков пользователя."""
-#        return user.following.count()
+    @admin.display(description='Подписчиков')
+    def followers_count(self, user: FoodgramUser):
+        """Счетчик подписчиков пользователя."""
+        return user.following.count()
 
     @admin.display(description='Рецептов')
-    def recipes_count(self, user: User):
+    def recipes_count(self, user: FoodgramUser):
         """Счетчик рецептов пользователя."""
         return Recipe.objects.filter(author=user).count()
 
-    def save_model(self, request, obj: User, form, change):
+    def save_model(self, request, obj: FoodgramUser, form, change):
         """
         Создание пользователя.
         Метод переопределен для автоматической

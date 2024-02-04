@@ -26,9 +26,17 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    Вьюсет для представления ингредиентов.
+    Методы:
+        - GET -- Представление списка ингредиентов.
+        - GET -- Представление ингредиента по id.
+    Доступен поиск по частичному вхождению в название ингредиента.
+    """
+
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = (IngredientSearchFilter,)
+    filter_backends = [IngredientSearchFilter, ]
     search_fields = ('^name',)
 
 

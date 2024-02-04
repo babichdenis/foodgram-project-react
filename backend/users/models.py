@@ -3,7 +3,7 @@ from django.db import models
 from foodgram.constants import Constants
 
 
-class User(AbstractUser):
+class FoodgramUser(AbstractUser):
     '''Пользователь (В рецепте - автор рецепта)'''
 
     email = models.EmailField(
@@ -37,13 +37,13 @@ class User(AbstractUser):
 class Subscription(models.Model):
     '''Подписчики'''
     user = models.ForeignKey(
-        User,
+        FoodgramUser,
         related_name='follower',
         on_delete=models.CASCADE,
         verbose_name='Подписчик'
     )
     following = models.ForeignKey(
-        User,
+        FoodgramUser,
         verbose_name='Подписан',
         related_name='following',
         on_delete=models.CASCADE

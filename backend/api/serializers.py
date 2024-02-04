@@ -1,18 +1,9 @@
-from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
+
 from api.fields import Base64ImageField
 from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
                             RecipeIngredient, Tag)
-from users.models import User
 from users.serializers import UserReadSerializer
-
-
-class UserPostSerializer(UserCreateSerializer):
-    """Cериализатор создания пользователя."""
-
-    class Meta:
-        model = User
-        fields = ('email', 'username', 'first_name', 'last_name', 'password')
 
 
 class TagSerializer(serializers.ModelSerializer):
