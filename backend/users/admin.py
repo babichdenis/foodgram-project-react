@@ -1,12 +1,12 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
-
+from django.contrib.auth import get_user_model
 from recipes.models import FavoritRecipe, Cart, Recipe
 from users.models import Subscription, User
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import TokenProxy
 
-# User = get_user_model()
+User = get_user_model()
 
 admin.site.site_header = 'Администрирование Foodgram'
 admin.site.index_title = 'Администрирование сайта Foodgram'
@@ -36,7 +36,7 @@ class UserAdmin(UserAdmin):
             'fields': ('is_active', 'is_staff', 'is_superuser'),
         }),
     )
-    list_display = ('id', 'username', 'email', 'followers_count',
+    list_display = ('id', 'username', 'email',
                     'recipes_count', 'is_admin', 'is_staff',
                     'is_superuser')
     list_display_links = ('username', 'id')
@@ -51,10 +51,10 @@ class UserAdmin(UserAdmin):
         """Булево значение является ли пользователь администратором."""
         return user.role == 'admin'
 
-    @admin.display(description='Подписчиков')
-    def followers_count(self, user: User):
-        """Счетчик подписчиков пользователя."""
-        return user.following.count()
+#    @admin.display(description='Подписчиков')
+#    def followers_count(self, user: User):
+#        """Счетчик подписчиков пользователя."""
+#        return user.following.count()
 
     @admin.display(description='Рецептов')
     def recipes_count(self, user: User):
