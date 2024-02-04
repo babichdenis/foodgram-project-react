@@ -28,12 +28,7 @@ class TagViewSet(viewsets.ReadOnlyModelViewSet):
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     """
     Вьюсет для представления ингредиентов.
-    Методы:
-        - GET -- Представление списка ингредиентов.
-        - GET -- Представление ингредиента по id.
-    Доступен поиск по частичному вхождению в название ингредиента.
     """
-
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
     filter_backends = [IngredientSearchFilter, ]
@@ -43,34 +38,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipeViewSet(ModelViewSet):
     """
     Вьюсет для представления, создания, редактирования и удаления рецептов.
-    Права доступа:
-        - Просмотр объектов доступен всем пользователям
-        - Создание объектов доступно только авторизованным пользователям
-        - Редактирование объектов доступно только авторам или пользователям
-        со статусом персонала.
-    Доступные методы:
-        - GET -- Представление списка рецептов.
-        - GET -- Представление рецепта по id.
-        - POST -- Создание рецепта.
-        - PATCH -- Редактирование рецепта.
-        - DELETE -- Удаление рецепта.
-    Доступные actions:
-        - POST -- Добавление рецепта в избранное.
-        - DELETE -- Удаление рецепта из избранного.
-        - POST -- Добавление рецепта в список покупок.
-        - DELETE -- Удаление рецепта из списка покупок.
-        - GET -- Получить список покупок в формате .txt.
-    Параметры фильтрации:
-        - is_favorited=<0 или 1> -- 1 Только рецепты добавленные в избранное
-        - is_in_shopping_cart=<0 или 1> -- Только рецепты в списке покупок
-        - author=<id> -- Только рецепты выбранного автора
-        - tags=<slug> -- Только рецепты с выбранными тегами
-            Пример: tags=lunch&tags=breakfast
-        Пагинация:
-        - page=<int> - Номер страницы
-        - limit=<int> - Количество объектов на странице(по умолчанию 6)
     """
-
     queryset = Recipe.objects.all()
     permission_classes = [IsAuthorOrAdminOrHigherOrReadOnly,
                           IsAuthenticatedOrReadOnly]
@@ -101,9 +69,6 @@ class RecipeViewSet(ModelViewSet):
     def __post_extra_action(self, request: Request, model, pk: int):
         """
         Добавление рецепта в список покупок/избранное.
-        Ограничения:
-            - Невозможно добавить рецепт, который не существует.
-            - Невозможно добавить уже добавленный рецепт.
         """
         if Recipe.objects.filter(id=pk).exists():
             user = request.user
@@ -180,7 +145,7 @@ class RecipeViewSet(ModelViewSet):
     @action(
         detail=True,
         methods=['post'],
-        #        permission_classes=[IsAuthenticated, ]
+        permission_classes=[IsAuthenticated]
     )
     def shopping_cart(self, request: Request, pk: int):
         """

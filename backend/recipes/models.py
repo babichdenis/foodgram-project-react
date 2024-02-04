@@ -10,10 +10,7 @@ User = get_user_model()
 class Ingredient(models.Model):
     """
     Модель ингредиентов.
-    Ограничения:
-        - Ингредиенты и их ед. измерения не должны повторяться.
     """
-
     name = models.CharField(
         'Ингредиент',
         max_length=Constants.MAX_CHAR_LENGTH
@@ -40,17 +37,17 @@ class Tag(models.Model):
     """ Модель тега. """
 
     name = models.CharField(
-        'Название тэга',
+        verbose_name='Название тэга',
         max_length=Constants.MAX_CHAR_LENGTH,
         unique=True,
     )
     color = ColorField(
-        'Цветовой HEX-код',
+        verbose_name='Цветовой HEX-код',
         max_length=Constants.MAX_COLOR_LENGTH,
         default="#FF0000",
     )
     slug = models.SlugField(
-        'Slug',
+        verbose_name='Slug',
         max_length=Constants.MAX_CHAR_LENGTH,
         unique=True,
     )
@@ -65,8 +62,9 @@ class Tag(models.Model):
 
 
 class Recipe(models.Model):
-    """Модель рецепта."""
-
+    """
+    Модель рецепта.
+    """
     name = models.CharField(
         max_length=Constants.MAX_CHAR_LENGTH,
         verbose_name='Название'
@@ -128,13 +126,7 @@ class Recipe(models.Model):
 class RecipeIngredient(models.Model):
     """
     Вспомогательная модель для связи рецептов и ингредиентов.
-    Связи:
-        - recipe -- Foreign Key c моделью Recipe.
-        - ingredient -- Foreign Key c моделью Ingredient.
-    Ограничения:
-        - Количество ограничено минимальным и максимальным значением.
     """
-
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
@@ -177,13 +169,13 @@ class FavoritRecipe(models.Model):
     """Модель для избранных рецептов."""
 
     recipe = models.ForeignKey(
-        to=Recipe,
+        Recipe,
         verbose_name='Избранное',
         related_name='favorites',
         on_delete=models.CASCADE
     )
     user = models.ForeignKey(
-        to=User,
+        User,
         verbose_name='Пользователь',
         related_name='favorites',
         on_delete=models.CASCADE
@@ -191,7 +183,6 @@ class FavoritRecipe(models.Model):
     added_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Дата добавления в избранное',
-        editable=False
     )
 
     class Meta:
@@ -211,13 +202,13 @@ class FavoritRecipe(models.Model):
 class Cart(models.Model):
     """Модель для списка покупок."""
     recipe = models.ForeignKey(
-        to=Recipe,
+        Recipe,
         verbose_name='Список покупок',
         related_name='shop_list',
         on_delete=models.CASCADE
     )
     user = models.ForeignKey(
-        to=User,
+        User,
         verbose_name='Пользователь',
         related_name='shop_list',
         on_delete=models.CASCADE
@@ -225,7 +216,6 @@ class Cart(models.Model):
     added_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Дата добавления в список покупок',
-        editable=False
     )
 
     class Meta:

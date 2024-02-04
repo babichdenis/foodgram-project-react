@@ -6,9 +6,7 @@ from foodgram.constants import Constants
 class FoodgramUser(AbstractUser):
     """
     Модель пользователя.
-    Поле email переопределено для установки уникальности электронных
-    почт пользователей.
-    Дополнительное поле role - Выбор пользователь или администратор.
+    role - Выбор пользователь или администратор.
     """
 
     class Role(models.TextChoices):

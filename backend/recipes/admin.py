@@ -56,7 +56,8 @@ class RecipeAdmin(BaseFoodgramAdmin):
         "name",
         "cooking_time",
         "author__email",
-        "ingredients__name" "tags__name",
+        "ingredients__name",
+        "tags__name",
     )
     list_filter = ("author", "tags__name")
     list_display_links = ('name', 'id')
@@ -130,17 +131,16 @@ class IngredientAdmin(BaseFoodgramAdmin):
 class FavoritRecipeAdmin(BaseFoodgramAdmin):
     """Административная панель для управления избранными рецептами."""
 
-    list_display = ("user", "recipe")
-    search_fields = ("user__username", "recipe__name")
-    list_editable = ("recipe",)
-    list_filter = ("recipe",)
+    list_display = ('user', 'recipe', 'added_date')
+    search_fields = ('user__username', 'recipe__name')
+    list_editable = ('recipe',)
+    list_filter = ('recipe',)
 
 
 @admin.register(Cart)
 class CartAdmin(BaseFoodgramAdmin):
     """Административная панель для управления списком покупок."""
 
-    fields = (('recipe', 'user', 'added_date'), )
     list_display = ('id', '__str__', 'user', 'recipe', 'added_date')
     list_display_links = ('__str__', 'id')
     search_fields = ('recipe__name', 'user__username')
