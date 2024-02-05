@@ -1,6 +1,8 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
+from foodgram.constants import Constants
+
 
 class FoodgramUser(AbstractUser):
     """
@@ -13,6 +15,12 @@ class FoodgramUser(AbstractUser):
     email = models.EmailField(
         unique=True,
         verbose_name='Электронная почта'
+    )
+    role = models.CharField(
+        choices=Role.choices,
+        default=Role.USER,
+        max_length=Constants.MAX_USERNAME_LENGTH,
+        verbose_name='Роль'
     )
 
     class Meta:
