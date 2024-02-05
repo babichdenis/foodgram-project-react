@@ -1,13 +1,20 @@
 from rest_framework import serializers
 
 from api.fields import Base64ImageField
-from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
-                            RecipeIngredient, Tag)
+from recipes.models import (
+    Cart,
+    FavoritRecipe,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    Tag
+)
 from users.serializers import UserReadSerializer
 
 
 class TagSerializer(serializers.ModelSerializer):
     """Сериалайзер для просмотра тегов."""
+
     class Meta:
         model = Tag
         fields = ('id', 'name', 'color', 'slug')
@@ -17,7 +24,6 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
     """
     Сериализатор для вспомогательной модели рецепта
     и ингредиентов с их количеством.
-    Используется для вывода ингредиентов в представлении рецептов.
     """
 
     id = serializers.ReadOnlyField(source='ingredient.id')
@@ -33,8 +39,6 @@ class RecipeIngredientReadSerializer(serializers.ModelSerializer):
 
 class RecipeIngredientCreateSerializer(serializers.ModelSerializer):
     """
-    Сериализатор для вспомогательной модели рецепта
-    и ингредиентов с их количеством.
     Используется для создания и обновления рецептов.
     """
 

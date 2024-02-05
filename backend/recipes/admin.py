@@ -1,10 +1,16 @@
 from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.safestring import mark_safe
-from foodgram.constants import Constants
 
-from recipes.models import (Cart, FavoritRecipe, Ingredient, Recipe,
-                            RecipeIngredient, Tag)
+from foodgram.constants import Constants
+from recipes.models import (
+    Cart,
+    FavoritRecipe,
+    Ingredient,
+    Recipe,
+    RecipeIngredient,
+    Tag
+)
 
 admin.site.empty_value_display = "Не задано"
 
@@ -95,7 +101,6 @@ class TagAdmin(BaseFoodgramAdmin):
 
     list_display = (
         "id",
-        "name",
         "color_code",
         "color",
         "slug",
@@ -106,15 +111,13 @@ class TagAdmin(BaseFoodgramAdmin):
         "color_code",
     )
     list_editable = ("slug",)
-    list_display_links = ('name', 'id')
+    list_display_links = ('color_code', 'id')
 
     @admin.display(description="Colored")
     def color_code(self, obj: Tag):
         return format_html(
             '<span style="color: #{};">{}</span>', obj.color[1:], obj.name
         )
-
-    color_code.short_description = "Название тэга"
 
 
 @admin.register(Ingredient)

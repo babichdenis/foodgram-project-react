@@ -1,11 +1,12 @@
 from django.contrib import admin
-from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth import get_user_model
-from recipes.models import FavoritRecipe, Cart, Recipe
-from users.models import Subscription, FoodgramUser
+from django.contrib.auth.admin import UserAdmin
 from django.contrib.auth.models import Group
 from rest_framework.authtoken.models import TokenProxy
+
 from foodgram.constants import Constants
+from recipes.models import Cart, FavoritRecipe, Recipe
+from users.models import FoodgramUser, Subscription
 
 User = get_user_model()
 
@@ -39,18 +40,22 @@ class FoodgramUserAdmin(UserAdmin):
     list_per_page = Constants.MAX_PAGE_SIZE
     list_max_show_all = Constants.MAX_PAGE_SIZE
 
-    @admin.display(description='Статус администратора',
+    @admin.display(description='Админ',
                    boolean=True)
     def is_admin(self, user: FoodgramUser):
         """Булево значение является ли пользователь администратором."""
         return user.is_active
 
+    @admin.display(description='Персонал',
+                   boolean=True)
     def is_active(self, user: FoodgramUser):
         """Булево значение является ли пользователь активным."""
         return user.is_active
 
+    @admin.display(description='Персонал',
+                   boolean=True)
     def is_staff(self, user: FoodgramUser):
-        """Булево значение является ли пользователь активным."""
+        """Булево значение является ли пользователь stuff"""
         return user.is_staff
 
     @admin.display(description='Подписчиков')
@@ -62,19 +67,6 @@ class FoodgramUserAdmin(UserAdmin):
     def recipes_count(self, user: FoodgramUser):
         """Счетчик рецептов пользователя."""
         return Recipe.objects.filter(author=user).count()
-
-
-'''
-    def save_model(self, request, obj: FoodgramUser, form, change):
-        """
-        Создание пользователя.
-        """
-        if obj.is_admin():
-            obj.is_staff = True
-        else:
-            obj.is_staff = False
-        super().save_model(request, obj, form, change)
- '''
 
 
 @admin.register(Subscription)

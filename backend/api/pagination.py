@@ -1,5 +1,6 @@
-from foodgram.constants import Constants
 from rest_framework.pagination import PageNumberPagination
+
+from foodgram.constants import Constants
 
 
 class Pagination(PageNumberPagination):

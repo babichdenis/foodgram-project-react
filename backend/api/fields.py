@@ -1,5 +1,5 @@
 import base64
-import webcolors
+
 from django.core.files.base import ContentFile
 from rest_framework import serializers
 
@@ -15,22 +15,3 @@ class Base64ImageField(serializers.ImageField):
             ext = format.split('/')[-1]
             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
         return super().to_internal_value(data)
-
-
-class Hex2NameColor(serializers.Field):
-    """
-    Добавление цвета при создании тега
-    #ffff00 - желтый
-    #00ff00 - зеленый
-    #ff0000 - красный
-    """
-
-    def to_representation(self, value):
-        return value
-
-    def to_internal_value(self, data):
-        try:
-            webcolors.hex_to_name(data)
-        except ValueError:
-            raise serializers.ValidationError("Для этого цвета нет имени")
-        return data

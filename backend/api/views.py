@@ -97,9 +97,6 @@ class RecipeViewSet(ModelViewSet):
     def __delete_extra_action(request: Request, model, pk: int):
         """
         Удаление рецепта из списка покупок/избранного.
-        Ограничения:
-            - Невозможно удалить рецепт, который не существует.
-            - Невозможно удалить рецепт, который не добавлен.
         """
         user = request.user
         recipe: Recipe = get_object_or_404(Recipe, id=pk)
@@ -122,7 +119,6 @@ class RecipeViewSet(ModelViewSet):
     def favorite(self, request: Request, pk: int):
         """
         Добавить рецепт в избранное.
-        Доступно только авторизованным пользователям.
         """
         return self.__post_extra_action(
             request=request,
@@ -134,7 +130,6 @@ class RecipeViewSet(ModelViewSet):
     def delete_favorite(self, request: Request, pk: int):
         """
         Удалить рецепт из избранного.
-        Доступно только авторизованным пользователям.
         """
         return self.__delete_extra_action(
             request=request,
@@ -145,11 +140,10 @@ class RecipeViewSet(ModelViewSet):
     @action(
         detail=True,
         methods=['post'],
-        permission_classes=[IsAuthenticated,])
+        permission_classes=[IsAuthenticated, ])
     def shopping_cart(self, request: Request, pk: int):
         """
         Добавить рецепт в список покупок.
-        Доступно только авторизованным пользователям.
         """
         return self.__post_extra_action(
             request=request,
@@ -161,7 +155,6 @@ class RecipeViewSet(ModelViewSet):
     def delete_shopping_cart(self, request: Request, pk: int):
         """
         Удалить рецепт из списка покупок.
-        Доступно только авторизованным пользователям.
         """
         return self.__delete_extra_action(
             request=request,
