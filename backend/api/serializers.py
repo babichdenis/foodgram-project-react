@@ -58,10 +58,7 @@ class IngredientSerializer(serializers.ModelSerializer):
 class RecipeReadSerializer(serializers.ModelSerializer):
     """
     Представление рецептов.
-    Поля is_favorited и is_in_shopping_cart получены с помощью
-    дополнительных методов.
     """
-
     tags = TagSerializer(many=True, read_only=True)
     author = UserReadSerializer(read_only=True)
     ingredients = RecipeIngredientReadSerializer(
@@ -205,4 +202,4 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ('id', 'name', 'image', 'cooking_time')
+        fields = ('id', )

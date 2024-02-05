@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.getenv("SECRET_KEY", get_random_secret_key())
 
-DEBUG = os.getenv("DEBUG", "False").lower() == "true"
+DEBUG = os.getenv("DEBUG", "True").lower() == "true"
 
 ALLOWED_HOSTS = os.getenv(
     "ALLOWED_HOSTS",
@@ -133,7 +133,7 @@ USE_TZ = True
 
 STATIC_URL = '/backend_static/'
 
-STATICFILES_DIRS = [BASE_DIR / 'backend',]
+# STATICFILES_DIRS = [BASE_DIR / 'backend',]
 
 STATIC_ROOT = BASE_DIR / 'backend_static'
 

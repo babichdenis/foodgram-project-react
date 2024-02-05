@@ -145,8 +145,7 @@ class RecipeViewSet(ModelViewSet):
     @action(
         detail=True,
         methods=['post'],
-        permission_classes=[IsAuthenticated]
-    )
+        permission_classes=[IsAuthenticated])
     def shopping_cart(self, request: Request, pk: int):
         """
         Добавить рецепт в список покупок.
