@@ -61,6 +61,7 @@ class RecipeReadSerializer(serializers.ModelSerializer):
     """
     tags = TagSerializer(many=True, read_only=True)
     author = UserReadSerializer(read_only=True)
+    image = Base64ImageField(required=True)
     ingredients = RecipeIngredientReadSerializer(
         many=True,
         source='recipe_ingredient'
@@ -70,9 +71,18 @@ class RecipeReadSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients',
-                  'is_favorited', 'is_in_shopping_cart', 'name',
-                  'image', 'text', 'cooking_time')
+        fields = (
+            'id',
+            'tags',
+            'author',
+            'ingredients',
+            'is_favorited',
+            'is_in_shopping_cart',
+            'name',
+            'image',
+            'text',
+            'cooking_time',
+        )
 
     def get_extra_field(self, obj, model):
         request = self.context.get('request')
@@ -202,4 +212,4 @@ class CartSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Cart
-        fields = ('id', )
+        fields = ("id",)

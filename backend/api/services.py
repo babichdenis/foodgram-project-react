@@ -7,13 +7,7 @@ from recipes.models import RecipeIngredient
 class ShoppingListCreator:
     """
     Создание списка покупок.
-    Пример:
-        Список покупок для @<username>.
-
-        ◻︎ бараний окорок на косточке --------- 10 кусок
-        ◻︎ масло грецкого ореха --------------- 50 ч. л.
-        ◻︎ персики консервированные ----------- 10 г
-        """
+    """
 
     def __init__(self, user):
         self.user = user

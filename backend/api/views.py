@@ -145,7 +145,7 @@ class RecipeViewSet(ModelViewSet):
     @action(
         detail=True,
         methods=['post'],
-        permission_classes=[IsAuthenticated])
+        permission_classes=[IsAuthenticated,])
     def shopping_cart(self, request: Request, pk: int):
         """
         Добавить рецепт в список покупок.
@@ -177,15 +177,6 @@ class RecipeViewSet(ModelViewSet):
     def download_shopping_cart(self, request: Request):
         """
         Получить список покупок в формате .txt.
-        Доступно только авторизованным пользователям.
-        При создании списка повторяющиеся ингредиенты складываются.
-        Пример:
-            - Рецепт 1:
-                - Персики 3 шт.
-            - Рецепт 2:
-                - Персики 2 шт.
-            Список покупок:
-                - Персики - 5 шт.
         """
         user = request.user
         if user.shop_list.exists():
