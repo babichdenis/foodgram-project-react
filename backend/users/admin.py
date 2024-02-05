@@ -31,7 +31,7 @@ class FoodgramUserAdmin(UserAdmin):
     """
 
     list_display = ('id', 'username', 'email', 'followers_count',
-                    'recipes_count', 'is_admin', 'is_staff',
+                    'recipes_count', 'is_active', 'is_admin', 'is_staff',
                     'is_superuser')
     list_display_links = ('username', 'id')
     date_hierarchy = 'date_joined'
@@ -43,7 +43,15 @@ class FoodgramUserAdmin(UserAdmin):
                    boolean=True)
     def is_admin(self, user: FoodgramUser):
         """Булево значение является ли пользователь администратором."""
-        return user.role == 'admin'
+        return user.is_active
+
+    def is_active(self, user: FoodgramUser):
+        """Булево значение является ли пользователь активным."""
+        return user.is_active
+
+    def is_staff(self, user: FoodgramUser):
+        """Булево значение является ли пользователь активным."""
+        return user.is_staff
 
     @admin.display(description='Подписчиков')
     def followers_count(self, user: FoodgramUser):
@@ -55,6 +63,8 @@ class FoodgramUserAdmin(UserAdmin):
         """Счетчик рецептов пользователя."""
         return Recipe.objects.filter(author=user).count()
 
+
+'''
     def save_model(self, request, obj: FoodgramUser, form, change):
         """
         Создание пользователя.
@@ -64,6 +74,7 @@ class FoodgramUserAdmin(UserAdmin):
         else:
             obj.is_staff = False
         super().save_model(request, obj, form, change)
+ '''
 
 
 @admin.register(Subscription)
