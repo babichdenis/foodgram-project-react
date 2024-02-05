@@ -6,6 +6,9 @@ class FoodgramUser(AbstractUser):
     """
     Модель пользователя.
     """
+    class Role(models.TextChoices):
+        ADMIN = 'admin', 'admin'
+        USER = 'user', 'user'
 
     email = models.EmailField(
         unique=True,
@@ -15,6 +18,9 @@ class FoodgramUser(AbstractUser):
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
+
+    def is_admin(self):
+        return self.role == self.Role.ADMIN
 
     def __str__(self):
         return self.username
